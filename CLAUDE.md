@@ -1,6 +1,6 @@
 # Jody: notes for Claude
 
-This site started as a copy of the website starter kit (`kit/` at the repo root). The brief is in `README.md`. Build pages from `src/components/` instead of writing sections from scratch; the kit's notes below still apply. Only change files in this folder: `kit/` and the other sites stay as they are.
+This site started as a copy of the website starter kit (`kit/` in `adi1singh/website-starter-kit`, where it was first built as `sites/jody/`). This repo is now its home: make changes here. The brief and what's still needed from Jody are in `README.md`. Build pages from `src/components/` instead of writing sections from scratch; the kit's notes below still apply. Pushing to `main` deploys once the repo is connected to Vercel.
 
 ## Map
 
