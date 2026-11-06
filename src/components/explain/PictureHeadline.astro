@@ -1,0 +1,175 @@
+---
+// Inspiration board (2026): small rounded
+// photos set inside a big headline, sized in em so they scale with the type
+// and widen on hover; a marquee line with a photo between the words; and a
+// "Play [▶] reel" button that opens up to show its thumbnail. Seen on
+// Realevate, Butter and Lusion. Works without JavaScript.
+//
+// <PictureHeadline parts={["We build", { src, alt: "" }, "homes that", { src, alt: "" }, "last."]}
+//   marquee={{ before: "Elevating", img: { src, alt: "" }, after: "life" }} play={{ src }} />
+type Pic = { src: string; alt: string };
+interface Props {
+  parts: (string | Pic)[];
+  marquee?: { before: string; img: Pic; after: string };
+  play?: { src: string; label?: string };
+}
+const { parts, marquee, play } = Astro.props;
+---
+<div class="ph">
+  <h3 class="ph-head">
+    {parts.map((p) =>
+      typeof p === "string" ? (
+        <>{p} </>
+      ) : (
+        <>
+          <span class="ph-pic"><img src={p.src} alt={p.alt} loading="lazy" /></span>{" "}
+        </>
+      ),
+    )}
+  </h3>
+
+  {play && (
+    <button type="button" class="ph-play">
+      <span>Play</span>
+      <span class="ph-thumb" aria-hidden="true">
+        <img src={play.src} alt="" loading="lazy" />
+        <svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>
+      </span>
+      <span>reel</span>
+      <span class="sr-only">(demo, no video)</span>
+    </button>
+  )}
+
+  {marquee && (
+    <div class="ph-marquee" aria-hidden="true">
+      <div class="ph-track">
+        {[0, 1, 2, 3].map(() => (
+          <span class="ph-run">
+            {marquee.before}
+            <span class="ph-pic ph-pic-big"><img src={marquee.img.src} alt="" loading="lazy" /></span>
+            {marquee.after}
+          </span>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .ph {
+    display: grid;
+    gap: clamp(32px, 5vw, 56px);
+  }
+  .ph-head {
+    max-width: 15ch;
+    font-size: clamp(40px, 7vw, 108px);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+  .ph-pic {
+    display: inline-block;
+    width: 1.55em;
+    height: 0.74em;
+    vertical-align: -0.04em;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--surface-2);
+    transition: width 0.7s var(--ease);
+  }
+  .ph-pic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s var(--ease);
+  }
+  .ph-head:hover .ph-pic {
+    width: 2.1em;
+  }
+  .ph-head .ph-pic:hover img {
+    transform: scale(1.08);
+  }
+
+  .ph-play {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+  }
+  .ph-thumb {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 1.3em;
+    height: 0.86em;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    transition: width 0.6s var(--ease);
+  }
+  .ph-thumb img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .ph-thumb svg {
+    position: relative;
+    width: 0.5em;
+    height: 0.5em;
+  }
+  .ph-play:hover .ph-thumb,
+  .ph-play:focus-visible .ph-thumb {
+    width: 3.2em;
+    color: #fff;
+  }
+  .ph-play:hover .ph-thumb img,
+  .ph-play:focus-visible .ph-thumb img {
+    opacity: 1;
+  }
+
+  .ph-marquee {
+    margin-inline: calc(var(--bleed, 0px) * -1);
+    overflow: hidden;
+    border-top: 1px solid var(--line);
+    padding-top: clamp(24px, 4vw, 40px);
+  }
+  .ph-track {
+    display: flex;
+    width: max-content;
+    animation: ph-slide 26s linear infinite;
+  }
+  .ph-run {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.18em;
+    padding-right: 0.4em;
+    font-size: clamp(48px, 9vw, 140px);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .ph-pic-big {
+    width: 1.1em;
+    height: 0.82em;
+    border-radius: 0.08em;
+  }
+  @keyframes ph-slide {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+</style>

@@ -1,0 +1,83 @@
+---
+// Every page uses this. It wires up the tokens, the motion layer, the intro
+// curtain, the scroll progress bar, page transitions, SEO and social tags.
+import "../styles/tokens.css";
+import "../styles/base.css";
+import "../styles/motion.css";
+import Header from "../components/layout/Header.astro";
+import Footer from "../components/layout/Footer.astro";
+import Intro from "../components/layout/Intro.astro";
+import { SITE } from "../data/site";
+import { languages, type Lang } from "../i18n/ui";
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  /** Branded curtain on the first view of a visit (Digital Bridge). */
+  intro?: boolean;
+  /** Alternative palette from tokens.css, e.g. "bridge" or "earth". */
+  theme?: string;
+  /** Film-grain texture over the page (JobGen). */
+  grain?: boolean;
+  lang?: Lang;
+  /** Show the language switcher in the header. */
+  languageSwitcher?: boolean;
+  cta?: { label: string; href: string };
+  noindex?: boolean;
+}
+const {
+  title,
+  description = SITE.description,
+  ogImage = "/placeholders/og.svg",
+  intro = true,
+  theme,
+  grain = true,
+  lang = "en",
+  languageSwitcher = false,
+  cta,
+  noindex = false,
+} = Astro.props;
+const site = Astro.site ?? new URL("https://example.com");
+const canonical = new URL(Astro.url.pathname, site);
+const image = new URL(ogImage, site);
+// Decides before first paint whether the intro plays: once per visit, never with reduced motion.
+const introScript = `try{document.documentElement.dataset.intro=sessionStorage.getItem("intro-seen")||matchMedia("(prefers-reduced-motion: reduce)").matches?"seen":"play"}catch(e){}`;
+---
+<!doctype html>
+<html lang={languages[lang].htmlLang} data-theme={theme}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#0b0b0d" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin />
+    <script is:inline>document.documentElement.classList.add("js")</script>
+    {intro && <script is:inline set:html={introScript} />}
+    <slot name="head" />
+  </head>
+  <body data-grain={grain ? "" : undefined}>
+    <div class="scroll-progress" aria-hidden="true"></div>
+    {intro && <Intro />}
+    <a class="skip" href="#main">Skip to content</a>
+    <Header cta={cta} languages={languageSwitcher} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer cta={cta} />
+    <slot name="end" />
+    <script>
+      import "../scripts/motion.ts";
+    </script>
+  </body>
+</html>

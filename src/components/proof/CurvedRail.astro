@@ -1,0 +1,150 @@
+---
+// Inspiration board (2026): a swipeable row of
+// cards that bends like the inside of a cylinder: the card in the middle
+// faces you, the ones at the sides turn in towards it. Seen on FOLLOW.ART and
+// Moto. Each card's turn is linked to its place in the row (CSS view timeline
+// on the scroller); without support or with reduced motion it is a flat row.
+// Previous / next buttons for mouse users.
+//
+// <CurvedRail label="Our team" items={[{ title, sub, img: { src, alt } }]} />
+interface Props {
+  label: string;
+  items: { title: string; sub: string; img: { src: string; alt: string } }[];
+}
+const { label, items } = Astro.props;
+---
+<div class="cr" data-curved-rail>
+  <div class="cr-scroller" tabindex="0" role="region" aria-label={label}>
+    <ul class="cr-track">
+      {items.map((it) => (
+        <li class="cr-card">
+          <img src={it.img.src} alt={it.img.alt} loading="lazy" />
+          <div class="cr-cap">
+            <p class="cr-title">{it.title}</p>
+            <p class="cr-sub mono">{it.sub}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <div class="cr-nav">
+    <button type="button" class="cr-btn" data-dir="-1" aria-label="Previous"><span aria-hidden="true">←</span></button>
+    <button type="button" class="cr-btn" data-dir="1" aria-label="Next"><span aria-hidden="true">→</span></button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-curved-rail]").forEach((root) => {
+    const scroller = root.querySelector<HTMLElement>(".cr-scroller")!;
+    const card = root.querySelector<HTMLElement>(".cr-card");
+    // Start in the middle of the row so the curve shows on both sides.
+    scroller.scrollLeft = (scroller.scrollWidth - scroller.clientWidth) / 2;
+    root.querySelectorAll<HTMLButtonElement>(".cr-btn").forEach((b) =>
+      b.addEventListener("click", () => {
+        const step = (card?.offsetWidth ?? 280) + 16;
+        scroller.scrollBy({ left: step * Number(b.dataset.dir), behavior: "smooth" });
+      }),
+    );
+  });
+</script>
+
+<style>
+  .cr {
+    display: grid;
+    gap: 20px;
+  }
+  .cr-scroller {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin-inline: calc(var(--bleed, 0px) * -1);
+    padding-block: 24px;
+    outline-offset: -4px;
+  }
+  .cr-scroller::-webkit-scrollbar {
+    display: none;
+  }
+  .cr-track {
+    display: flex;
+    gap: 16px;
+    width: max-content;
+    margin: 0;
+    padding: 0 calc(50cqi - 140px);
+    list-style: none;
+  }
+  .cr-scroller {
+    container-type: inline-size;
+  }
+  .cr-card {
+    position: relative;
+    flex: 0 0 280px;
+    height: 380px;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    scroll-snap-align: center;
+  }
+  .cr-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .cr-cap {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 40px 18px 16px;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.62));
+    color: #fff;
+  }
+  .cr-title {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .cr-sub {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 11px;
+  }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .cr-card {
+        animation-name: cr-bend;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: view(inline);
+      }
+    }
+  }
+  /* Entering from the right it faces left, in the middle it faces you, leaving
+     on the left it faces right: the inside of a cylinder. */
+  @keyframes cr-bend {
+    0% {
+      transform: perspective(900px) translateZ(120px) rotateY(-42deg);
+    }
+    50% {
+      transform: perspective(900px) translateZ(0) rotateY(0);
+    }
+    100% {
+      transform: perspective(900px) translateZ(120px) rotateY(42deg);
+    }
+  }
+  .cr-nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  :global(html:not(.js)) .cr-nav {
+    display: none;
+  }
+  .cr-btn {
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    background: transparent;
+    font-size: 18px;
+  }
+  .cr-btn:hover {
+    border-color: var(--muted);
+  }
+</style>

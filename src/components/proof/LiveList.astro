@@ -1,0 +1,140 @@
+---
+// JobGen's simulated "watch it work" demo (Olivia's owner list, Jess's applicant
+// pipeline): a list worked through row by row, each row going pending → working
+// → its outcome. Starts when scrolled into view, loops, and is always labelled
+// as a simulation. With reduced motion every row simply shows its outcome.
+interface Props {
+  title: string;
+  label?: string;
+  rows: { name: string; detail?: string; outcome: string; tone?: "good" | "warn" | "neutral" }[];
+}
+const { title, label = "SIMULATED EXAMPLE", rows } = Astro.props;
+---
+<div class="live card" data-live>
+  <div class="live-head">
+    <p class="live-title"><span class="ping" aria-hidden="true"></span>{title}</p>
+    <p class="mono">{label}</p>
+  </div>
+  <ol>
+    {rows.map((r) => (
+      <li data-state="pending" data-tone={r.tone ?? "good"}>
+        <span class="who"><b>{r.name}</b>{r.detail && <small>{r.detail}</small>}</span>
+        <span class="status" data-outcome={r.outcome}>Queued</span>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-live]").forEach((root) => {
+    const rows = [...root.querySelectorAll<HTMLElement>("li")];
+    const status = (li: HTMLElement) => li.querySelector<HTMLElement>(".status")!;
+    const finish = (li: HTMLElement) => {
+      li.dataset.state = "done";
+      status(li).textContent = "✓ " + status(li).dataset.outcome;
+    };
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return rows.forEach(finish);
+    let i = 0, timer = 0, running = false;
+    const step = () => {
+      if (i === rows.length) {
+        timer = window.setTimeout(() => {
+          rows.forEach((li) => ((li.dataset.state = "pending"), (status(li).textContent = "Queued")));
+          i = 0;
+          step();
+        }, 3000);
+        return;
+      }
+      const li = rows[i];
+      li.dataset.state = "working";
+      status(li).textContent = "Working…";
+      timer = window.setTimeout(() => {
+        finish(li);
+        i++;
+        timer = window.setTimeout(step, 350);
+      }, 1100);
+    };
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !running) {
+        running = true;
+        step();
+      } else if (!e.isIntersecting && running) {
+        running = false;
+        clearTimeout(timer);
+      }
+    }).observe(root);
+  });
+</script>
+
+<style>
+  .live-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .live-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+  }
+  .ping {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #34c759;
+    animation: ping 1.8s infinite;
+  }
+  @keyframes ping {
+    0% {
+      box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.6);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 9px rgba(52, 199, 89, 0);
+    }
+  }
+  ol {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    transition: background 0.4s;
+  }
+  li[data-state="working"] {
+    background: var(--surface-2);
+  }
+  .who {
+    display: grid;
+  }
+  small {
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .status {
+    font-size: 13px;
+    color: var(--faint);
+    text-align: right;
+  }
+  li[data-state="working"] .status {
+    color: var(--text);
+  }
+  li[data-state="done"][data-tone="good"] .status {
+    color: var(--c4);
+  }
+  li[data-state="done"][data-tone="warn"] .status {
+    color: var(--c2);
+  }
+  li[data-state="done"][data-tone="neutral"] .status {
+    color: var(--muted);
+  }
+</style>

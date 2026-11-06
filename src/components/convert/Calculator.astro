@@ -1,0 +1,359 @@
+---
+// "What is this costing you?": the visitor sets their own numbers with sliders.
+// Two modes:
+// - mode="reveal" (JobGen website): the total stays hidden until they press
+//   Calculate, then the working is revealed line by line and the result counts
+//   up. Changing a slider afterwards folds the answer away until they recalculate.
+// - mode="live" (Olivia): the total updates as they slide, with one plain line
+//   under it built from `detail`, e.g. "a month, from {missed} missed calls."
+//   Dark by default, with soft colour light and the warning half of the title
+//   (<span class='muted'>) in red.
+//
+// `formula` is a list of steps; each step's `calc` is a JS expression that can
+// use the input ids and earlier step ids. The last step is the result.
+interface Input {
+  id: string;
+  label: string;
+  min: number;
+  max: number;
+  step?: number;
+  value: number;
+  /** "{v}" is replaced with the value, e.g. "{v}%" or "$ {v}". */
+  format?: string;
+}
+interface Step {
+  id: string;
+  label: string;
+  calc: string;
+  money?: boolean;
+}
+interface Props {
+  eyebrow?: string;
+  title: string;
+  sub?: string;
+  inputs: Input[];
+  formula: Step[];
+  currency?: string;
+  locale?: string;
+  resultLabel?: string;
+  note?: string;
+  mode?: "reveal" | "live";
+  /** Live mode: a line under the total. {stepId} is replaced with that step's value. */
+  detail?: string;
+  /** Live mode: a button under the total. */
+  cta?: { label: string; href: string };
+  tone?: "light" | "dark";
+}
+const {
+  eyebrow,
+  title,
+  sub,
+  inputs,
+  formula,
+  currency = "AUD",
+  locale = "en-AU",
+  resultLabel = "Estimated per month",
+  note,
+  mode = "reveal",
+  detail,
+  cta,
+  tone = mode === "live" ? "dark" : "light",
+} = Astro.props;
+const config = { inputs: inputs.map((i) => ({ id: i.id, format: i.format ?? "{v}" })), formula, currency, locale };
+// Work the default numbers out at build time, so the live total is right even
+// before (or without) JavaScript. `calc` strings are author-written, never visitor input.
+const scope: Record<string, number> = Object.fromEntries(inputs.map((i) => [i.id, i.value]));
+for (const s of formula) scope[s.id] = Function(...Object.keys(scope), `return (${s.calc})`)(...Object.values(scope));
+const money = new Intl.NumberFormat(locale, { style: "currency", currency, maximumFractionDigits: 0 });
+const show = (id: string) => {
+  const step = formula.find((s) => s.id === id);
+  return step?.money ? money.format(scope[id]) : (+(scope[id] ?? 0).toFixed(2)).toLocaleString(locale, { maximumFractionDigits: 2 });
+};
+const result = formula.at(-1)!;
+const detailParts = (detail ?? "").split(/\{(\w+)\}/);
+---
+<section class:list={["section", tone === "light" ? "light" : "calc-dark"]} id="calculator">
+  <div class="wrap calc-grid">
+    <div>
+      {eyebrow && <p class="eyebrow reveal">{eyebrow}</p>}
+      <h2 class="h2 reveal" set:html={title} />
+      {sub && <p class="section-sub reveal">{sub}</p>}
+    </div>
+    <div class="calc card" data-calc data-mode={mode}>
+      {inputs.map((i) => (
+        <label class="field">
+          <span class="field-top"><span>{i.label}</span><output data-out={i.id}>{(i.format ?? "{v}").replace("{v}", i.value.toLocaleString(locale))}</output></span>
+          <input type="range" name={i.id} min={i.min} max={i.max} step={i.step ?? 1} value={i.value} />
+        </label>
+      ))}
+      {mode === "reveal" ? (
+        <>
+          <button type="button" class="btn btn-light calc-go magnetic" data-calc-go>Calculate <span aria-hidden="true">→</span></button>
+          <p class="stale" data-calc-stale hidden>Your numbers changed. Press Calculate to update.</p>
+          <div class="reveal-box" data-calc-reveal hidden>
+            <ol class="working">
+              {formula.slice(0, -1).map((s) => <li><span>{s.label}</span><b data-step={s.id}>0</b></li>)}
+            </ol>
+            <p class="result-label mono">{resultLabel}</p>
+            <p class="result" data-step={result.id}>0</p>
+            {note && <p class="note">{note}</p>}
+          </div>
+        </>
+      ) : (
+        <>
+          <div class="live-box" aria-live="polite">
+            <p class="result-label mono">{resultLabel}</p>
+            <p class="result result-live" data-step={result.id}>{show(result.id)}</p>
+            {detail && (
+              <p class="live-detail">
+                {detailParts.map((part, i) => (i % 2 ? <b data-step={part}>{show(part)}</b> : part))}
+              </p>
+            )}
+            {cta && <a class="btn btn-light magnetic live-cta" href={cta.href}>{cta.label} <span aria-hidden="true">→</span></a>}
+          </div>
+          {note && <p class="note">{note}</p>}
+        </>
+      )}
+    </div>
+  </div>
+  <script type="application/json" data-calc-config set:html={JSON.stringify(config)} />
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-calc]").forEach((box) => {
+    const section = box.closest("section")!;
+    const cfg = JSON.parse(section.querySelector("[data-calc-config]")!.textContent!);
+    const still = matchMedia("(prefers-reduced-motion: reduce)");
+    const ranges = [...box.querySelectorAll<HTMLInputElement>("input[type=range]")];
+    const reveal = box.querySelector<HTMLElement>("[data-calc-reveal]")!;
+    const stale = box.querySelector<HTMLElement>("[data-calc-stale]")!;
+    const money = new Intl.NumberFormat(cfg.locale, { style: "currency", currency: cfg.currency, maximumFractionDigits: 0 });
+    const num = (v: number) => (+v.toFixed(2)).toLocaleString(cfg.locale, { maximumFractionDigits: 2 });
+    let timers: number[] = [];
+    let calculated = false;
+
+    const values = () => {
+      const scope: Record<string, number> = Object.fromEntries(ranges.map((r) => [r.name, +r.value]));
+      for (const s of cfg.formula) scope[s.id] = Function(...Object.keys(scope), `return (${s.calc})`)(...Object.values(scope));
+      return scope;
+    };
+    const showInputs = () =>
+      ranges.forEach((r) => {
+        r.style.setProperty("--fill", ((+r.value - +r.min) / (+r.max - +r.min)) * 100 + "%");
+        const fmt = cfg.inputs.find((i: { id: string }) => i.id === r.name).format;
+        box.querySelector(`[data-out="${r.name}"]`)!.textContent = fmt.replace("{v}", (+r.value).toLocaleString(cfg.locale));
+      });
+    const countUp = (el: Element, to: number, fmt: (v: number) => string, ms: number) => {
+      const start = performance.now();
+      const tick = (now: number) => {
+        const k = still.matches ? 1 : Math.min(1, (now - start) / ms);
+        el.textContent = fmt(to * (1 - Math.pow(1 - k, 3)));
+        if (k < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+    if (box.dataset.mode === "live") {
+      // Live: every slider move re-works the numbers; the total glides to its new value.
+      const steps = new Map(cfg.formula.map((s: { id: string; money?: boolean }) => [s.id, s]));
+      const fmt = (id: string, v: number) => ((steps.get(id) as { money?: boolean } | undefined)?.money ? money.format(v) : num(v));
+      const resultId = cfg.formula.at(-1).id;
+      const total = box.querySelector<HTMLElement>(`.result[data-step="${resultId}"]`)!;
+      let shown = values()[resultId];
+      let raf = 0;
+      const update = () => {
+        showInputs();
+        const v = values();
+        box.querySelectorAll<HTMLElement>(".live-detail [data-step]").forEach((b) => (b.textContent = fmt(b.dataset.step!, v[b.dataset.step!])));
+        cancelAnimationFrame(raf);
+        const from = shown, to = v[resultId], start = performance.now();
+        const tick = (now: number) => {
+          const k = still.matches ? 1 : Math.min(1, (now - start) / 450);
+          shown = from + (to - from) * (1 - Math.pow(1 - k, 3));
+          total.textContent = fmt(resultId, shown);
+          if (k < 1) raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+      };
+      ranges.forEach((r) => r.addEventListener("input", update));
+      showInputs();
+      return;
+    }
+    const calculate = () => {
+      timers.forEach(clearTimeout);
+      timers = [];
+      calculated = true;
+      stale.hidden = true;
+      reveal.hidden = false;
+      const v = values();
+      const gap = still.matches ? 0 : 600;
+      const lines = [...reveal.querySelectorAll("li")];
+      lines.forEach((li) => li.classList.remove("is-shown"));
+      cfg.formula.forEach((s: { id: string; money?: boolean }, i: number) =>
+        timers.push(
+          window.setTimeout(() => {
+            lines[i]?.classList.add("is-shown");
+            countUp(reveal.querySelector(`[data-step="${s.id}"]`)!, v[s.id], s.money ? money.format : num, i === cfg.formula.length - 1 ? 900 : 500);
+          }, i * gap),
+        ),
+      );
+      if (!still.matches) reveal.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    };
+    ranges.forEach((r) =>
+      r.addEventListener("input", () => {
+        showInputs();
+        if (!calculated) return;
+        timers.forEach(clearTimeout);
+        reveal.hidden = true;
+        stale.hidden = false;
+      }),
+    );
+    box.querySelector("[data-calc-go]")!.addEventListener("click", calculate);
+    showInputs();
+  });
+</script>
+
+<style>
+  .calc-grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 60px;
+    align-items: start;
+  }
+  .calc {
+    display: grid;
+    gap: 26px;
+    padding: clamp(24px, 4vw, 40px);
+  }
+  .field-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+  output {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  input[type="range"] {
+    width: 100%;
+    height: 6px;
+    appearance: none;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--text) var(--fill, 50%), var(--line-strong) var(--fill, 50%));
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--text);
+    border: 4px solid var(--surface);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--text);
+    border: 4px solid var(--surface);
+  }
+  .calc-go {
+    justify-self: start;
+  }
+  .stale {
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .working {
+    display: grid;
+    gap: 10px;
+    margin: 0 0 24px;
+    padding: 0;
+    list-style: none;
+  }
+  .working li {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--line-strong);
+    color: var(--muted);
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity 0.5s var(--ease),
+      transform 0.5s var(--ease);
+  }
+  .working li:global(.is-shown) {
+    opacity: 1;
+    transform: none;
+  }
+  .working b {
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .result {
+    margin-top: 6px;
+    font-size: clamp(44px, 6vw, 72px);
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Live mode (Olivia) */
+  .calc-dark {
+    background:
+      radial-gradient(60% 80% at 0% 40%, color-mix(in srgb, var(--c3) 16%, transparent), transparent 70%),
+      radial-gradient(50% 70% at 100% 80%, color-mix(in srgb, var(--c1) 14%, transparent), transparent 70%),
+      var(--bg);
+  }
+  .calc-dark .calc {
+    border: 1px solid var(--line-strong);
+    border-radius: 28px;
+    background: color-mix(in srgb, var(--text) 3%, transparent);
+  }
+  .calc-dark h2 :global(.muted) {
+    background: linear-gradient(100deg, #ff8a5c, #ff4d4d 55%, #ff2e63);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 6px 28px rgba(255, 77, 77, 0.35));
+  }
+  .live-box {
+    padding-top: 6px;
+    border-top: 1px solid var(--line);
+  }
+  .live-box .result-label {
+    margin-top: 18px;
+  }
+  .result-live {
+    font-size: clamp(52px, 6.5vw, 92px);
+    letter-spacing: -0.055em;
+    overflow-wrap: anywhere;
+    background: var(--spectrum);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .live-detail {
+    margin-top: 10px;
+    color: var(--muted);
+  }
+  .live-detail b {
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .live-cta {
+    margin-top: 22px;
+  }
+  .note {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  @media (max-width: 900px) {
+    .calc-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+</style>

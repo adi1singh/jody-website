@@ -1,0 +1,382 @@
+---
+// A short "which one is right for me?" quiz, one question at a time, then
+// suggestions with the reason for each. Scripted and private: nothing is sent.
+//
+// variant="inline": Pathwise's course finder. A full section with a progress
+//   track; answers are kept in the URL (?q1=a&q2=b) so results can be shared.
+// variant="corner": JobGen's "Not sure which one you need?" guide. A launcher
+//   in the corner opens a small chat-style panel.
+//
+// Each option lists the result keys it points to (`picks`). The results with
+// the most points are suggested, each with the reasons collected on the way
+// (an option's `reason` is shown under its first pick).
+interface Option {
+  id: string;
+  label: string;
+  picks?: string[];
+  reason?: string;
+}
+interface Props {
+  variant?: "inline" | "corner";
+  title?: string;
+  intro?: string;
+  launcher?: string;
+  questions: { id: string; q: string; options: Option[] }[];
+  results: Record<string, { name: string; text: string; href: string; cta?: string; tint?: string }>;
+  max?: number;
+  cta?: { label: string; href: string };
+}
+const {
+  variant = "inline",
+  title = "Find your fit",
+  intro = "A few quick questions · nothing is sent",
+  launcher = "Not sure which one you need?",
+  questions,
+  results,
+  max = 2,
+  cta = { label: "Get in touch", href: "#contact" },
+} = Astro.props;
+const data = { questions, results, max, cta, variant };
+---
+{variant === "inline" ? (
+  <section class="section quiz-section" id="finder">
+    <div class="wrap">
+      <div class="quiz quiz-inline card" data-quiz>
+        <div class="quiz-head">
+          <p class="eyebrow">{title}</p>
+          <p class="mono" data-count></p>
+        </div>
+        <div class="track" aria-hidden="true">{questions.map(() => <span></span>)}</div>
+        <div class="stage" data-stage aria-live="polite"></div>
+        <div class="nav">
+          <button type="button" class="btn btn-ghost btn-small" data-back hidden>← Back</button>
+        </div>
+        <script type="application/json" data-quiz-data set:html={JSON.stringify(data)} />
+      </div>
+    </div>
+  </section>
+) : (
+  <div class="quiz-corner" data-quiz-corner>
+    <button type="button" class="launch" aria-expanded="false" aria-controls="quiz-panel" data-launch>
+      <span class="orb" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>{launcher}</span>
+    </button>
+    <section class="panel" id="quiz-panel" role="dialog" aria-labelledby="quiz-title" tabindex="-1" hidden>
+      <header>
+        <span class="orb" aria-hidden="true"><i></i><i></i><i></i></span>
+        <div>
+          <h2 id="quiz-title">{title}</h2>
+          <p>{intro}</p>
+        </div>
+        <button type="button" class="close" aria-label="Close" data-close>✕</button>
+      </header>
+      <div class="quiz" data-quiz>
+        <div class="stage" data-stage aria-live="polite"></div>
+        <button type="button" class="btn btn-ghost btn-small" data-back hidden>← Back</button>
+        <script type="application/json" data-quiz-data set:html={JSON.stringify(data)} />
+      </div>
+    </section>
+  </div>
+)}
+
+<script>
+  type Opt = { id: string; label: string; picks?: string[]; reason?: string };
+  type Q = { id: string; q: string; options: Opt[] };
+  type R = { name: string; text: string; href: string; cta?: string; tint?: string };
+  const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+
+  document.querySelectorAll<HTMLElement>("[data-quiz]").forEach((root) => {
+    const { questions, results, max, cta, variant } = JSON.parse(root.querySelector("[data-quiz-data]")!.textContent!) as {
+      questions: Q[]; results: Record<string, R>; max: number; cta: { label: string; href: string }; variant: string;
+    };
+    const stage = root.querySelector<HTMLElement>("[data-stage]")!;
+    const back = root.querySelector<HTMLButtonElement>("[data-back]")!;
+    const count = root.querySelector("[data-count]");
+    const dots = [...root.querySelectorAll(".track span")];
+    const inline = variant === "inline";
+    const answers: Record<string, string> = {};
+    let index = 0;
+
+    if (inline) {
+      const params = new URL(location.href).searchParams;
+      questions.forEach((q) => {
+        const v = params.get(q.id);
+        if (v && q.options.some((o) => o.id === v)) answers[q.id] = v;
+      });
+    }
+    const sync = (done: boolean) => {
+      if (!inline) return;
+      const url = new URL(location.href);
+      questions.forEach((q) => (answers[q.id] ? url.searchParams.set(q.id, answers[q.id]) : url.searchParams.delete(q.id)));
+      url.hash = done ? "finder" : "";
+      history.replaceState(null, "", url);
+    };
+
+    const ask = (i: number) => {
+      index = i;
+      const q = questions[i];
+      if (count) count.textContent = `Question ${i + 1} of ${questions.length}`;
+      dots.forEach((d, j) => d.className = j < i ? "done" : j === i ? "now" : "");
+      back.hidden = i === 0;
+      stage.innerHTML = `<fieldset class="q enter"><legend tabindex="-1">${esc(q.q)}</legend><div class="opts">${q.options
+        .map((o) => `<button type="button" class="opt${answers[q.id] === o.id ? " picked" : ""}" data-id="${o.id}">${esc(o.label)}</button>`)
+        .join("")}</div></fieldset>`;
+      stage.querySelector<HTMLElement>("legend")!.focus({ preventScroll: true });
+      sync(false);
+    };
+
+    const finish = () => {
+      const score: Record<string, number> = {};
+      const why: Record<string, string[]> = {};
+      questions.forEach((q) => {
+        const o = q.options.find((x) => x.id === answers[q.id]);
+        o?.picks?.forEach((k, n) => {
+          score[k] = (score[k] ?? 0) + 1;
+          // An option's reason explains its first pick; the others just gain a point.
+          if (o.reason && n === 0) (why[k] ??= []).push(o.reason);
+        });
+      });
+      const top = Object.keys(score).sort((a, b) => score[b] - score[a]).slice(0, max);
+      if (count) count.textContent = "Your suggestions";
+      dots.forEach((d) => (d.className = "done"));
+      back.hidden = false;
+      stage.innerHTML = `<div class="results enter"><p class="lead">${top.length ? "Here’s where we’d start:" : "Let’s talk it through."}</p>${top
+        .map((k) => {
+          const r = results[k];
+          const reasons = (why[k] ?? []).map((w) => `<li>${esc(w)}</li>`).join("");
+          return `<article class="result" style="--tint:${r.tint ?? "var(--accent)"}"><h3>${esc(r.name)}</h3><p>${esc(r.text)}</p>${reasons ? `<ul>${reasons}</ul>` : ""}<a href="${r.href}">${esc(r.cta ?? "Learn more")} →</a></article>`;
+        })
+        .join("")}<div class="btn-row"><a class="btn btn-light btn-small" href="${cta.href}">${esc(cta.label)}</a><button type="button" class="btn btn-ghost btn-small" data-restart>Start again</button></div></div>`;
+      stage.querySelector("[data-restart]")!.addEventListener("click", () => {
+        Object.keys(answers).forEach((k) => delete answers[k]);
+        ask(0);
+      });
+      sync(true);
+    };
+
+    stage.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".opt");
+      if (!btn) return;
+      answers[questions[index].id] = btn.dataset.id!;
+      btn.classList.add("picked");
+      setTimeout(() => (index + 1 < questions.length ? ask(index + 1) : finish()), 160);
+    });
+    back.addEventListener("click", () => ask(stage.querySelector(".results") ? questions.length - 1 : Math.max(0, index - 1)));
+
+    const allAnswered = questions.every((q) => answers[q.id]);
+    allAnswered ? finish() : ask(Math.max(0, questions.findIndex((q) => !answers[q.id])));
+  });
+
+  /* Corner launcher */
+  document.querySelectorAll<HTMLElement>("[data-quiz-corner]").forEach((root) => {
+    const launch = root.querySelector<HTMLButtonElement>("[data-launch]")!;
+    const panel = root.querySelector<HTMLElement>(".panel")!;
+    const set = (open: boolean) => {
+      panel.hidden = !open;
+      launch.setAttribute("aria-expanded", String(open));
+      root.classList.toggle("open", open);
+      open ? panel.focus() : launch.focus();
+    };
+    launch.addEventListener("click", () => set(panel.hidden));
+    root.querySelector("[data-close]")!.addEventListener("click", () => set(false));
+    document.addEventListener("keydown", (e) => e.key === "Escape" && !panel.hidden && set(false));
+  });
+</script>
+
+<style>
+  /* The corner guide needs JavaScript; without it the launcher would do nothing. */
+  :global(html:not(.js)) .quiz-corner {
+    display: none;
+  }
+  .quiz-inline {
+    max-width: 760px;
+    margin-inline: auto;
+    padding: clamp(24px, 4vw, 44px);
+  }
+  .quiz-head {
+    display: flex;
+    justify-content: space-between;
+  }
+  .track {
+    display: flex;
+    gap: 6px;
+    margin: 16px 0 28px;
+  }
+  .track span {
+    flex: 1;
+    height: 4px;
+    border-radius: 4px;
+    background: var(--line-strong);
+    transition: background 0.4s;
+  }
+  .track :global(.done) {
+    background: var(--text);
+  }
+  .track :global(.now) {
+    background: var(--accent);
+  }
+  .stage :global(.q) {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .stage :global(legend) {
+    margin-bottom: 20px;
+    font-size: clamp(22px, 2.6vw, 30px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    outline: none;
+  }
+  .stage :global(.opts) {
+    display: grid;
+    gap: 10px;
+  }
+  .stage :global(.opt) {
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    text-align: left;
+    font-size: 16px;
+    transition:
+      border-color 0.2s,
+      background 0.2s,
+      transform 0.2s var(--ease);
+  }
+  .stage :global(.opt:hover) {
+    border-color: var(--text);
+    transform: translateX(4px);
+  }
+  .stage :global(.opt.picked) {
+    background: var(--text);
+    color: var(--bg);
+  }
+  .stage :global(.enter) {
+    animation: q-in 0.45s var(--ease) both;
+  }
+  @keyframes q-in {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+  }
+  .stage :global(.results) {
+    display: grid;
+    gap: 14px;
+  }
+  .stage :global(.result) {
+    padding: 20px;
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    border-left: 3px solid var(--tint);
+  }
+  .stage :global(.result h3) {
+    color: var(--tint);
+  }
+  .stage :global(.result p),
+  .stage :global(.result ul) {
+    margin: 6px 0 10px;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  .stage :global(.result a) {
+    font-weight: 500;
+  }
+  .nav,
+  .quiz [data-back] {
+    margin-top: 20px;
+  }
+
+  /* Corner variant */
+  .quiz-corner {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 60;
+    display: grid;
+    justify-items: end;
+    gap: 12px;
+  }
+  .launch {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 18px 8px 8px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--surface) 85%, transparent);
+    backdrop-filter: blur(14px);
+    font-size: 14px;
+    box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+  }
+  .open .launch {
+    display: none;
+  }
+  .orb {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--spectrum);
+  }
+  .orb i {
+    width: 3px;
+    height: 12px;
+    border-radius: 2px;
+    background: #fff;
+    animation: voice 1.1s ease-in-out infinite;
+  }
+  .orb i:nth-child(2) {
+    animation-delay: -0.4s;
+  }
+  .orb i:nth-child(3) {
+    animation-delay: -0.7s;
+  }
+  @keyframes voice {
+    0%,
+    100% {
+      transform: scaleY(0.45);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
+  .panel {
+    width: min(380px, calc(100vw - 40px));
+    max-height: min(620px, calc(100dvh - 40px));
+    overflow-y: auto;
+    padding: 18px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.7);
+    animation: q-in 0.35s var(--ease) both;
+    outline: none;
+  }
+  .panel header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .panel h2 {
+    font-size: 17px;
+  }
+  .panel header p {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .close {
+    margin-left: auto;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font-size: 16px;
+  }
+  .panel .stage :global(legend) {
+    font-size: 18px;
+  }
+</style>

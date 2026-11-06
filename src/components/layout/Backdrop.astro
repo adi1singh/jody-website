@@ -1,0 +1,214 @@
+---
+// Inspiration board (2026): a signature background behind any content you put
+// inside it. Four kinds:
+// - "topo": topographic contour lines with a hand-drawn scribble that draws in
+//   once (Lando Norris). The lines come from src/pages/textures/topo.svg.ts,
+//   generated at build time and used as a mask, so any colour works.
+// - "paper": graph paper, with optional notes taped on (Oatly).
+// - "stripes": blurred diagonal glow stripes (Raycast).
+// - "dots": a field of dots with a soft light that follows a mouse pointer
+//   (Cerebrium).
+// CSS only, apart from the pointer light. Still with reduced motion.
+//
+// <Backdrop kind="topo" colours={{ bg: "#282c20", ink: "#f4f4ed", line: "#f4f4ed", mark: "#d2ff00" }}>
+//   <h2>Built for the long way round</h2>
+// </Backdrop>
+// Add class="section" to use it as a full page section.
+interface Props {
+  kind: "topo" | "paper" | "stripes" | "dots";
+  /** bg and ink always; line + mark for topo, glow for stripes and dots. */
+  colours: { bg: string; ink: string; line?: string; mark?: string; glow?: string };
+  /** Short notes taped onto the paper (kind="paper"), with their paper colours. */
+  notes?: { text: string; tone: string }[];
+  /** Draw the scribble on the contours (kind="topo"). */
+  scribble?: boolean;
+  class?: string;
+}
+const { kind, colours, notes = [], scribble = true, class: className } = Astro.props;
+const vars = [
+  `--bd-bg:${colours.bg}`,
+  `--bd-ink:${colours.ink}`,
+  colours.line && `--bd-line:${colours.line}`,
+  colours.mark && `--bd-mark:${colours.mark}`,
+  colours.glow && `--bd-glow:${colours.glow}`,
+  kind === "topo" && "--contours:url(/textures/topo.svg)",
+]
+  .filter(Boolean)
+  .join(";");
+---
+<div class:list={["bd", `bd-${kind}`, className]} style={vars} data-backdrop={kind} data-reveal-group={kind === "topo" ? "" : undefined}>
+  {kind === "topo" && scribble && (
+    <svg class="bd-scribble" viewBox="0 0 300 110" aria-hidden="true">
+      <path pathLength="1" d="M12 78C28 30 58 12 70 42S56 96 88 74 126 14 140 42 128 94 160 66C176 50 196 34 208 52S198 88 226 74L292 34M222 96C240 90 262 92 280 86" />
+    </svg>
+  )}
+  {kind === "paper" &&
+    notes.map((n, i) => (
+      <p class={`bd-note bd-note-${i % 3}`} style={`--note:${n.tone}`}>
+        {n.text}
+      </p>
+    ))}
+  <div class="bd-content">
+    <slot />
+  </div>
+</div>
+
+<script>
+  // The dot field's light follows a mouse pointer; touch and keyboard users see it in place.
+  const fine = matchMedia("(hover: hover) and (pointer: fine)");
+  document.querySelectorAll<HTMLElement>("[data-backdrop='dots']").forEach((el) => {
+    el.addEventListener("pointermove", (e) => {
+      if (!fine.matches) return;
+      const box = el.getBoundingClientRect();
+      el.style.setProperty("--gx", `${e.clientX - box.left}px`);
+      el.style.setProperty("--gy", `${e.clientY - box.top}px`);
+    });
+  });
+</script>
+
+<style>
+  .bd {
+    position: relative;
+    overflow: hidden;
+    background: var(--bd-bg);
+    color: var(--bd-ink);
+    isolation: isolate;
+  }
+  .bd::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .bd-content {
+    position: relative;
+  }
+
+  /* Topographic contours, poured through a generated mask */
+  .bd-topo::before {
+    background: var(--bd-line, var(--bd-ink));
+    -webkit-mask: var(--contours) center / cover;
+    mask: var(--contours) center / cover;
+    opacity: 0.5;
+  }
+  .bd-scribble {
+    position: absolute;
+    right: 6%;
+    top: 12%;
+    width: min(46%, 420px);
+    overflow: visible;
+    pointer-events: none;
+  }
+  .bd-scribble path {
+    fill: none;
+    stroke: var(--bd-mark, var(--accent));
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+  :global(html.js) .bd-topo:not(:global(.is-visible)) .bd-scribble path {
+    stroke-dashoffset: 1;
+  }
+  :global(html.js) .bd-scribble path {
+    transition: stroke-dashoffset 2.2s 0.4s cubic-bezier(0.6, 0.1, 0.3, 1);
+  }
+
+  /* Graph paper with taped notes */
+  .bd-paper::before {
+    background-image:
+      linear-gradient(color-mix(in srgb, var(--bd-ink) 14%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--bd-ink) 14%, transparent) 1px, transparent 1px),
+      linear-gradient(color-mix(in srgb, var(--bd-ink) 6%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in srgb, var(--bd-ink) 6%, transparent) 1px, transparent 1px);
+    background-size:
+      100px 100px,
+      100px 100px,
+      20px 20px,
+      20px 20px;
+  }
+  .bd-note {
+    position: absolute;
+    z-index: 1;
+    max-width: 150px;
+    padding: 22px 16px 16px;
+    background: var(--note);
+    color: #17161a;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.15;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+  }
+  /* A strip of tape */
+  .bd-note::before {
+    content: "";
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    width: 64px;
+    height: 20px;
+    margin-left: -32px;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transform: rotate(-3deg);
+  }
+  .bd-note-0 {
+    top: 12%;
+    right: 7%;
+    transform: rotate(5deg);
+  }
+  .bd-note-1 {
+    top: 30%;
+    right: 30%;
+    transform: rotate(-6deg);
+  }
+  .bd-note-2 {
+    top: 52%;
+    right: 10%;
+    transform: rotate(3deg);
+  }
+
+  /* Blurred diagonal glow stripes */
+  .bd-stripes::before {
+    inset: -20%;
+    background:
+      radial-gradient(60% 50% at 80% 10%, color-mix(in srgb, var(--bd-glow, var(--accent)) 55%, transparent), transparent 70%),
+      repeating-linear-gradient(118deg, transparent 0 60px, color-mix(in srgb, var(--bd-glow, var(--accent)) 70%, transparent) 60px 84px, transparent 84px 150px);
+    filter: blur(22px);
+    -webkit-mask: linear-gradient(200deg, #000 20%, transparent 75%);
+    mask: linear-gradient(200deg, #000 20%, transparent 75%);
+  }
+
+  /* Dot field with a light that follows the pointer */
+  .bd-dots::before {
+    background: radial-gradient(circle, color-mix(in srgb, var(--bd-ink) 34%, transparent) 1.2px, transparent 1.8px) 0 0 / 18px 18px;
+    -webkit-mask: radial-gradient(70% 80% at 50% 45%, #000 40%, transparent 100%);
+    mask: radial-gradient(70% 80% at 50% 45%, #000 40%, transparent 100%);
+  }
+  .bd-dots::after {
+    content: "";
+    position: absolute;
+    left: var(--gx, 70%);
+    top: var(--gy, 40%);
+    z-index: -1;
+    width: 280px;
+    height: 280px;
+    margin: -140px 0 0 -140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--bd-glow, var(--accent)) 70%, transparent), transparent 65%);
+    filter: blur(10px);
+    transition:
+      left 0.5s var(--ease-out),
+      top 0.5s var(--ease-out);
+    pointer-events: none;
+  }
+  @media (max-width: 600px) {
+    .bd-note {
+      max-width: 120px;
+      font-size: 16px;
+    }
+  }
+</style>

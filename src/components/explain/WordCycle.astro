@@ -1,0 +1,175 @@
+---
+// Hind Zero Waste ("Rethink. Reduce. Reuse. Recover."): big outlined words
+// stacked in a sticky column fill in one at a time as the section scrolls
+// past, with a photo showing through the letters as a texture. The last word
+// takes the accent colour. Beside them: a lead line, short paragraphs and a
+// photo. Phones and reduced motion get every word filled from the start.
+//
+// <WordCycle eyebrow="OUR PHILOSOPHY" words={["Rethink.", "Reduce.", "Reuse.", "Recover."]}
+//   lead="..." paras={["..."]} img={{ src, alt }} />
+interface Props {
+  eyebrow?: string;
+  words: string[];
+  lead?: string;
+  paras?: string[];
+  img?: { src: string; alt: string };
+  /** Photo seen through the letters; defaults to `img`. */
+  texture?: string;
+  tone?: "light" | "dark";
+}
+const { eyebrow, words, lead, paras = [], img, texture = img?.src, tone = "light" } = Astro.props;
+---
+<section class:list={["section", "wc", { light: tone === "light" }]} data-word-cycle style={texture ? `--texture:url(${texture})` : undefined}>
+  <div class="wrap wc-grid">
+    <div class="wc-sticky">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h2 class="wc-words">
+        {words.map((w, i) => (
+          <span class:list={["wc-word", { "is-on": i === 0 }]} data-word data-text={w}>{w}</span>
+        ))}
+      </h2>
+    </div>
+    <div class="wc-body">
+      {lead && <p class="wc-lead reveal">{lead}</p>}
+      {paras.map((p) => <p class="wc-para reveal">{p}</p>)}
+      {img && (
+        <figure class="wc-figure reveal-image">
+          <img src={img.src} alt={img.alt} loading="lazy" />
+        </figure>
+      )}
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-word-cycle]");
+  if (root) {
+    const words = [...root.querySelectorAll<HTMLElement>("[data-word]")];
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (still || matchMedia("(max-width: 899px)").matches) words.forEach((w) => w.classList.add("is-on"));
+    else {
+      let frame = 0;
+      const update = () => {
+        frame = 0;
+        const r = root.getBoundingClientRect();
+        const range = Math.max(1, r.height - innerHeight * 0.6);
+        const progress = Math.min(1, Math.max(0, (innerHeight * 0.35 - r.top) / range));
+        const active = Math.min(words.length - 1, Math.floor(progress * words.length));
+        words.forEach((w, i) => w.classList.toggle("is-on", i <= active));
+      };
+      update();
+      addEventListener("scroll", () => frame || (frame = requestAnimationFrame(update)), { passive: true });
+    }
+  }
+</script>
+
+<style>
+  .wc {
+    overflow: visible;
+  }
+  .wc-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: 48px 80px;
+    align-items: start;
+  }
+  /* Room to scroll, so the words fill one at a time */
+  @media (min-width: 900px) {
+    .wc-grid {
+      min-height: 150vh;
+    }
+  }
+  .wc-sticky {
+    position: sticky;
+    top: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .wc-words {
+    display: flex;
+    flex-direction: column;
+    font-size: clamp(52px, 6.6vw, 102px);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+  .wc-word {
+    position: relative;
+    display: block;
+    width: fit-content;
+    color: transparent;
+    -webkit-text-stroke: 1.5px color-mix(in srgb, var(--text) 50%, transparent);
+  }
+  /* The filled version sits on top and fades in; the photo shows through as texture */
+  .wc-word::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    -webkit-text-stroke: 0;
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--text) 78%, transparent), color-mix(in srgb, var(--text) 90%, transparent)),
+      var(--texture, none) center 78% / 140% auto,
+      var(--text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 0.7s var(--ease-out),
+      transform 0.7s var(--ease-out);
+  }
+  .wc-word:last-child::after {
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--accent) 84%, transparent), color-mix(in srgb, var(--accent) 92%, #000)),
+      var(--texture, none) center 78% / 140% auto,
+      var(--accent);
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+  .wc-word:global(.is-on)::after,
+  :global(html:not(.js)) .wc-word::after {
+    opacity: 1;
+    transform: none;
+  }
+  .wc-body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding-top: 44px;
+  }
+  .wc-lead {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(24px, 2.2vw, 31px);
+    line-height: 1.35;
+  }
+  .wc-para {
+    color: var(--muted);
+  }
+  .wc-figure {
+    width: 100%;
+    margin: 12px 0 0;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+  }
+  .wc-figure img {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+  @media (max-width: 899px) {
+    .wc-grid {
+      grid-template-columns: 1fr;
+    }
+    .wc-sticky {
+      position: static;
+    }
+    .wc-body {
+      padding-top: 0;
+    }
+  }
+</style>

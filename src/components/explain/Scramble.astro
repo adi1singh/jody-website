@@ -1,0 +1,156 @@
+---
+// Inspiration board (2026): a headline that arrives
+// as flickering random characters and settles, letter by letter, into the
+// real words; plus small labels that re-scramble on hover, as navigation.
+// Seen on L.I.S.A. by Locomotive. Screen readers get the real text; the
+// flicker is a decorative copy. Reduced motion and no JavaScript: plain text.
+//
+// <Scramble text="Engineering zero waste" labels={["Services", "Projects", "Contact"]} />
+interface Props {
+  text: string;
+  eyebrow?: string;
+  labels?: string[];
+}
+const { text, eyebrow, labels = [] } = Astro.props;
+---
+<div class="scr">
+  {eyebrow && <p class="eyebrow scr-eyebrow" data-scramble data-scramble-hover>{eyebrow}</p>}
+  <h3 class="scr-head" data-scramble data-scramble-hover>{text}</h3>
+  {labels.length > 0 && (
+    <ul class="scr-labels" aria-label="Example menu">
+      {labels.map((l) => (
+        <li><a href="#idea-scramble" class="mono" data-scramble-hover>[ {l} ]</a></li>
+      ))}
+    </ul>
+  )}
+</div>
+
+<script>
+  const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+=/<>?";
+  const still = matchMedia("(prefers-reduced-motion: reduce)");
+  const running = new WeakSet<HTMLElement>();
+
+  // Wraps every letter once so the layout never moves: the real letter keeps
+  // its place (hidden while unsettled) and a random glyph is drawn over it.
+  function prepare(el: HTMLElement) {
+    if (el.dataset.ready) return [...el.querySelectorAll<HTMLElement>(".scr-c")];
+    el.dataset.ready = "1";
+    const text = el.textContent ?? "";
+    const spoken = document.createElement("span");
+    spoken.className = "sr-only";
+    spoken.textContent = text;
+    const visual = document.createElement("span");
+    visual.setAttribute("aria-hidden", "true");
+    for (const word of text.split(/(\s+)/)) {
+      if (/^\s+$/.test(word)) {
+        visual.append(word);
+        continue;
+      }
+      const w = document.createElement("span");
+      w.className = "scr-w";
+      for (const ch of word) {
+        const c = document.createElement("span");
+        c.className = "scr-c";
+        c.textContent = ch;
+        w.append(c);
+      }
+      visual.append(w);
+    }
+    el.replaceChildren(spoken, visual);
+    return [...el.querySelectorAll<HTMLElement>(".scr-c")];
+  }
+
+  function run(el: HTMLElement) {
+    if (still.matches || running.has(el)) return;
+    running.add(el);
+    const chars = prepare(el);
+    const total = 500 + chars.length * 28;
+    const lockAt = chars.map((_, i) => (i / chars.length) * total * 0.75 + Math.random() * total * 0.25);
+    const start = performance.now();
+    let last = 0;
+    const tick = (now: number) => {
+      const t = now - start;
+      if (now - last > 45) {
+        last = now;
+        chars.forEach((c, i) => {
+          if (t >= lockAt[i]) {
+            c.classList.remove("is-scrambling");
+            c.removeAttribute("data-g");
+          } else {
+            c.classList.add("is-scrambling");
+            c.dataset.g = GLYPHS[(Math.random() * GLYPHS.length) | 0];
+          }
+        });
+      }
+      if (t < total) requestAnimationFrame(tick);
+      else {
+        chars.forEach((c) => c.classList.remove("is-scrambling"));
+        running.delete(el);
+      }
+    };
+    requestAnimationFrame(tick);
+  }
+
+  const onView = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        onView.unobserve(e.target);
+        run(e.target as HTMLElement);
+      }),
+    { threshold: 0.6 },
+  );
+  document.querySelectorAll<HTMLElement>("[data-scramble]").forEach((el) => onView.observe(el));
+  document.querySelectorAll<HTMLElement>("[data-scramble-hover]").forEach((el) => {
+    el.addEventListener("pointerenter", () => run(el));
+    el.addEventListener("focus", () => run(el));
+  });
+</script>
+
+<style>
+  .scr {
+    display: grid;
+    gap: 22px;
+  }
+  .scr-head {
+    max-width: 14ch;
+    font-size: clamp(40px, 7vw, 104px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+  }
+  .scr :global(.scr-w) {
+    display: inline-block;
+    white-space: nowrap;
+  }
+  .scr :global(.scr-c) {
+    position: relative;
+  }
+  /* The real letter keeps its width; a random glyph sits on top of it */
+  .scr :global(.scr-c.is-scrambling) {
+    color: transparent;
+  }
+  .scr :global(.scr-c.is-scrambling)::after {
+    content: attr(data-g);
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .scr-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .scr-labels a {
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+  .scr-labels a:hover,
+  .scr-labels a:focus-visible {
+    color: var(--text);
+  }
+</style>

@@ -1,0 +1,123 @@
+---
+// Inspiration board (2026): two sections meeting
+// on a slant, crossed by tilted colour bands with giant words running along
+// them, like tape on a poster. Seen on FOLLOW.ART. The words are decoration
+// (hidden from screen readers); reduced motion stops them.
+//
+// <TiltedBands top={{ eyebrow, title }} bottom={{ eyebrow, title }}
+//   bands={[{ words: ["Design", "Build"], tone: "#f4793a", ink: "#000", tilt: -4 }]} />
+interface Band {
+  words: string[];
+  tone: string;
+  ink: string;
+  /** Degrees; negative tilts up to the right. */
+  tilt: number;
+  /** Seconds per loop; negative runs the other way. */
+  speed?: number;
+}
+interface Props {
+  top: { eyebrow: string; title: string; tone: string; ink: string };
+  bottom: { eyebrow: string; title: string; tone: string; ink: string };
+  bands: Band[];
+}
+const { top, bottom, bands } = Astro.props;
+---
+<div class="tb">
+  <div class="tb-half" style={`--tone:${top.tone};--ink:${top.ink}`}>
+    <p class="mono">{top.eyebrow}</p>
+    <h3>{top.title}</h3>
+  </div>
+  <div class="tb-bands" aria-hidden="true">
+    {bands.map((b, i) => (
+      <div class="tb-band" style={`--tone:${b.tone};--ink:${b.ink};--tilt:${b.tilt}deg;--speed:${Math.abs(b.speed ?? 24)}s;--dir:${(b.speed ?? 24) < 0 ? "reverse" : "normal"};--i:${i}`}>
+        <div class="tb-track">
+          {[0, 1].map(() => (
+            <span class="tb-run">{[...b.words, ...b.words].map((w) => <><span>{w}</span><i>✶</i></>)}</span>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+  <div class="tb-half tb-bottom" style={`--tone:${bottom.tone};--ink:${bottom.ink}`}>
+    <p class="mono">{bottom.eyebrow}</p>
+    <h3>{bottom.title}</h3>
+  </div>
+</div>
+
+<style>
+  .tb {
+    --seam: 330px;
+    position: relative;
+    overflow: hidden;
+  }
+  .tb-half {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    min-height: var(--seam);
+    padding: clamp(28px, 5vw, 56px);
+    background: var(--tone);
+    color: var(--ink);
+  }
+  .tb-half .mono {
+    color: inherit;
+    opacity: 0.7;
+  }
+  .tb-half h3 {
+    max-width: 16ch;
+    font-size: clamp(30px, 4.4vw, 60px);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+  }
+  .tb-bottom {
+    align-content: end;
+    justify-items: end;
+    text-align: right;
+    min-height: 330px;
+  }
+  /* The bands sit on the seam between the two halves */
+  .tb-bands {
+    position: absolute;
+    inset: var(--seam) 0 auto;
+    height: 0;
+    z-index: 1;
+  }
+  .tb-band {
+    position: absolute;
+    left: -10%;
+    width: 120%;
+    top: calc(-40px + var(--i) * 10px);
+    padding: 14px 0;
+    background: var(--tone);
+    color: var(--ink);
+    transform: rotate(var(--tilt));
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  }
+  .tb-track {
+    display: flex;
+    width: max-content;
+    animation: tb-run var(--speed) linear infinite var(--dir);
+  }
+  .tb-run {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+    padding-right: 0.35em;
+    font-size: clamp(36px, 6vw, 84px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .tb-run i {
+    font-style: normal;
+    font-size: 0.5em;
+  }
+  @keyframes tb-run {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+</style>

@@ -1,0 +1,152 @@
+---
+// Hind Zero Waste: a process timeline. Arrows draw in one after another,
+// 1 → 2 → 3 → 4, and each number lights up as its turn comes, so the direction
+// of the work reads at a glance. Phones get a vertical timeline with arrows
+// pointing down. Cards lift on hover.
+interface Props {
+  steps: { title: string; text: string }[];
+}
+const { steps } = Astro.props;
+---
+<ol class="steps" data-reveal-group style={`--count:${steps.length}`}>
+  {steps.map((s, i) => (
+    <li class="step reveal" style={`--i:${i}`}>
+      <span class="step-dot">{String(i + 1).padStart(2, "0")}</span>
+      <h3>{s.title}</h3>
+      <p>{s.text}</p>
+      {i < steps.length - 1 && <span class="step-arrow" aria-hidden="true"></span>}
+    </li>
+  ))}
+</ol>
+
+<style>
+  .steps {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--count), minmax(0, 1fr));
+    gap: 22px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 30px 24px 32px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    transition:
+      transform 0.45s var(--ease-out),
+      background 0.45s;
+  }
+  .step:hover {
+    transform: translateY(-8px);
+    background: var(--surface);
+  }
+  .step-dot {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: var(--surface-2);
+    border: 1px solid var(--line-strong);
+    font: 600 15px var(--font-mono);
+    box-shadow: 0 0 0 8px var(--bg);
+    transition:
+      background 0.35s,
+      border-color 0.5s,
+      color 0.5s,
+      transform 0.45s var(--ease-out);
+    transition-delay: 0s, calc(0.3s + var(--i) * 0.45s), calc(0.3s + var(--i) * 0.45s), 0s;
+  }
+  .steps:global(.is-visible) .step-dot {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .step:hover .step-dot {
+    background: var(--accent);
+    color: var(--accent-ink);
+    transform: scale(1.08);
+  }
+  /* The arrow from this number to the next one */
+  .step-arrow {
+    position: absolute;
+    top: 57px;
+    left: calc(50% + 46px);
+    width: calc(100% + 22px - 92px);
+    height: 14px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 20%, transparent), var(--accent)) center / calc(100% - 4px) 2px no-repeat;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.6s var(--ease-out) calc(0.5s + var(--i) * 0.45s);
+  }
+  .step-arrow::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    width: 10px;
+    height: 10px;
+    border-top: 2px solid var(--accent);
+    border-right: 2px solid var(--accent);
+    transform: rotate(45deg);
+  }
+  .steps:global(.is-visible) .step-arrow,
+  :global(html:not(.js)) .step-arrow {
+    clip-path: inset(0 0 0 0);
+  }
+  h3 {
+    margin-top: 8px;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+  }
+  p {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  @media (max-width: 900px) {
+    .steps {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .step {
+      display: grid;
+      grid-template-columns: 68px 1fr;
+      column-gap: 20px;
+      row-gap: 6px;
+      align-items: start;
+      padding: 0 0 40px;
+      text-align: left;
+    }
+    .step:hover {
+      transform: none;
+      background: none;
+    }
+    .step-dot {
+      grid-row: span 2;
+    }
+    h3 {
+      margin-top: 20px;
+    }
+    .step-arrow {
+      top: 80px;
+      left: 27px;
+      width: 14px;
+      height: calc(100% - 88px);
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 20%, transparent), var(--accent)) center / 2px calc(100% - 4px) no-repeat;
+      clip-path: inset(0 0 100% 0);
+    }
+    .step-arrow::after {
+      top: auto;
+      right: auto;
+      bottom: 3px;
+      left: 2px;
+      transform: rotate(135deg);
+    }
+  }
+</style>

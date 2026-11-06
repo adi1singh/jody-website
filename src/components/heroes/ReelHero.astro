@@ -1,0 +1,155 @@
+---
+// Pathwise ("Find the course that fits you."): the heading, a short lead and
+// one button on one side; on the other, three columns of photos drifting up,
+// down and up at different speeds, tilted slightly and fading out at the top
+// and bottom. Soft colour light in the corner. The drift is CSS only. Phones
+// skip the photos so visitors reach the content sooner; with reduced motion
+// the columns stand still.
+//
+// <ReelHero eyebrow="4 QUESTIONS · ABOUT A MINUTE" title="Find the course that <em>fits you.</em>"
+//   lead="..." cta={{ label: "Start the questions", href: "#finder" }} photos={[...9-12 photos]} />
+interface Props {
+  eyebrow?: string;
+  /** HTML; wrap the accent words in <em>. */
+  title: string;
+  lead?: string;
+  cta?: { label: string; href: string };
+  photos: { src: string; alt?: string }[];
+}
+const { eyebrow, title, lead, cta, photos } = Astro.props;
+const third = Math.ceil(photos.length / 3);
+const cols = [photos.slice(0, third), photos.slice(third, third * 2), photos.slice(third * 2)].map((c) => (c.length ? c : photos));
+---
+<section class="reel-hero">
+  <div class="wrap reel-inner">
+    <div class="reel-text">
+      {eyebrow && <p class="eyebrow fade-up" style="--line:-1">{eyebrow}</p>}
+      <h1 class="line-up"><span set:html={title} /></h1>
+      {lead && <p class="reel-lead fade-up">{lead}</p>}
+      {cta && <a class="btn btn-accent btn-big magnetic fade-up" style="--line:1" href={cta.href}>{cta.label} <span aria-hidden="true">→</span></a>}
+    </div>
+    <div class="reel" aria-hidden="true">
+      {cols.map((col, i) => (
+        <div class:list={["reel-col", { down: i === 1 }]}>
+          {[...col, ...col].map((p) => (
+            <span class="reel-tile"><img src={p.src} alt="" loading="lazy" /></span>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .reel-hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .reel-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(45% 80% at 0% 0%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 65%),
+      radial-gradient(35% 60% at 45% 110%, color-mix(in srgb, var(--c2) 16%, transparent), transparent 70%);
+  }
+  .reel-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 32px;
+    align-items: center;
+  }
+  .reel-text {
+    padding-block: clamp(48px, 8vw, 96px);
+  }
+  h1 {
+    max-width: 12ch;
+    margin: 18px 0 22px;
+    font-size: clamp(42px, 5.6vw, 84px);
+    font-weight: 600;
+    line-height: 0.97;
+    letter-spacing: -0.055em;
+  }
+  h1 :global(em) {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--c2);
+  }
+  .reel-lead {
+    max-width: 34rem;
+    font-size: 19px;
+    color: var(--muted);
+  }
+  .reel-text .btn {
+    margin-top: 30px;
+  }
+  .reel {
+    display: none;
+  }
+  @media (min-width: 900px) {
+    .reel-inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+      min-height: min(calc(100svh - 72px), 760px);
+    }
+    .reel {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      height: clamp(440px, 62svh, 580px);
+      overflow: hidden;
+      transform: rotate(-4deg) scale(1.08);
+      -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent);
+      mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent);
+    }
+  }
+  .reel-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .reel-tile {
+    display: block;
+    flex: none;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: 18px;
+    background: var(--surface-2);
+  }
+  .reel-tile:nth-child(3n + 1) {
+    aspect-ratio: 4 / 5;
+  }
+  .reel-tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .reel-col {
+      animation: reel-up 46s linear infinite;
+    }
+    .reel-col.down {
+      animation: reel-down 52s linear infinite;
+    }
+    .reel-col:nth-child(3) {
+      animation-duration: 40s;
+    }
+  }
+  @keyframes reel-up {
+    to {
+      transform: translateY(calc(-50% - 7px));
+    }
+  }
+  @keyframes reel-down {
+    from {
+      transform: translateY(calc(-50% - 7px));
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+</style>

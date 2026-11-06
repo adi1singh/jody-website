@@ -1,0 +1,69 @@
+---
+// YouTube video that loads nothing from YouTube until the visitor presses play
+// (privacy-enhanced youtube-nocookie). Fast pages, no tracking on load (JobGen).
+interface Props {
+  id: string;
+  title: string;
+  poster?: string;
+}
+const { id, title, poster = `https://i.ytimg.com/vi/${id}/hqdefault.jpg` } = Astro.props;
+---
+<div class="video" data-video={id} data-title={title}>
+  <img src={poster} alt="" loading="lazy" />
+  <button type="button" class="video-play" aria-label={`Play video: ${title}`}>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+  </button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-video]").forEach((box) =>
+    box.querySelector("button")!.addEventListener("click", () => {
+      const f = document.createElement("iframe");
+      f.src = `https://www.youtube-nocookie.com/embed/${box.dataset.video}?autoplay=1&rel=0`;
+      f.title = box.dataset.title!;
+      f.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+      f.allowFullscreen = true;
+      box.replaceChildren(f);
+      f.focus();
+    }),
+  );
+</script>
+
+<style>
+  .video {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    background: var(--surface-2);
+  }
+  .video img,
+  .video :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    object-fit: cover;
+  }
+  .video-play {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 84px;
+    height: 84px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: #111;
+    transition: transform 0.3s var(--ease);
+  }
+  .video-play:hover {
+    transform: scale(1.08);
+  }
+  .video-play svg {
+    width: 32px;
+    margin-left: 4px;
+    fill: currentColor;
+  }
+</style>

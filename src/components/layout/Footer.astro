@@ -1,0 +1,98 @@
+---
+// Footer with a big closing call to action (Digital Bridge) above the link columns.
+import BrandMark from "./BrandMark.astro";
+import { FOOTER, SITE } from "../../data/site";
+interface Props {
+  cta?: { label: string; href: string };
+}
+const { cta = { label: "Let’s talk", href: `mailto:${SITE.email}` } } = Astro.props;
+const year = new Date().getFullYear();
+---
+<footer class="footer">
+  <div class="wrap">
+    <a class="footer-cta" href={cta.href}>{cta.label} <span aria-hidden="true">→</span></a>
+    <div class="footer-cols">
+      <div class="footer-brand">
+        <a class="brand" href="/"><BrandMark /> <b>{SITE.name}</b></a>
+        <p>{SITE.tagline}</p>
+        <p><a href={`mailto:${SITE.email}`}>{SITE.email}</a>{SITE.phone && <><br /><a href={`tel:${SITE.phone.replace(/\s/g, "")}`}>{SITE.phone}</a></>}</p>
+      </div>
+      {FOOTER.map((col) => (
+        <nav aria-label={col.title}>
+          <p class="mono">{col.title}</p>
+          <ul>{col.links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+        </nav>
+      ))}
+    </div>
+    <p class="footer-legal mono">© {year} {SITE.name}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding: clamp(70px, 10vw, 120px) 0 40px;
+    border-top: 1px solid var(--line);
+    background: var(--bg);
+  }
+  .footer-cta {
+    display: inline-flex;
+    gap: 0.3em;
+    font-size: clamp(2.6rem, 8vw, 6.5rem);
+    font-weight: 600;
+    letter-spacing: -0.06em;
+    line-height: 1;
+    background: var(--spectrum);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .footer-cta span {
+    transition: transform 0.4s var(--ease);
+  }
+  .footer-cta:hover span {
+    transform: translateX(12px);
+  }
+  .footer-cols {
+    display: grid;
+    grid-template-columns: 2fr repeat(auto-fit, minmax(140px, 1fr));
+    gap: 40px;
+    margin-top: clamp(50px, 7vw, 90px);
+    padding-top: 40px;
+    border-top: 1px solid var(--line);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+  }
+  .footer-brand p {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 15px;
+  }
+  ul {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+    font-size: 15px;
+    color: var(--muted);
+  }
+  a:hover {
+    color: var(--text);
+  }
+  .footer-legal {
+    margin-top: 50px;
+    font-size: 11px;
+  }
+  @media (max-width: 700px) {
+    .footer-cols {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer-brand {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

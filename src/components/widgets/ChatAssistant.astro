@@ -1,0 +1,231 @@
+---
+// Pathwise's chat assistant: a rule-based helper in a chat bubble. It answers
+// only from this site's own content (the `answers` you give it, matched by
+// keywords), offers quick-reply chips, and hands over to a person when it
+// doesn't know. No AI service is called and nothing typed is sent anywhere.
+import { SITE } from "../../data/site";
+interface Answer {
+  /** Words that trigger this answer. */
+  keys: string[];
+  /** Label for the quick-reply chip (optional). */
+  chip?: string;
+  text: string;
+  link?: { label: string; href: string };
+}
+interface Props {
+  name?: string;
+  greeting?: string;
+  answers: Answer[];
+  fallback?: string;
+}
+const {
+  name = "Assistant",
+  greeting = "Hi! I can answer common questions about what we do. What would you like to know?",
+  answers,
+  fallback = `I’m not sure about that one. The quickest way is to ask us directly: <a href="mailto:${SITE.email}">${SITE.email}</a>.`,
+} = Astro.props;
+---
+<div class="assistant" data-assistant>
+  <button type="button" class="bubble" aria-expanded="false" aria-controls="assistant-panel" aria-label={`Chat with ${name}`} data-toggle>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z" /></svg>
+  </button>
+  <section class="panel" id="assistant-panel" role="dialog" aria-label={name} hidden>
+    <header>
+      <b>{name}</b><span class="mono">ANSWERS FROM THIS SITE</span>
+      <button type="button" class="x" aria-label="Close chat" data-toggle>✕</button>
+    </header>
+    <div class="log" data-log aria-live="polite"></div>
+    <form data-form>
+      <input type="text" name="q" placeholder="Type a question…" aria-label="Your question" autocomplete="off" />
+      <button type="submit" aria-label="Send">→</button>
+    </form>
+  </section>
+  <script type="application/json" data-assistant-data set:html={JSON.stringify({ greeting, answers, fallback })} />
+</div>
+
+<script>
+  type A = { keys: string[]; chip?: string; text: string; link?: { label: string; href: string } };
+  document.querySelectorAll<HTMLElement>("[data-assistant]").forEach((root) => {
+    const { greeting, answers, fallback } = JSON.parse(root.querySelector("[data-assistant-data]")!.textContent!) as { greeting: string; answers: A[]; fallback: string };
+    const panel = root.querySelector<HTMLElement>(".panel")!;
+    const bubble = root.querySelector<HTMLButtonElement>(".bubble")!;
+    const log = root.querySelector<HTMLElement>("[data-log]")!;
+    const form = root.querySelector<HTMLFormElement>("[data-form]")!;
+    const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+    const chips = answers.filter((a) => a.chip);
+    let started = false;
+
+    const add = (who: "bot" | "me", html: string) => {
+      const m = document.createElement("div");
+      m.className = `msg ${who}`;
+      m.innerHTML = html;
+      log.append(m);
+      log.scrollTop = log.scrollHeight;
+    };
+    const chipRow = () =>
+      `<div class="chips">${chips.map((a, i) => `<button type="button" data-chip="${i}">${esc(a.chip!)}</button>`).join("")}</div>`;
+    const reply = (a: A | undefined) =>
+      setTimeout(
+        () => add("bot", a ? `${esc(a.text)}${a.link ? ` <a href="${a.link.href}">${esc(a.link.label)} →</a>` : ""}` : fallback),
+        350,
+      );
+    const match = (q: string) => {
+      const words = q.toLowerCase();
+      let best: A | undefined, score = 0;
+      for (const a of answers) {
+        const s = a.keys.filter((k) => words.includes(k.toLowerCase())).length;
+        if (s > score) (best = a), (score = s);
+      }
+      return best;
+    };
+    const toggle = (open: boolean) => {
+      panel.hidden = !open;
+      bubble.setAttribute("aria-expanded", String(open));
+      if (open && !started) {
+        started = true;
+        add("bot", esc(greeting) + chipRow());
+      }
+      if (open) form.querySelector("input")!.focus();
+    };
+    root.querySelectorAll("[data-toggle]").forEach((b) => b.addEventListener("click", () => toggle(panel.hidden)));
+    log.addEventListener("click", (e) => {
+      const c = (e.target as HTMLElement).closest<HTMLElement>("[data-chip]");
+      if (!c) return;
+      const a = chips[Number(c.dataset.chip)];
+      add("me", esc(a.chip!));
+      reply(a);
+    });
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = form.querySelector("input")!;
+      const q = input.value.trim();
+      if (!q) return;
+      add("me", esc(q));
+      input.value = "";
+      reply(match(q));
+    });
+    document.addEventListener("keydown", (e) => e.key === "Escape" && !panel.hidden && (toggle(false), bubble.focus()));
+  });
+</script>
+
+<style>
+  /* The assistant needs JavaScript; without it the bubble would do nothing. */
+  :global(html:not(.js)) .assistant {
+    display: none;
+  }
+  .assistant {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    z-index: 60;
+  }
+  .bubble {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-ink);
+    box-shadow: 0 16px 40px -12px color-mix(in srgb, var(--accent) 70%, transparent);
+  }
+  .bubble svg {
+    width: 24px;
+    fill: currentColor;
+  }
+  .panel {
+    position: absolute;
+    left: 0;
+    bottom: 70px;
+    display: flex;
+    flex-direction: column;
+    width: min(360px, calc(100vw - 40px));
+    height: min(520px, calc(100dvh - 120px));
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+  }
+  .panel[hidden] {
+    display: none;
+  }
+  header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  header .mono {
+    font-size: 10px;
+  }
+  .x {
+    margin-left: auto;
+    border: 0;
+    background: none;
+    color: var(--muted);
+  }
+  .log {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    overflow-y: auto;
+    font-size: 15px;
+  }
+  .log :global(.msg) {
+    max-width: 86%;
+    padding: 10px 14px;
+    border-radius: 16px;
+  }
+  .log :global(.bot) {
+    background: var(--surface-2);
+    border-bottom-left-radius: 4px;
+  }
+  .log :global(.me) {
+    align-self: flex-end;
+    background: var(--text);
+    color: var(--bg);
+    border-bottom-right-radius: 4px;
+  }
+  .log :global(a) {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .log :global(.chips) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .log :global(.chips button) {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    font-size: 13px;
+  }
+  form {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid var(--line);
+  }
+  input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    background: var(--bg);
+  }
+  form button {
+    width: 42px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--text);
+    color: var(--bg);
+  }
+</style>

@@ -1,0 +1,458 @@
+---
+// Digital Bridge ("Make the connection."): drag the plug along to the socket
+// and the wire lights up the bridge path, the photo warms, and the outcome and
+// a link appear. Dropping near the socket, a plain tap, Enter or Space all
+// connect; Escape cancels; "Try again" resets. Instructions are announced.
+// Without JavaScript it shows the connected state, so the message and link are
+// still there.
+//
+// <ConnectPlayground img={{ src, alt }} from="YOUR BUSINESS" to="TECHNOLOGY"
+//   link={{ label: "Let’s connect your business", href: "#contact" }} />
+interface Props {
+  img: { src: string; alt: string };
+  kicker?: string;
+  title?: string;
+  doneTitle?: string;
+  from?: string;
+  to?: string;
+  /** HTML; <em> for the italic line. */
+  lead?: string;
+  cue?: string;
+  doneText?: string;
+  link?: { label: string; href: string };
+  hint?: string;
+  doneHint?: string;
+}
+const {
+  img,
+  kicker = "BUSINESS + TECHNOLOGY",
+  title = "Make the connection.",
+  doneTitle = "Better, together.",
+  from = "YOUR BUSINESS",
+  to = "TECHNOLOGY",
+  lead = "A little connection.<br /><em>A lot of possibility.</em>",
+  cue = "DRAG THE DOT ↗",
+  doneText = "That’s where we come in.",
+  link = { label: "Let’s connect", href: "#contact" },
+  hint = "Drag the dot to the socket. Or tap it to connect.",
+  doneHint = "Connected. Two things, working together.",
+} = Astro.props;
+const bridge = "M70 400H140C210 400 205 325 205 245V160C205 70 380 70 380 160V220Q380 255 415 255H440";
+const rest = "M-10 450Q15 405 70 400";
+---
+<div class="cp" data-connect data-hint={hint} data-done-hint={doneHint}>
+  <div class="cp-window">
+    <img src={img.src} alt={img.alt} loading="lazy" />
+    <div class="cp-light"></div>
+  </div>
+  <svg class="cp-wires" viewBox="0 0 500 570" preserveAspectRatio="none" fill="none" aria-hidden="true">
+    <path class="cp-guide" d={bridge} />
+    <path class="cp-loose" d={rest} data-loose />
+    <path class="cp-wire" d={bridge} pathLength="1" />
+  </svg>
+  <div class="cp-title">
+    <span>{kicker}</span>
+    <strong data-title={title} data-done={doneTitle}>{title}</strong>
+  </div>
+  <div class="cp-socket" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+    <span>{to}</span>
+  </div>
+  <button type="button" class="cp-plug" data-plug aria-label="Connect" aria-describedby="cp-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+  </button>
+  <span class="cp-from" aria-hidden="true">{from}</span>
+  <div class="cp-outcome cp-before">
+    <p set:html={lead} />
+    <span>{cue}</span>
+  </div>
+  <div class="cp-outcome cp-after">
+    <p>{doneText}</p>
+    <a href={link.href}>{link.label} <span aria-hidden="true">↗</span></a>
+  </div>
+  <div class="cp-controls">
+    <p id="cp-hint" role="status" aria-live="polite" data-hint-text>{hint}</p>
+    <button type="button" class="cp-reset" data-reset hidden>↺ Try again</button>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-connect]").forEach((root) => {
+    const plug = root.querySelector<HTMLButtonElement>("[data-plug]")!;
+    const loose = root.querySelector<SVGPathElement>("[data-loose]")!;
+    const hintEl = root.querySelector<HTMLElement>("[data-hint-text]")!;
+    const titleEl = root.querySelector<HTMLElement>("[data-title]")!;
+    const resetBtn = root.querySelector<HTMLButtonElement>("[data-reset]")!;
+    const start = { x: 70, y: 400 };
+    const target = { x: 440, y: 255 };
+    const rest = loose.getAttribute("d")!;
+    let gesture: { id: number; x: number; y: number; moved: boolean } | null = null;
+    let connected = false;
+
+    const place = (p: { x: number; y: number }) => {
+      plug.style.left = p.x / 5 + "%";
+      plug.style.top = p.y / 5.7 + "%";
+    };
+    const say = (text: string) => (hintEl.textContent = text);
+    const connect = () => {
+      gesture = null;
+      connected = true;
+      root.classList.remove("is-dragging");
+      root.classList.add("is-connected");
+      place(target);
+      loose.setAttribute("d", rest);
+      plug.setAttribute("aria-disabled", "true");
+      plug.setAttribute("aria-label", "Connection complete");
+      titleEl.textContent = titleEl.dataset.done!;
+      resetBtn.hidden = false;
+      say(root.dataset.doneHint!);
+    };
+    const cancel = () => {
+      gesture = null;
+      root.classList.remove("is-dragging");
+      place(start);
+      loose.setAttribute("d", rest);
+    };
+    const coords = (e: PointerEvent) => {
+      const b = root.getBoundingClientRect();
+      return {
+        x: Math.max(25, Math.min(475, ((e.clientX - b.left) / b.width) * 500)),
+        y: Math.max(25, Math.min(545, ((e.clientY - b.top) / b.height) * 570)),
+      };
+    };
+    plug.addEventListener("pointerdown", (e) => {
+      if (connected || !e.isPrimary || e.button !== 0) return;
+      gesture = { id: e.pointerId, x: e.clientX, y: e.clientY, moved: false };
+      plug.setPointerCapture(e.pointerId);
+      root.classList.add("is-dragging");
+    });
+    plug.addEventListener("pointermove", (e) => {
+      if (!gesture || gesture.id !== e.pointerId) return;
+      if (Math.hypot(e.clientX - gesture.x, e.clientY - gesture.y) > 7) gesture.moved = true;
+      if (!gesture.moved) return;
+      const p = coords(e);
+      place(p);
+      loose.setAttribute("d", `M70 400 Q${(70 + p.x) / 2} ${Math.max(400, p.y) + 55} ${p.x} ${p.y}`);
+    });
+    plug.addEventListener("pointerup", (e) => {
+      if (!gesture || gesture.id !== e.pointerId) return;
+      const p = coords(e);
+      if (!gesture.moved || Math.hypot(p.x - target.x, p.y - target.y) < 65) connect();
+      else {
+        cancel();
+        say("Almost! Drop it on the socket, or tap the dot.");
+      }
+    });
+    plug.addEventListener("pointercancel", cancel);
+    plug.addEventListener("lostpointercapture", () => gesture && cancel());
+    plug.addEventListener("click", (e) => {
+      if (e.detail === 0 && !connected) connect(); // Enter or Space
+    });
+    plug.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      cancel();
+      say("Cancelled. Tap or drag to try again.");
+    });
+    resetBtn.addEventListener("click", () => {
+      connected = false;
+      root.classList.remove("is-connected");
+      plug.removeAttribute("aria-disabled");
+      plug.setAttribute("aria-label", "Connect");
+      titleEl.textContent = titleEl.dataset.title!;
+      resetBtn.hidden = true;
+      cancel();
+      say(root.dataset.hint!);
+      plug.focus();
+    });
+  });
+</script>
+
+<style>
+  .cp {
+    --plug: var(--c3);
+    --socket: var(--c1);
+    position: relative;
+    height: 600px;
+    margin-bottom: 40px;
+  }
+  .cp-window {
+    position: absolute;
+    inset: 0 0 40px 4%;
+    overflow: hidden;
+    border-radius: 150px 150px 0 0;
+    background: var(--surface-2);
+  }
+  .cp-window img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 78%;
+    transition: filter 1.2s ease;
+  }
+  .cp-window::after {
+    content: "";
+    position: absolute;
+    inset: 55% 0 0;
+    background: linear-gradient(transparent, rgba(8, 14, 20, 0.75));
+  }
+  .cp-light {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background: radial-gradient(ellipse at 80% 45%, color-mix(in srgb, var(--plug) 46%, transparent), transparent 65%);
+    transition: opacity 1.2s;
+  }
+  .cp-wires {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .cp-guide {
+    stroke: rgba(255, 255, 255, 0.3);
+    stroke-width: 2;
+    stroke-dasharray: 5 9;
+  }
+  .cp-loose {
+    stroke: var(--plug);
+    stroke-width: 12;
+    stroke-linecap: round;
+  }
+  .cp-wire {
+    display: none;
+    stroke: color-mix(in srgb, var(--plug) 80%, #fff);
+    stroke-width: 17;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--plug) 60%, transparent));
+    animation: cp-wire 1.3s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  @keyframes cp-wire {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .cp-title {
+    position: absolute;
+    top: 5%;
+    left: 17%;
+    right: 0;
+    padding: 16px 20px;
+    background: var(--surface);
+    color: var(--text);
+    transform: rotate(-4deg);
+  }
+  .cp-title span {
+    display: block;
+    margin-bottom: 5px;
+    font: 500 10px var(--font-mono);
+    letter-spacing: 0.15em;
+    color: color-mix(in srgb, var(--plug) 55%, #fff);
+  }
+  .cp-title strong {
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.035em;
+  }
+  .cp-plug,
+  .cp-socket {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .cp-plug {
+    z-index: 4;
+    left: 14%;
+    top: 70.175%;
+    padding: 0;
+    border: 5px solid var(--text);
+    background: var(--plug);
+    color: #19241f;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    cursor: grab;
+    touch-action: none;
+  }
+  .cp-plug:active {
+    cursor: grabbing;
+  }
+  .cp-plug svg,
+  .cp-socket svg {
+    width: 24px;
+    height: 24px;
+  }
+  .cp-socket {
+    left: 88%;
+    top: 44.7368%;
+    border: 2px solid color-mix(in srgb, var(--socket) 45%, #fff);
+    background: var(--socket);
+    color: #fff;
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--socket) 20%, transparent);
+  }
+  .cp-socket span {
+    position: absolute;
+    right: 0;
+    top: -30px;
+    padding: 4px 7px;
+    white-space: nowrap;
+    font: 500 10px var(--font-mono);
+    letter-spacing: 0.1em;
+    background: var(--surface);
+    color: var(--text);
+  }
+  .cp-from {
+    position: absolute;
+    left: 3%;
+    top: 77%;
+    padding: 5px 8px;
+    font: 600 10px var(--font-mono);
+    letter-spacing: 0.06em;
+    background: var(--text);
+    color: var(--bg);
+  }
+  .cp-outcome {
+    position: absolute;
+    z-index: 2;
+    bottom: 66px;
+    left: 27%;
+    right: 16px;
+    color: #fff;
+  }
+  .cp-outcome p {
+    font-size: 21px;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+  }
+  .cp-outcome :global(em) {
+    font-family: var(--font-serif);
+    font-size: 1.3em;
+  }
+  .cp-outcome > span {
+    display: block;
+    margin-top: 13px;
+    font: 500 10px var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+  .cp-outcome a {
+    display: inline-flex;
+    gap: 8px;
+    margin-top: 15px;
+    font-size: 15px;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .cp-after {
+    display: none;
+    left: 20%;
+    right: 12px;
+    padding: 18px;
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    color: var(--text);
+    animation: cp-result 0.5s ease-out both;
+  }
+  @keyframes cp-result {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  .cp-controls {
+    position: absolute;
+    top: calc(100% - 25px);
+    left: 12%;
+    right: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .cp-controls p {
+    flex: 1;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .cp-reset {
+    flex-shrink: 0;
+    min-height: 36px;
+    padding: 4px 0;
+    border: 0;
+    background: none;
+    font-size: 13px;
+    color: var(--socket);
+  }
+  :global(html:not(.js)) .cp-controls {
+    display: none;
+  }
+
+  /* Connected: the scripted state, and the no-JavaScript fallback */
+  .cp:global(.is-connected) .cp-window img,
+  :global(html:not(.js)) .cp-window img {
+    filter: saturate(1.2) brightness(1.05);
+  }
+  .cp:global(.is-connected) .cp-light,
+  :global(html:not(.js)) .cp-light {
+    opacity: 1;
+  }
+  .cp:global(.is-connected) .cp-wire,
+  :global(html:not(.js)) .cp-wire {
+    display: block;
+  }
+  .cp:global(.is-connected) .cp-loose,
+  .cp:global(.is-connected) .cp-from,
+  .cp:global(.is-connected) .cp-before,
+  :global(html:not(.js)) .cp-loose,
+  :global(html:not(.js)) .cp-from,
+  :global(html:not(.js)) .cp-before {
+    display: none;
+  }
+  .cp:global(.is-connected) .cp-after,
+  :global(html:not(.js)) .cp-after {
+    display: block;
+  }
+  .cp:global(.is-connected) .cp-plug,
+  :global(html:not(.js)) .cp-plug {
+    left: 88% !important;
+    top: 44.7368% !important;
+    pointer-events: none;
+    cursor: default;
+    border-color: color-mix(in srgb, var(--plug) 45%, #fff);
+    background: color-mix(in srgb, var(--plug) 45%, #fff);
+    box-shadow:
+      0 0 0 9px color-mix(in srgb, var(--plug) 20%, transparent),
+      0 0 40px color-mix(in srgb, var(--plug) 50%, transparent);
+  }
+  @media (max-width: 800px) {
+    .cp {
+      height: 440px;
+    }
+    .cp-window {
+      inset: 0 0 40px 12%;
+      border-radius: 120px 120px 0 0;
+    }
+    .cp-title strong {
+      font-size: 19px;
+    }
+    .cp-outcome p {
+      font-size: 18px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cp-wire,
+    .cp-after {
+      animation: none;
+    }
+    .cp-window img,
+    .cp-light {
+      transition: none;
+    }
+  }
+</style>

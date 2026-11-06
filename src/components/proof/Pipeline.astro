@@ -1,0 +1,571 @@
+---
+// JobGen website (Jess's "Applicants called. Only the best shortlisted."):
+// a queue on the left, the one being checked in the middle (a voice wave while
+// "calling", checks ticking off, a match score filling a ring), and the
+// shortlist on the right. Weaker ones are "kept on file". Works for anything
+// that gets screened: applicants, leads, quotes, enquiries.
+//
+// The page already holds the finished result (shortlist, counts, last card),
+// so it reads complete without JavaScript and stays that way with reduced
+// motion. With motion, it resets and plays through when scrolled into view,
+// then loops. Always labelled as a simulation.
+interface Item {
+  name: string;
+  detail?: string;
+  /** 0–100 */
+  score: number;
+  /** One per entry in `checks`: passed or not. */
+  checks: boolean[];
+}
+interface Props {
+  eyebrow?: string;
+  title: string;
+  sub?: string;
+  items: Item[];
+  checks: string[];
+  /** Score needed to be shortlisted. */
+  pass?: number;
+  labels?: { queue?: string; stage?: string; shortlist?: string; passed?: string; filed?: string; onFile?: string; score?: string };
+  note?: string;
+}
+const {
+  eyebrow,
+  title,
+  sub,
+  items,
+  checks,
+  pass = 80,
+  labels: l = {},
+  note = "Simulated example. Not real people or calls.",
+} = Astro.props;
+const labels = {
+  queue: "Applicants",
+  stage: "Screening call",
+  shortlist: "Shortlist",
+  passed: "Shortlisted",
+  filed: "Kept on file",
+  onFile: "On file for later",
+  score: "% match",
+  ...l,
+};
+const initial = (name: string) => name.trim()[0]?.toUpperCase() ?? "?";
+const passed = items.filter((i) => i.score >= pass);
+const last = items.at(-1)!;
+const config = { items, pass, labels };
+---
+<section class="section pipeline" aria-labelledby="pipe-title">
+  <div class="wrap">
+    <div class="section-head">
+      {eyebrow && <p class="eyebrow reveal">{eyebrow}</p>}
+      <h2 id="pipe-title" class="h2 reveal" set:html={title} />
+      {sub && <p class="section-sub reveal">{sub}</p>}
+    </div>
+
+    <div class="jp reveal" data-pipeline data-config={JSON.stringify(config)}>
+      <div class="jp-col">
+        <p class="mono jp-label">{labels.queue} <b data-jp-left>0</b></p>
+        <ul class="jp-chips">
+          {items.map((c, i) => (
+            <li data-i={i} class="is-done">
+              <span class="jp-av">{initial(c.name)}</span>
+              <span><b>{c.name}</b>{c.detail && <small>{c.detail}</small>}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="jp-col jp-stage" aria-live="polite">
+        <p class="mono jp-label"><span class="jp-live"><i></i>{labels.stage}</span></p>
+        <article class="jp-card" data-jp-card data-state={last.score >= pass ? "pass" : "file"} style={`--score:${last.score}`}>
+          <header>
+            <span class="jp-av jp-av-lg" data-jp-av>{initial(last.name)}</span>
+            <span><b data-jp-name>{last.name}</b><small data-jp-detail>{last.detail}</small></span>
+            <span class="jp-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+          </header>
+          <ul class="jp-checks">
+            {checks.map((c, j) => <li data-ok={String(last.checks[j])}><span class="jp-tick" aria-hidden="true"></span>{c}</li>)}
+          </ul>
+          <div class="jp-score">
+            <svg viewBox="0 0 44 44" aria-hidden="true"><circle class="jp-ring-bg" cx="22" cy="22" r="19" /><circle class="jp-ring" cx="22" cy="22" r="19" pathLength="100" /></svg>
+            <span><b data-jp-score>{last.score}</b><small>{labels.score}</small></span>
+            <p class="jp-verdict" data-jp-verdict>{last.score >= pass ? labels.passed : labels.filed}</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="jp-col">
+        <p class="mono jp-label">{labels.shortlist} <b data-jp-short>{passed.length}</b></p>
+        <ul class="jp-list" data-jp-list>
+          {passed.map((c) => (
+            <li>
+              <span class="jp-av">{initial(c.name)}</span>
+              <span><b>{c.name}</b>{c.detail && <small>{c.detail}</small>}</span>
+              <span class="jp-pct">{c.score}%</span>
+            </li>
+          ))}
+        </ul>
+        <p class="jp-file">{labels.onFile}: <b data-jp-file>{items.length - passed.length}</b></p>
+      </div>
+    </div>
+    <p class="jp-note">{note}</p>
+  </div>
+</section>
+
+<script>
+  type Item = { name: string; detail?: string; score: number; checks: boolean[] };
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelectorAll<HTMLElement>("[data-pipeline]").forEach((root) => {
+    if (still) return; // the finished state is already on the page
+    const { items, pass, labels } = JSON.parse(root.dataset.config!) as { items: Item[]; pass: number; labels: Record<string, string> };
+    const $ = <T extends HTMLElement = HTMLElement>(s: string) => root.querySelector<T>(s)!;
+    const card = $("[data-jp-card]");
+    const ticks = [...card.querySelectorAll<HTMLElement>(".jp-checks li")];
+    const chips = [...root.querySelectorAll<HTMLElement>(".jp-chips li")];
+    const list = $("[data-jp-list]");
+    let short = 0, file = 0;
+    // New shortlist rows need this component's style scope to pick up its styles.
+    const scope = [...chips[0].attributes].filter((a) => a.name.startsWith("data-astro-cid")).map((a) => a.name);
+    const make = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string) => {
+      const el = document.createElement(tag);
+      scope.forEach((name) => el.setAttribute(name, ""));
+      if (cls) el.className = cls;
+      if (text) el.textContent = text;
+      return el;
+    };
+
+    const left = () => ($("[data-jp-left]").textContent = String(chips.filter((c) => !c.classList.contains("is-done")).length));
+    const load = (c: Item, i: number) => {
+      $("[data-jp-av]").textContent = c.name.trim()[0]?.toUpperCase() ?? "?";
+      $("[data-jp-name]").textContent = c.name;
+      $("[data-jp-detail]").textContent = c.detail ?? "";
+      ticks.forEach((t) => delete t.dataset.ok);
+      $("[data-jp-score]").textContent = "0";
+      card.style.setProperty("--score", "0");
+      card.dataset.state = "calling";
+      $("[data-jp-verdict]").textContent = "";
+      chips[i].classList.add("is-active");
+    };
+    const score = (c: Item, done: () => void) => {
+      const start = performance.now();
+      card.dataset.state = "scoring";
+      card.style.setProperty("--score", String(c.score));
+      const tick = (now: number) => {
+        const k = Math.min(1, (now - start) / 900);
+        $("[data-jp-score]").textContent = String(Math.round(c.score * (1 - Math.pow(1 - k, 3))));
+        if (k < 1) requestAnimationFrame(tick);
+        else done();
+      };
+      requestAnimationFrame(tick);
+    };
+    const settle = (c: Item, i: number) => {
+      const ok = c.score >= pass;
+      card.dataset.state = ok ? "pass" : "file";
+      $("[data-jp-verdict]").textContent = ok ? labels.passed : labels.filed;
+      chips[i].classList.replace("is-active", "is-done");
+      left();
+      if (ok) {
+        const li = make("li", "is-new");
+        const who = make("span");
+        who.append(make("b", undefined, c.name));
+        if (c.detail) who.append(make("small", undefined, c.detail));
+        li.append(make("span", "jp-av", c.name.trim()[0]?.toUpperCase() ?? "?"), who, make("span", "jp-pct", c.score + "%"));
+        list.append(li);
+        $("[data-jp-short]").textContent = String(++short);
+      } else $("[data-jp-file]").textContent = String(++file);
+    };
+    const reset = () => {
+      short = file = 0;
+      list.replaceChildren();
+      chips.forEach((c) => c.classList.remove("is-done", "is-active"));
+      $("[data-jp-short]").textContent = "0";
+      $("[data-jp-file]").textContent = "0";
+      left();
+    };
+
+    let visible = false, timer = 0, i = 0, gen = 0, started = false;
+    const wait = (ms: number, fn: () => void, g: number) => (timer = window.setTimeout(() => g === gen && fn(), ms));
+    const run = () => {
+      const g = ++gen;
+      if (!visible) return;
+      if (i >= items.length) return wait(3600, () => { reset(); i = 0; run(); }, g);
+      const c = items[i];
+      load(c, i);
+      c.checks.forEach((ok, j) => wait(700 + j * 520, () => ticks[j] && (ticks[j].dataset.ok = String(ok)), g));
+      wait(700 + c.checks.length * 520 + 200, () => score(c, () => {
+        if (g !== gen) return;
+        settle(c, i);
+        i++;
+        wait(1300, run, g);
+      }), g);
+    };
+    new IntersectionObserver(
+      ([e]) => {
+        visible = e.isIntersecting;
+        clearTimeout(timer);
+        gen++;
+        if (!visible) return;
+        if (!started) {
+          started = true;
+          reset();
+        }
+        run();
+      },
+      { threshold: 0.3 },
+    ).observe(root);
+  });
+</script>
+
+<style>
+  .pipeline {
+    --p1: var(--c4);
+    --p2: var(--c5);
+    background:
+      radial-gradient(55% 70% at 100% 30%, color-mix(in srgb, var(--p1) 16%, transparent), transparent 70%),
+      radial-gradient(45% 60% at 0% 100%, color-mix(in srgb, var(--p2) 12%, transparent), transparent 70%),
+      var(--bg);
+  }
+  .pipeline :global(.h2 .muted) {
+    background: linear-gradient(100deg, var(--p1), var(--p2) 50%, var(--p1));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .jp {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr) minmax(0, 0.9fr);
+    gap: 16px;
+  }
+  .jp-col {
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid var(--line-strong);
+    border-radius: 24px;
+    background: color-mix(in srgb, var(--text) 3%, transparent);
+  }
+  .jp-stage {
+    background: var(--surface);
+    box-shadow: 0 50px 100px -50px color-mix(in srgb, var(--p1) 45%, #000);
+  }
+  .jp-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 0 14px;
+    font-size: 11px;
+  }
+  .jp-label b {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .jp-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text);
+  }
+  .jp-live i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--p1);
+    animation: live-dot 1.6s ease-out infinite;
+  }
+  @keyframes live-dot {
+    from {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--p1) 70%, transparent);
+    }
+    to {
+      box-shadow: 0 0 0 10px transparent;
+    }
+  }
+  .jp-chips,
+  .jp-list,
+  .jp-checks {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .jp-chips li,
+  .jp-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 8px 10px;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--text) 4%, transparent);
+    transition:
+      opacity 0.4s,
+      border-color 0.4s,
+      background 0.4s;
+  }
+  .jp-chips li > span:last-child,
+  .jp-list li > span:nth-child(2) {
+    display: grid;
+    min-width: 0;
+  }
+  .jp-chips b,
+  .jp-list b {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .jp-chips small,
+  .jp-list small {
+    overflow: hidden;
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .jp-chips li:global(.is-active) {
+    border-color: var(--p1);
+    background: color-mix(in srgb, var(--p1) 12%, transparent);
+  }
+  .jp-chips li:global(.is-done) {
+    opacity: 0.32;
+  }
+  .jp-av {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--p1), var(--p2));
+    color: #141317;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .jp-av-lg {
+    width: 44px;
+    height: 44px;
+    font-size: 17px;
+  }
+  .jp-card {
+    padding: 4px;
+  }
+  .jp-card header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .jp-card header > span:nth-child(2) {
+    display: grid;
+    min-width: 0;
+  }
+  .jp-card header b {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .jp-card header small {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .jp-wave {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin-left: auto;
+    opacity: 0.25;
+    transition: opacity 0.3s;
+  }
+  .jp-wave i {
+    width: 3px;
+    height: 18px;
+    border-radius: 2px;
+    background: var(--p1);
+  }
+  .jp-card[data-state="calling"] .jp-wave {
+    opacity: 1;
+  }
+  .jp-card[data-state="calling"] .jp-wave i {
+    animation: voice 0.9s ease-in-out infinite;
+  }
+  .jp-wave i:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .jp-wave i:nth-child(3) {
+    animation-delay: -0.6s;
+  }
+  .jp-wave i:nth-child(4) {
+    animation-delay: -0.15s;
+  }
+  .jp-wave i:nth-child(5) {
+    animation-delay: -0.45s;
+  }
+  @keyframes voice {
+    0%,
+    100% {
+      transform: scaleY(0.45);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
+  .jp-checks {
+    margin: 20px 0;
+  }
+  .jp-checks li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    color: var(--muted);
+    transition: color 0.3s;
+  }
+  .jp-tick {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    color: #141317;
+    transition:
+      background 0.3s,
+      border-color 0.3s,
+      transform 0.3s var(--ease);
+  }
+  .jp-checks li[data-ok] {
+    color: var(--text);
+  }
+  .jp-checks li[data-ok] .jp-tick {
+    border-color: transparent;
+    transform: scale(1.1);
+  }
+  .jp-checks li[data-ok="true"] .jp-tick {
+    background: var(--c4);
+  }
+  .jp-checks li[data-ok="true"] .jp-tick::after {
+    content: "✓";
+  }
+  .jp-checks li[data-ok="false"] {
+    color: var(--muted);
+    text-decoration: line-through;
+  }
+  .jp-checks li[data-ok="false"] .jp-tick {
+    background: var(--c3);
+  }
+  .jp-checks li[data-ok="false"] .jp-tick::after {
+    content: "✕";
+  }
+  .jp-score {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    align-items: center;
+    gap: 8px 14px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line-strong);
+  }
+  .jp-score svg {
+    width: 64px;
+    height: 64px;
+    transform: rotate(-90deg);
+  }
+  .jp-ring-bg,
+  .jp-ring {
+    fill: none;
+    stroke-width: 4;
+  }
+  .jp-ring-bg {
+    stroke: var(--line-strong);
+  }
+  .jp-ring {
+    stroke: var(--p1);
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: calc(100 - var(--score, 0));
+    transition:
+      stroke-dashoffset 0.9s var(--ease),
+      stroke 0.3s;
+  }
+  .jp-card[data-state="file"] .jp-ring {
+    stroke: var(--muted);
+  }
+  .jp-score > span {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+  .jp-score b {
+    font-size: 34px;
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .jp-score small {
+    color: var(--muted);
+  }
+  .jp-verdict {
+    grid-column: 1 / -1;
+    min-height: 1.5em;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .jp-card[data-state="pass"] .jp-verdict {
+    color: var(--c4);
+  }
+  .jp-card[data-state="file"] .jp-verdict {
+    color: var(--muted);
+  }
+  .jp-list li {
+    border-color: color-mix(in srgb, var(--c4) 40%, transparent);
+    background: color-mix(in srgb, var(--c4) 10%, transparent);
+  }
+  .jp-list li:global(.is-new) {
+    animation: shortlist-in 0.6s var(--ease) both;
+  }
+  @keyframes shortlist-in {
+    from {
+      opacity: 0;
+      transform: translateX(-18px) scale(0.96);
+    }
+  }
+  .jp-pct {
+    margin-left: auto;
+    font: 12px var(--font-mono);
+    color: var(--c4);
+  }
+  .jp-file {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .jp-file b {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .jp-note {
+    margin-top: 16px;
+    font-size: 12.5px;
+    color: var(--faint);
+    text-align: center;
+  }
+  @media (max-width: 1000px) {
+    .jp {
+      grid-template-columns: 1fr 1fr;
+    }
+    .jp-stage {
+      grid-column: 1 / -1;
+      grid-row: 1;
+    }
+  }
+  @media (max-width: 620px) {
+    .jp {
+      grid-template-columns: 1fr;
+    }
+    .jp-chips {
+      grid-template-columns: 1fr 1fr;
+    }
+    .jp-chips small {
+      display: none;
+    }
+  }
+</style>

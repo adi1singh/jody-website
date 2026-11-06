@@ -1,0 +1,194 @@
+---
+// Inspiration board (2026): a field of dots with
+// glowing arcs running from a hub to each city, small pulses travelling along
+// them, and readable city tags. Seen on United Carriers (dotted globe with
+// routes) and Cerebrium (dotted world with hotspots). Cities are placed by
+// latitude and longitude; there is deliberately no country outline (use an
+// official map if one is needed). Arcs draw in once on screen; reduced
+// motion and no JavaScript show them drawn and still.
+//
+// <RouteMap hub={{ name: "Nagpur", lat: 21.15, lon: 79.09 }} places={[{ name, lat, lon }]} />
+interface Place {
+  name: string;
+  lat: number;
+  lon: number;
+  /** Which side of the dot the tag sits; by default right, or left near the east edge. */
+  side?: "left" | "right";
+}
+interface Props {
+  hub: Place;
+  places: Place[];
+  /** Map bounds in degrees; defaults suit India. */
+  bounds?: { north: number; south: number; west: number; east: number };
+  label: string;
+}
+const { hub, places, bounds = { north: 34, south: 7, west: 67, east: 96 }, label } = Astro.props;
+// Equirectangular projection, with longitude squeezed by the cosine of the
+// middle latitude so distances look right.
+const mid = ((bounds.north + bounds.south) / 2) * (Math.PI / 180);
+const W = Math.round((bounds.east - bounds.west) * Math.cos(mid) * 40);
+const H = Math.round((bounds.north - bounds.south) * 40);
+const at = (p: Place) => ({ x: ((p.lon - bounds.west) / (bounds.east - bounds.west)) * W, y: ((bounds.north - p.lat) / (bounds.north - bounds.south)) * H });
+const h = at(hub);
+const routes = places.map((p, i) => {
+  const q = at(p);
+  // Bend each arc to one side by a fifth of its length.
+  const mx = (h.x + q.x) / 2;
+  const my = (h.y + q.y) / 2;
+  const len = Math.hypot(q.x - h.x, q.y - h.y);
+  const nx = -(q.y - h.y) / len;
+  const ny = (q.x - h.x) / len;
+  const bend = len * 0.22 * (ny > 0 ? -1 : 1);
+  return { ...p, ...q, d: `M${h.x.toFixed(1)} ${h.y.toFixed(1)}Q${(mx + nx * bend).toFixed(1)} ${(my + ny * bend).toFixed(1)} ${q.x.toFixed(1)} ${q.y.toFixed(1)}`, i, side: p.side ?? (q.x > W * 0.72 ? "left" : "right") };
+});
+---
+<figure class="rm" data-reveal-group style={`--w:${W};--h:${H}`}>
+  <div class="rm-map">
+    <svg viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
+      {routes.map((r) => (
+        <g style={`--i:${r.i}`}>
+          <path class="rm-arc" d={r.d} pathLength="100" />
+          <path class="rm-pulse" d={r.d} pathLength="100" />
+          <circle class="rm-city" cx={r.x} cy={r.y} r="5" />
+        </g>
+      ))}
+      <circle class="rm-ring" cx={h.x} cy={h.y} r="9" />
+      <circle class="rm-hub" cx={h.x} cy={h.y} r="7" />
+    </svg>
+    <span class="rm-tag rm-tag-hub mono" style={`left:${(h.x / W) * 100}%;top:${(h.y / H) * 100}%`} data-side="right">{hub.name}</span>
+    {routes.map((r) => (
+      <span class="rm-tag mono" style={`left:${(r.x / W) * 100}%;top:${(r.y / H) * 100}%;--i:${r.i}`} data-side={r.side}>{r.name}</span>
+    ))}
+  </div>
+  <figcaption>
+    {label}: <span>{places.map((p) => p.name).join(", ")}</span>.
+  </figcaption>
+</figure>
+
+<style>
+  .rm {
+    display: grid;
+    gap: 16px;
+    margin: 0;
+  }
+  .rm-map {
+    position: relative;
+    width: min(100%, 620px);
+    margin-inline: auto;
+    aspect-ratio: var(--w) / var(--h);
+  }
+  /* The dot field: a CSS pattern faded out towards the edges */
+  .rm-map::before {
+    content: "";
+    position: absolute;
+    inset: -6%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--text) 30%, transparent) 1.3px, transparent 1.9px) 0 0 / 14px 14px;
+    -webkit-mask: radial-gradient(closest-side, #000 55%, transparent);
+    mask: radial-gradient(closest-side, #000 55%, transparent);
+  }
+  .rm svg {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .rm-arc {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    filter: drop-shadow(0 0 6px var(--accent));
+  }
+  .rm-pulse {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    stroke-dasharray: 3 97;
+    stroke-dashoffset: 103;
+    opacity: 0;
+  }
+  .rm-city {
+    fill: var(--text);
+  }
+  .rm-hub {
+    fill: var(--accent);
+  }
+  .rm-ring {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: rm-ring 2.4s ease-out infinite;
+  }
+  @keyframes rm-ring {
+    from {
+      transform: scale(0.8);
+      opacity: 1;
+    }
+    to {
+      transform: scale(3.2);
+      opacity: 0;
+    }
+  }
+  /* With JavaScript: arcs draw in once the map is on screen, then pulses run */
+  :global(html.js) .rm:not(:global(.is-visible)) .rm-arc {
+    stroke-dashoffset: 100;
+  }
+  :global(html.js) .rm:not(:global(.is-visible)) .rm-tag:not(.rm-tag-hub) {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  .rm-arc {
+    transition: stroke-dashoffset 1.4s var(--ease-out);
+    transition-delay: calc(var(--i) * 0.12s);
+  }
+  :global(html.js) .rm:global(.is-visible) .rm-pulse {
+    opacity: 1;
+    animation: rm-pulse 3.2s linear infinite;
+    animation-delay: calc(1.6s + var(--i) * 0.37s);
+  }
+  @keyframes rm-pulse {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .rm-tag {
+    position: absolute;
+    padding: 4px 7px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    border: 1px solid var(--line-strong);
+    color: var(--text);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    transform: translate(10px, -50%);
+    transition:
+      opacity 0.5s,
+      translate 0.5s var(--ease);
+    transition-delay: calc(0.6s + var(--i, 0) * 0.12s);
+  }
+  .rm-tag[data-side="left"] {
+    transform: translate(calc(-100% - 10px), -50%);
+  }
+  .rm-tag-hub {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+  figcaption {
+    text-align: center;
+    color: var(--faint);
+    font-size: 13px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rm-pulse,
+    .rm-ring {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,83 @@
+---
+// Digital Bridge: a full-width photograph that wipes open as it scrolls into
+// view and drifts slowly while you scroll past, with a big headline over it.
+interface Props {
+  img: string;
+  alt: string;
+  eyebrow?: string;
+  /** May include <em> for an italic accent. */
+  title: string;
+}
+const { img, alt, eyebrow, title } = Astro.props;
+---
+<section class="band">
+  <div class="band-frame reveal-image"><img src={img} alt={alt} loading="lazy" /></div>
+  <div class="wrap band-copy">
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h2 set:html={title} />
+  </div>
+</section>
+
+<style>
+  .band {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: max(70vh, 460px);
+    overflow: hidden;
+    color: #fff;
+    background: #000;
+    view-timeline-name: --band;
+  }
+  .band-frame {
+    position: absolute;
+    inset: 0;
+  }
+  .band-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .band-frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.25) 55%, rgba(0, 0, 0, 0.05));
+  }
+  .band-copy {
+    position: relative;
+    padding-bottom: clamp(40px, 6vw, 80px);
+  }
+  .eyebrow {
+    color: var(--intro-sub);
+  }
+  h2 {
+    margin-top: 14px;
+    font-size: clamp(2.8rem, 6vw, 6rem);
+    line-height: 1;
+    letter-spacing: -0.06em;
+  }
+  h2 :global(em) {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    color: var(--intro-sub);
+  }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .band-frame.in img {
+        animation-name: band-drift;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-timeline: --band;
+      }
+    }
+  }
+  @keyframes band-drift {
+    from {
+      transform: scale(1.15) translateY(-5%);
+    }
+    to {
+      transform: scale(1.15) translateY(5%);
+    }
+  }
+</style>

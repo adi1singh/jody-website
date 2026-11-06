@@ -1,0 +1,161 @@
+---
+// Inspiration board (2026): a round badge whose
+// words slowly orbit an arrow (a real link; it stops on hover and with reduced
+// motion), and a section title set along a big arch with the reasons below.
+// Seen on twks and ERA Residence. SVG text on a path; no JavaScript.
+//
+// <CircleBadge badge="Book a site visit" href="#contact" arc="Three reasons to choose us" reasons={[...]} />
+interface Props {
+  badge: string;
+  href: string;
+  arc?: string;
+  reasons?: { title: string; text: string }[];
+}
+const { badge, href, arc, reasons = [] } = Astro.props;
+const uid = Math.random().toString(36).slice(2, 8);
+// Repeat the words with separators so they fill the circle evenly.
+const ring = `${badge} · ${badge} · `.toUpperCase();
+---
+<div class="cb">
+  <a class="cb-badge" href={href}>
+    <svg viewBox="0 0 200 200" aria-hidden="true">
+      <defs><path id={`ring-${uid}`} d="M100 100m-74 0a74 74 0 1 1 148 0a74 74 0 1 1 -148 0" /></defs>
+      <circle cx="100" cy="100" r="98" class="cb-disc" />
+      <g class="cb-spin">
+        <text><textPath href={`#ring-${uid}`} textLength="462" lengthAdjust="spacing">{ring}</textPath></text>
+      </g>
+      <path class="cb-arrow" d="M84 116 116 84M92 84h24v24" />
+    </svg>
+    <span class="sr-only">{badge}</span>
+  </a>
+
+  {arc && (
+    <div class="cb-arc">
+      <svg viewBox="0 0 1000 320" aria-hidden="true">
+        <defs><path id={`arc-${uid}`} d="M150 330A480 480 0 0 1 850 330" /></defs>
+        <path class="cb-dome" d="M40 330A560 560 0 0 1 960 330Z" />
+        <text><textPath href={`#arc-${uid}`} startOffset="50%" text-anchor="middle">{arc}</textPath></text>
+      </svg>
+      <h3 class="sr-only">{arc}</h3>
+      {reasons.length > 0 && (
+        <ol class="cb-reasons">
+          {reasons.map((r, i) => (
+            <li>
+              <span class="mono">0{i + 1}</span>
+              <h4>{r.title}</h4>
+              <p>{r.text}</p>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  )}
+</div>
+
+<style>
+  .cb {
+    position: relative;
+    display: grid;
+    gap: clamp(32px, 6vw, 64px);
+  }
+  .cb-badge {
+    justify-self: end;
+    display: block;
+    width: clamp(120px, 16vw, 168px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+  }
+  .cb-badge svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .cb-disc {
+    fill: var(--accent);
+    transition: transform 0.5s var(--ease);
+    transform-origin: 100px 100px;
+  }
+  .cb-badge:hover .cb-disc {
+    transform: scale(1.05);
+  }
+  .cb-spin {
+    transform-origin: 100px 100px;
+    animation: cb-spin 18s linear infinite;
+  }
+  .cb-badge:hover .cb-spin,
+  .cb-badge:focus-visible .cb-spin {
+    animation-play-state: paused;
+  }
+  .cb-spin text {
+    fill: var(--accent-ink);
+    font: 600 15px var(--font-mono);
+    letter-spacing: 0.08em;
+  }
+  .cb-arrow {
+    fill: none;
+    stroke: var(--accent-ink);
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform 0.4s var(--ease);
+  }
+  .cb-badge:hover .cb-arrow {
+    transform: translate(4px, -4px);
+  }
+  @keyframes cb-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .cb-arc svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .cb-dome {
+    fill: color-mix(in srgb, var(--c5) 30%, var(--bg));
+  }
+  .cb-arc text {
+    fill: var(--text);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 64px;
+    letter-spacing: 0.02em;
+  }
+  .cb-reasons {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    margin: 0;
+    padding: 28px clamp(0px, 3vw, 40px) 0;
+    list-style: none;
+    background: color-mix(in srgb, var(--c5) 30%, var(--bg));
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    padding-bottom: 32px;
+    margin-top: -1px;
+  }
+  .cb-reasons li {
+    display: grid;
+    gap: 6px;
+    padding-inline: 16px;
+  }
+  .cb-reasons h4 {
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .cb-reasons p {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  @media (max-width: 700px) {
+    .cb-reasons {
+      grid-template-columns: 1fr;
+    }
+    .cb-badge {
+      justify-self: start;
+    }
+  }
+</style>

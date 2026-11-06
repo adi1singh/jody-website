@@ -1,0 +1,288 @@
+---
+// Sticky header that turns solid on scroll (JobGen). Dropdown groups open on hover
+// for mouse users and on click/Enter for keyboard and touch (Hind Zero Waste);
+// Escape or clicking away closes. Phones get a full-screen menu.
+import BrandMark from "./BrandMark.astro";
+import LanguageSwitcher from "./LanguageSwitcher.astro";
+import { NAV, SITE, isGroup } from "../../data/site";
+interface Props {
+  cta?: { label: string; href: string };
+  /** Show the EN / हिं / मरा switcher (see src/i18n). */
+  languages?: boolean;
+}
+const { cta = { label: "Get in touch", href: "#contact" }, languages = false } = Astro.props;
+---
+<header class="header" data-header>
+  <div class="wrap header-inner">
+    <a class="brand" href="/">
+      <BrandMark />
+      <b>{SITE.name}<span>{SITE.suffix}</span></b>
+      <span class="sr-only">, home</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      {NAV.map((n, i) =>
+        isGroup(n) ? (
+          <div class="nav-group" data-nav-group>
+            <button type="button" class="nav-trigger" aria-expanded="false" aria-controls={`nav-menu-${i}`}>
+              {n.label}
+              <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" /></svg>
+            </button>
+            <div class="nav-menu" id={`nav-menu-${i}`} hidden>
+              {n.items.map((it) => (
+                <a href={it.href}>
+                  <b>{it.label}</b>
+                  {it.desc && <small>{it.desc}</small>}
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <a href={n.href}>{n.label}</a>
+        ),
+      )}
+    </nav>
+    <div class="header-actions">
+      {languages && <LanguageSwitcher />}
+      <a class="btn btn-light btn-small header-cta magnetic" href={cta.href}>{cta.label}</a>
+      <button type="button" class="menu-btn" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <div class="wrap">
+      {NAV.map((n) =>
+        isGroup(n) ? (
+          <div class="mobile-group">
+            <p class="mono">{n.label}</p>
+            {n.items.map((it) => (
+              <a href={it.href}>{it.label}{it.desc && <small>{it.desc}</small>}</a>
+            ))}
+          </div>
+        ) : (
+          <a class="mobile-link" href={n.href}>{n.label}</a>
+        ),
+      )}
+      <a class="btn btn-light" href={cta.href}>{cta.label}</a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const groups = [...document.querySelectorAll<HTMLElement>("[data-nav-group]")];
+  const hover = matchMedia("(hover: hover) and (pointer: fine)");
+  const set = (g: HTMLElement, open: boolean) => {
+    g.querySelector(".nav-trigger")?.setAttribute("aria-expanded", String(open));
+    const m = g.querySelector<HTMLElement>(".nav-menu");
+    if (m) m.hidden = !open;
+  };
+  const closeAll = (except?: HTMLElement) => groups.forEach((g) => g !== except && set(g, false));
+  groups.forEach((g) => {
+    const trigger = g.querySelector<HTMLButtonElement>(".nav-trigger")!;
+    let hoverOpened = 0;
+    trigger.addEventListener("click", () => {
+      // A click straight after a hover-open keeps the menu open rather than toggling it shut.
+      if (Date.now() - hoverOpened < 400) return;
+      const open = trigger.getAttribute("aria-expanded") !== "true";
+      closeAll(g);
+      set(g, open);
+    });
+    g.addEventListener("pointerenter", () => {
+      if (!hover.matches) return;
+      closeAll(g);
+      set(g, true);
+      hoverOpened = Date.now();
+    });
+    g.addEventListener("pointerleave", () => hover.matches && set(g, false));
+  });
+  document.addEventListener("click", (e) => {
+    if (!(e.target as HTMLElement).closest("[data-nav-group]")) closeAll();
+  });
+
+  const menuBtn = document.querySelector<HTMLButtonElement>(".menu-btn");
+  const mobile = document.getElementById("mobile-menu");
+  const setMobile = (open: boolean) => {
+    if (!menuBtn || !mobile) return;
+    menuBtn.setAttribute("aria-expanded", String(open));
+    menuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    mobile.hidden = !open;
+    document.body.classList.toggle("menu-open", open);
+  };
+  menuBtn?.addEventListener("click", () => setMobile(mobile?.hidden ?? true));
+  mobile?.addEventListener("click", (e) => (e.target as HTMLElement).closest("a") && setMobile(false));
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    const open = groups.find((g) => g.querySelector(".nav-trigger")?.getAttribute("aria-expanded") === "true");
+    if (open) {
+      set(open, false);
+      open.querySelector<HTMLElement>(".nav-trigger")?.focus();
+    }
+    if (mobile && !mobile.hidden) {
+      setMobile(false);
+      menuBtn?.focus();
+    }
+  });
+  matchMedia("(min-width: 961px)").addEventListener("change", (e) => e.matches && setMobile(false));
+</script>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid transparent;
+    transition:
+      background 0.4s,
+      border-color 0.4s;
+  }
+  .header:global(.scrolled),
+  :global(body.menu-open) .header {
+    background: color-mix(in srgb, var(--bg) 94%, transparent);
+    backdrop-filter: blur(18px) saturate(140%);
+    border-color: var(--line);
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    height: 72px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+  }
+  .brand b {
+    font-weight: 650;
+  }
+  .brand b span {
+    color: var(--faint);
+    font-weight: 500;
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .nav > a:hover,
+  .nav-trigger:hover {
+    color: var(--text);
+  }
+  .nav-group {
+    position: relative;
+  }
+  .nav-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 0;
+    background: none;
+    border: 0;
+    color: inherit;
+  }
+  .nav-trigger svg {
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    transition: transform 0.3s var(--ease);
+  }
+  .nav-trigger[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+  }
+  .nav-menu {
+    position: absolute;
+    top: 100%;
+    left: -18px;
+    min-width: 260px;
+    padding: 8px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5);
+    animation: menu-in 0.25s var(--ease) both;
+  }
+  .nav-menu a {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: var(--text);
+  }
+  .nav-menu a:hover {
+    background: var(--surface-2);
+  }
+  .nav-menu small,
+  .mobile-group small {
+    display: block;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .menu-btn {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    background: none;
+    place-content: center;
+    gap: 5px;
+  }
+  .menu-btn span {
+    display: block;
+    width: 16px;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform 0.3s var(--ease);
+  }
+  .menu-btn[aria-expanded="true"] span:first-child {
+    transform: translateY(3.25px) rotate(45deg);
+  }
+  .menu-btn[aria-expanded="true"] span:last-child {
+    transform: translateY(-3.25px) rotate(-45deg);
+  }
+  .mobile-menu {
+    height: calc(100dvh - 72px);
+    overflow-y: auto;
+    padding: 24px 0 40px;
+    border-top: 1px solid var(--line);
+  }
+  .mobile-menu .wrap {
+    display: grid;
+    gap: 22px;
+  }
+  .mobile-group {
+    display: grid;
+    gap: 12px;
+  }
+  .mobile-group a,
+  .mobile-link {
+    font-size: 22px;
+    letter-spacing: -0.02em;
+  }
+  @media (max-width: 960px) {
+    .nav,
+    .header-cta {
+      display: none;
+    }
+    .menu-btn {
+      display: grid;
+    }
+  }
+</style>

@@ -1,0 +1,271 @@
+---
+// Jody's site: a short email sign-up (first name, email, optional choices)
+// for lead capture, used for the free audio and the book waitlist. Sends to
+// the same endpoint as the contact form (SITE.form.endpoint), with a `list`
+// field so the CRM can tell the sign-ups apart. Several per page are fine.
+// - No endpoint yet: shows switched off with a note, like the contact form.
+// - With JavaScript: field messages, sends in the background, success only
+//   once the service accepts it. Without JavaScript it posts as a normal form.
+// - A hidden field catches simple spam bots. Nothing is sent until submit.
+//
+// <Signup list="free-audio" submit="Send me the audio" choices={["Sleep", "Anxiety"]} />
+import { SITE } from "../../data/site";
+interface Props {
+  /** Name of the list in the CRM, e.g. "free-audio". */
+  list: string;
+  submit?: string;
+  /** Optional tick boxes, e.g. which audios they want. */
+  choices?: string[];
+  choicesLabel?: string;
+  /** Shown once the sign-up is accepted. */
+  done?: string;
+  /** Small print under the button. */
+  note?: string;
+}
+const {
+  list,
+  submit = "Sign me up",
+  choices = [],
+  choicesLabel = "Which ones would you like?",
+  done = "You’re on the list. Check your inbox soon.",
+  note = "No spam. Unsubscribe any time.",
+} = Astro.props;
+const endpoint = SITE.form.endpoint;
+const live = Boolean(endpoint);
+const id = `su-${list}`;
+const config = { endpoint, list, done, extraFields: SITE.form.extraFields ?? {}, email: SITE.email };
+---
+<form class="signup" action={live ? endpoint : undefined} method="post" novalidate data-signup data-config={JSON.stringify(config)}>
+  {!live && (
+    <p class="notice" role="note">
+      <strong>Sign-ups open soon.</strong> For now, email <a href={`mailto:${SITE.email}`}>{SITE.email}</a> and ask to be added.
+    </p>
+  )}
+  <fieldset disabled={!live}>
+    <legend class="sr-only">Sign up</legend>
+    <input type="hidden" name="list" value={list} />
+    <div class="row">
+      <div class="field" data-field>
+        <label for={`${id}-name`}>First name</label>
+        <input id={`${id}-name`} name="name" autocomplete="given-name" />
+      </div>
+      <div class="field" data-field>
+        <label for={`${id}-email`}>Email</label>
+        <input id={`${id}-email`} name="email" type="email" autocomplete="email" required />
+        <p class="error" data-error aria-live="polite"></p>
+      </div>
+    </div>
+    {choices.length > 0 && (
+      <div class="choices">
+        <p class="choices-label">{choicesLabel}</p>
+        <div class="chips">
+          {choices.map((c) => (
+            <label class="chip"><input type="checkbox" name="choices" value={c} checked /> <span>{c}</span></label>
+          ))}
+        </div>
+      </div>
+    )}
+    <div class="trap" aria-hidden="true">
+      <label>Leave this empty <input name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+    </div>
+    <button type="submit" class="btn btn-accent magnetic" data-submit>{submit} <span aria-hidden="true">→</span></button>
+    <p class="small">{note}</p>
+  </fieldset>
+  <div class="status" data-status tabindex="-1"></div>
+</form>
+
+<script>
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  document.querySelectorAll<HTMLFormElement>("[data-signup]").forEach((form) => {
+    const cfg = JSON.parse(form.dataset.config!) as { endpoint: string; list: string; done: string; extraFields: Record<string, string>; email: string };
+    if (!cfg.endpoint) return;
+    const email = form.querySelector<HTMLInputElement>("input[type=email]")!;
+    const error = form.querySelector<HTMLElement>("[data-error]")!;
+    const button = form.querySelector<HTMLButtonElement>("[data-submit]")!;
+    const status = form.querySelector<HTMLElement>("[data-status]")!;
+    const check = () => {
+      const v = email.value.trim();
+      const msg = !v ? "Please enter your email address." : EMAIL.test(v) ? "" : "Enter an email address like name@example.com.";
+      error.textContent = msg;
+      msg ? email.setAttribute("aria-invalid", "true") : email.removeAttribute("aria-invalid");
+      return msg;
+    };
+    email.addEventListener("blur", () => email.value && check());
+    email.addEventListener("input", () => email.hasAttribute("aria-invalid") && check());
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (check()) return email.focus();
+      if (form.querySelector<HTMLInputElement>("[name=_gotcha]")?.value) return;
+      const fd = new FormData(form);
+      const data = {
+        ...cfg.extraFields,
+        list: cfg.list,
+        name: String(fd.get("name") ?? "").trim(),
+        email: email.value.trim(),
+        choices: fd.getAll("choices").join(", "),
+        _subject: `Website sign-up: ${cfg.list}`,
+        page: location.href,
+      };
+      button.disabled = true;
+      try {
+        const res = await fetch(cfg.endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(data),
+        });
+        let body: { ok?: boolean; success?: boolean } = {};
+        try {
+          body = await res.clone().json();
+        } catch {}
+        if (res.ok && body.ok !== false && body.success !== false) {
+          const done = document.createElement("p");
+          done.className = "done";
+          done.tabIndex = -1;
+          done.textContent = `${data.name ? `Thanks, ${data.name}. ` : ""}${cfg.done}`;
+          form.replaceChildren(done);
+          done.focus();
+          return;
+        }
+        status.className = "status error";
+        status.innerHTML = `<strong>Sorry, that didn’t go through</strong> (error ${res.status}). Please try again, or email <a href="mailto:${cfg.email}">${cfg.email}</a>.`;
+        status.focus();
+      } catch {
+        status.className = "status error";
+        status.innerHTML = `<strong>Sorry, that didn’t go through.</strong> Please check your connection, or email <a href="mailto:${cfg.email}">${cfg.email}</a>.`;
+        status.focus();
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
+</script>
+
+<style>
+  .signup {
+    display: grid;
+    gap: 16px;
+  }
+  fieldset {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  fieldset[disabled] {
+    opacity: 0.6;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 12px;
+  }
+  .field {
+    display: grid;
+    gap: 6px;
+  }
+  label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  input:not([type="checkbox"]) {
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 16px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+  [aria-invalid="true"] {
+    border-color: var(--c3);
+  }
+  .error {
+    min-height: 0;
+    color: var(--c3);
+    font-size: 14px;
+  }
+  .choices-label {
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-weight: 400;
+    cursor: pointer;
+  }
+  .chip input {
+    accent-color: var(--accent);
+    width: 16px;
+    height: 16px;
+  }
+  .chip:has(input:checked) {
+    border-color: var(--accent);
+  }
+  .chip:has(input:focus-visible) {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  button {
+    justify-self: start;
+  }
+  .small {
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .notice {
+    padding: 12px 16px;
+    border: 1px dashed var(--line-strong);
+    border-radius: var(--radius);
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .notice a,
+  .status :global(a) {
+    color: var(--text);
+    text-decoration: underline;
+  }
+  .trap {
+    position: absolute;
+    left: -9999px;
+  }
+  .status:empty {
+    display: none;
+  }
+  .status {
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--c3) 14%, transparent);
+    font-size: 14px;
+  }
+  .signup :global(.done) {
+    padding: 18px 20px;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    font-weight: 500;
+  }
+  @media (max-width: 560px) {
+    .row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

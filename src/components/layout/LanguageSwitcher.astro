@@ -1,0 +1,32 @@
+---
+// Language switcher (Hind Zero Waste): links to the same page in each language.
+import { languages, localise, type Lang } from "../../i18n/ui";
+const path = Astro.url.pathname;
+const current = (Object.keys(languages) as Lang[]).find((l) => languages[l].prefix && path.startsWith(languages[l].prefix)) ?? "en";
+---
+<nav class="lang" aria-label="Language">
+  {(Object.keys(languages) as Lang[]).map((l) => (
+    <a href={localise(path, l)} lang={languages[l].htmlLang} aria-current={l === current ? "true" : undefined} title={languages[l].label}>
+      {languages[l].short}
+    </a>
+  ))}
+</nav>
+
+<style>
+  .lang {
+    display: flex;
+    padding: 3px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font-size: 12px;
+  }
+  .lang a {
+    padding: 5px 10px;
+    border-radius: 999px;
+    color: var(--muted);
+  }
+  .lang a[aria-current] {
+    background: var(--text);
+    color: var(--bg);
+  }
+</style>

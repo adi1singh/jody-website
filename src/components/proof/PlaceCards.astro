@@ -1,0 +1,164 @@
+---
+// Hind Zero Waste ("Bio-mining plants installed in 7 states"): one card per
+// place, with a count, the sites there and an optional line drawing of a local
+// landmark (see src/data/landmarks.ts). Cards lift and the drawing sharpens on
+// hover.
+//
+// `flag` paints the given colours as equal bands across the whole set of cards,
+// top to bottom, and the cards turn slightly see-through so together they read
+// as the flag. India: flag={["#FF9933", "#FFFFFF", "#138808"]}.
+interface Item {
+  name: string;
+  /** e.g. "5 plants" */
+  count?: string;
+  list?: string[];
+  /** SVG path in a 120×100 box, e.g. INDIA_LANDMARKS.Rajasthan */
+  mark?: string;
+}
+interface Props {
+  items: Item[];
+  flag?: string[];
+}
+const { items, flag } = Astro.props;
+const bands = flag?.length
+  ? `linear-gradient(180deg, ${flag.map((c, i) => `${c} ${((i * 100) / flag.length).toFixed(3)}% ${(((i + 1) * 100) / flag.length).toFixed(3)}%`).join(", ")})`
+  : undefined;
+---
+<div class:list={["places", { flagged: bands }]} style={bands ? `--flag:${bands}` : undefined}>
+  <ul class="places-grid" data-reveal-group>
+    {items.map((p) => (
+      <li class="place reveal">
+        <div class="place-head">
+          <div class="place-title">
+            <h3>{p.name}</h3>
+            {p.count && <span class="place-count">{p.count}</span>}
+          </div>
+          {p.mark && (
+            <svg class="place-mark" viewBox="0 0 120 100" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d={p.mark} />
+            </svg>
+          )}
+        </div>
+        {p.list && p.list.length > 0 && (
+          <ul class="place-list">
+            {p.list.map((s) => <li>{s}</li>)}
+          </ul>
+        )}
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .places-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .place {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 24px 24px 26px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border-top: 4px solid var(--text);
+    transition:
+      transform 0.45s var(--ease-out),
+      box-shadow 0.45s var(--ease-out),
+      border-color 0.45s var(--ease-out);
+  }
+  .place:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.35);
+    border-color: var(--accent);
+  }
+  .place-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .place-title {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  h3 {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1.1;
+  }
+  .place-count {
+    align-self: flex-start;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .place:hover .place-count {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .place-mark {
+    flex: none;
+    width: 92px;
+    height: auto;
+    margin: -6px -6px 0 0;
+    color: var(--accent);
+    opacity: 0.55;
+    transition:
+      opacity 0.4s var(--ease),
+      transform 0.5s var(--ease-out);
+  }
+  .place:hover .place-mark {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  .place-list {
+    display: grid;
+    gap: 7px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 15px;
+    color: var(--muted);
+  }
+
+  /* Flag bands behind slightly see-through cards */
+  .flagged {
+    padding: 14px;
+    border-radius: calc(var(--radius-lg) + 14px);
+    background: var(--flag);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .flagged .place {
+    background: color-mix(in srgb, var(--surface) 80%, transparent);
+    border-top-color: transparent;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+  .flagged .place:hover {
+    background: var(--surface);
+  }
+
+  @media (max-width: 1000px) {
+    .places-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 560px) {
+    .places-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .flagged {
+      padding: 10px;
+    }
+  }
+</style>
