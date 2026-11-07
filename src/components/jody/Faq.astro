@@ -1,4 +1,162 @@
 ---
-// Placeholder: being built (the version 2 file is in git history: git show main:src/components/jody/Faq.astro).
+// Questions (#faq). Secondary information, kept calm and compact: ivory,
+// a serif "Questions" headline on the left with a line pointing to Jody's
+// email, and the answers on the right as a list of <details> with fine rules
+// and a thin plus that turns into a minus. Works without JavaScript (native
+// <details>); publishes FAQPage structured data for search engines (the
+// pattern from src/components/convert/Faq.astro). No motion beyond the
+// shared .reveal; the icon turn is still with reduced motion.
+// Words: FAQ in src/data/jody.ts (answers TO CONFIRM with Jody).
+//
+// <Faq />
+import { FAQ } from "../../data/jody";
+import { SITE } from "../../data/site";
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+};
 ---
-<section class="section"><div class="wrap"><p class="eyebrow">Faq · being built</p></div></section>
+<section class="faq section" id="faq" aria-labelledby="faq-title">
+  <div class="wrap grid">
+    <div class="head">
+      <p class="eyebrow reveal">Good to know</p>
+      <h2 id="faq-title" class="h2 reveal">Questions</h2>
+      <p class="read reveal">
+        Something else on your mind? Ask me directly at <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+    </div>
+    <div class="items" data-reveal-group>
+      {FAQ.map((f) => (
+        <details class="reveal">
+          <summary>
+            <span class="q">{f.q}</span>
+            <span class="icon" aria-hidden="true"></span>
+          </summary>
+          <p class="a">{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+</section>
+
+<style>
+  .faq {
+    padding-block: calc(var(--section) * 0.72);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: clamp(40px, 7vw, 120px);
+    align-items: start;
+  }
+  .head {
+    display: grid;
+    justify-items: start;
+    gap: 22px;
+  }
+  .h2 {
+    margin: 0;
+  }
+  .read {
+    margin: 0;
+    max-width: 30ch;
+    font-size: 15.5px;
+  }
+  .read a {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--detail);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    overflow-wrap: anywhere;
+  }
+  .items {
+    border-top: 1px solid var(--line-strong);
+  }
+  details {
+    border-bottom: 1px solid var(--line);
+  }
+  summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18px;
+    align-items: center;
+    gap: 24px;
+    padding: 24px 0;
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  .q {
+    font: 400 clamp(21px, 1.8vw, 26px) / 1.25 var(--font-display);
+    letter-spacing: -0.005em;
+    color: var(--text);
+    transition: color 0.4s var(--ease);
+  }
+  summary:hover .q {
+    color: var(--accent);
+  }
+  summary:focus-visible {
+    outline: 1px solid var(--detail);
+    outline-offset: 4px;
+  }
+  /* A thin plus; the vertical stroke turns flat to make a minus */
+  .icon {
+    position: relative;
+    width: 18px;
+    height: 18px;
+  }
+  .icon::before,
+  .icon::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+    background: var(--text);
+    transition: transform 0.5s var(--ease);
+  }
+  .icon::after {
+    transform: rotate(90deg);
+  }
+  details[open] .icon::after {
+    transform: rotate(0deg);
+  }
+  .a {
+    margin: 0;
+    padding: 0 48px 28px 0;
+    max-width: 60ch;
+    font: 400 16px/1.7 var(--font-sans);
+    color: var(--muted);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .icon::before,
+    .icon::after,
+    .q {
+      transition: none;
+    }
+  }
+  @media (max-width: 900px) {
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+  @media (max-width: 600px) {
+    summary {
+      gap: 18px;
+      padding: 20px 0;
+    }
+    .q {
+      font-size: 21px;
+    }
+    .a {
+      padding-right: 0;
+      font-size: 15.5px;
+    }
+  }
+</style>

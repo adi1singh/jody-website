@@ -1,32 +1,39 @@
 ---
-// Jody's email pop-up: a small gold-and-black card inviting visitors to get
-// the free audio (Jody's reference site had one). Sends with
-// Signup list="free-audio-popup", so the CRM can tell it apart.
+// Jody's email pop-up (version 3 look): a light ivory card with a serif
+// headline, the four free audio titles in a quiet line, and the sign-up
+// (Signup list="free-audio-popup", so the CRM can tell it apart). Marked as a
+// preview of the free audio offer: nothing is connected yet.
 // Rules: never on first paint. Opens once, after the visitor has scrolled
 // past ~45% of the page or after ~25 seconds, whichever comes first, and not
 // while they are typing in a form or reading the free-audio section. Never
-// again after closing it or signing up anywhere on the page (localStorage,
-// wrapped in try/catch). A real modal <dialog>: focus moves in and returns,
-// Escape, the close button and clicking the backdrop close it. A bottom sheet
-// on phones. With JavaScript off it never shows (rendered `hidden`).
-// No motion with reduced motion.
+// again after closing it or signing up anywhere on the page (localStorage key
+// "jody-popup", wrapped in try/catch). A real modal <dialog>: focus moves in
+// and returns, Escape, the close button and clicking the backdrop close it.
+// A bottom sheet on phones. With JavaScript off it never shows (rendered
+// `hidden`). No motion with reduced motion.
 //
 // <EmailPopup slot="end" />   (in Base.astro's end slot)
 import Signup from "../convert/Signup.astro";
+import { AUDIOS } from "../../data/jody";
 ---
 <dialog class="popup" aria-labelledby="popup-title" aria-describedby="popup-text" aria-modal="true" hidden data-email-popup>
-  <div class="card">
-    <span class="sun" aria-hidden="true"></span>
+  <div class="card light">
     <button type="button" class="close" aria-label="Close" data-close>
-      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
     </button>
     <div class="inner">
       <p class="eyebrow">A gift from Jody</p>
-      <h2 id="popup-title" class="title">Sleep easier <em>tonight</em><span class="dot">.</span></h2>
+      <h2 id="popup-title" class="title">Sleep easier <em>tonight.</em></h2>
       <p id="popup-text" class="text">
-        Free hypnosis audios for sleep, anxiety, low days and money. Leave your email and I’ll send them as soon as they’re recorded.
+        Free hypnosis audios, recorded by me. Leave your email and I’ll send them as soon as they’re ready.
       </p>
-      <Signup list="free-audio-popup" submit="Send me the audio" done="You’re on the list. Watch your inbox." />
+      <p class="titles" aria-label="The recordings">
+        {AUDIOS.map((a, i) => <span class="t">{a.title}{i < AUDIOS.length - 1 && <span class="sep" aria-hidden="true">·</span>}</span>)}
+      </p>
+      <div class="form">
+        <Signup list="free-audio-popup" submit="Send me the audio" done="You’re on the list. Watch your inbox." note="" />
+      </div>
+      <p class="preview">A preview of the free audio offer</p>
     </div>
   </div>
 </dialog>
@@ -133,79 +140,94 @@ import Signup from "../convert/Signup.astro";
 
 <style>
   .popup {
-    width: min(500px, calc(100% - 32px));
+    width: min(520px, calc(100% - 32px));
     max-width: none;
     max-height: calc(100dvh - 32px);
     padding: 0;
     border: 0;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius);
     background: transparent;
-    color: var(--text);
+    color: var(--black);
     overflow: visible;
   }
   .popup::backdrop {
-    background: color-mix(in srgb, var(--ink) 62%, transparent);
-    -webkit-backdrop-filter: blur(6px);
-    backdrop-filter: blur(6px);
+    background: color-mix(in srgb, var(--black) 55%, transparent);
   }
+  /* .light: the card always takes the ivory tone */
   .card {
     position: relative;
     max-height: calc(100dvh - 32px);
     overflow: auto;
     overscroll-behavior: contain;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--line-strong);
-    background: var(--ink);
-    box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.8);
-    isolation: isolate;
-  }
-  /* a gold half-sun rising over the top edge */
-  .sun {
-    position: absolute;
-    z-index: -1;
-    top: -196px;
-    left: 50%;
-    width: 300px;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(200deg, var(--gold-soft), var(--gold) 50%, var(--gold-deep));
-    box-shadow: 0 0 80px 10px color-mix(in srgb, var(--gold) 30%, transparent);
+    border-radius: var(--radius);
+    border-top: 1px solid var(--gold);
+    background: var(--bg);
+    color: var(--text);
   }
   .inner {
     display: grid;
-    gap: 14px;
-    padding: 136px clamp(22px, 5vw, 40px) clamp(24px, 5vw, 34px);
-    text-align: left;
+    gap: 16px;
+    padding: clamp(36px, 6vw, 52px) clamp(24px, 6vw, 48px) clamp(26px, 5vw, 36px);
   }
   .title {
-    font-size: clamp(32px, 7vw, 42px);
-    letter-spacing: -0.04em;
-  }
-  .title em {
-    padding-right: 0.04em;
+    margin: 6px 0 0;
+    font-size: clamp(40px, 8vw, 54px);
+    font-weight: 300;
+    line-height: 1;
   }
   .text {
-    margin-bottom: 8px;
-    font: 400 17px/1.45 var(--font-read);
+    margin: 0;
+    max-width: 36ch;
+    font: 400 15.5px/1.65 var(--font-sans);
     color: var(--muted);
+  }
+  .titles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 0;
+    margin: 4px 0 6px;
+    padding: 14px 0;
+    border-block: 1px solid var(--line);
+    font: italic 400 19px/1.3 var(--font-display);
+    color: var(--text);
+  }
+  .t {
+    white-space: nowrap;
+  }
+  .sep {
+    margin: 0 10px;
+    color: var(--detail);
+    font-style: normal;
+  }
+  .form {
+    margin-top: 6px;
+  }
+  .preview {
+    margin: 6px 0 0;
+    font: 400 12px/1.5 var(--font-sans);
+    color: var(--faint);
   }
   .close {
     position: absolute;
-    top: 14px;
-    right: 14px;
+    top: 12px;
+    right: 12px;
     display: grid;
     place-items: center;
-    width: 42px;
-    height: 42px;
-    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
+    width: 44px;
+    height: 44px;
+    border: 1px solid transparent;
     border-radius: 50%;
-    background: color-mix(in srgb, var(--ink) 82%, transparent);
-    color: var(--ivory);
-    transition: background 0.3s var(--ease);
+    background: transparent;
+    color: var(--text);
+    transition: border-color 0.4s var(--ease);
   }
-  .close:hover {
-    background: var(--ink);
+  .close:hover,
+  .close:focus-visible {
+    border-color: var(--line-strong);
+    outline: none;
+  }
+  .close:focus-visible {
+    border-color: var(--gold);
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -225,13 +247,13 @@ import Signup from "../convert/Signup.astro";
   @keyframes pop-in {
     from {
       opacity: 0;
-      transform: translateY(24px) scale(0.97);
+      transform: translateY(20px);
     }
   }
   @keyframes pop-out {
     to {
       opacity: 0;
-      transform: translateY(16px) scale(0.98);
+      transform: translateY(12px);
     }
   }
   @keyframes fade {
@@ -245,25 +267,18 @@ import Signup from "../convert/Signup.astro";
     .popup {
       width: 100%;
       margin: auto 0 0;
-      max-height: 88dvh;
-      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      max-height: 90dvh;
     }
     .card {
-      max-height: 88dvh;
-      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-      border-bottom: 0;
-    }
-    .sun {
-      top: -186px;
-      width: 250px;
+      max-height: 90dvh;
+      border-radius: 0;
     }
     .inner {
-      gap: 10px;
-      padding-top: 88px;
+      gap: 12px;
       padding-bottom: calc(22px + env(safe-area-inset-bottom));
     }
-    .text {
-      font-size: 16px;
+    .titles {
+      font-size: 17px;
     }
     @media (prefers-reduced-motion: no-preference) {
       .popup[open] {
