@@ -1,0 +1,258 @@
+---
+// Jody's hero, after dawnsaunders.com: a giant lowercase name ("jody.") on a
+// metallic gold field, Jody's cut-out portrait on a black disc in front of it,
+// the promise on the left and a short serif intro on the right. Below, a gold
+// disc spills over into the black section with Jody's statement in it.
+// The portrait's circle crop is baked into /jody-hero.webp (centre 345,460,
+// radius 345 in a 690×770 image); the disc here matches that geometry.
+// Motion: the name rises, the disc grows, the photo fades up. All still with
+// reduced motion; complete without JavaScript.
+import { HERO, PHOTOS, STATEMENT, BOOK_HREF } from "../../data/jody";
+import { SITE } from "../../data/site";
+const first = SITE.name.split(" ")[0].toLowerCase();
+const book = SITE.booking || BOOK_HREF;
+// "**word**" → <b>word</b>
+const statement = STATEMENT.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>");
+---
+<section class="hero gold" aria-labelledby="hero-title">
+  <p class="name" aria-hidden="true"><span class="name-in">{first}<span class="dot">.</span></span></p>
+
+  <div class="hero-grid wrap">
+    <div class="lead-col">
+      <h1 id="hero-title" class="tagline fade-up" style="--line:1">{HERO.tagline}</h1>
+      <div class="actions fade-up" style="--line:2">
+        <a class="btn btn-ink magnetic" href={book}>Book a session <span aria-hidden="true">→</span></a>
+        <a class="btn btn-outline" href="#free">Free audio</a>
+      </div>
+    </div>
+
+    <figure class="portrait">
+      <span class="disc" aria-hidden="true"></span>
+      <span class="ring" aria-hidden="true"></span>
+      <img src={PHOTOS.hero.src} alt={PHOTOS.hero.alt} width={PHOTOS.hero.width} height={PHOTOS.hero.height} fetchpriority="high" />
+    </figure>
+
+    <p class="intro read fade-up" style="--line:2">{HERO.intro}</p>
+  </div>
+</section>
+
+<section class="statement" aria-label="About Jody in a sentence">
+  <div class="sun" aria-hidden="true"></div>
+  <p class="statement-text reveal" set:html={statement} />
+</section>
+
+<style>
+  /* ---------- hero ---------- */
+  .hero {
+    position: relative;
+    overflow: clip;
+    min-height: min(100svh, 920px);
+    padding-top: 84px; /* under the fixed header */
+    background:
+      radial-gradient(70% 60% at 50% 30%, rgba(255, 240, 200, 0.45), transparent 70%),
+      linear-gradient(160deg, #e2bf73 0%, #cfa553 45%, #b98d3f 100%);
+    display: grid;
+    grid-template-rows: 1fr;
+  }
+  .name {
+    position: absolute;
+    inset: 72px 0 auto;
+    margin: 0;
+    text-align: center;
+    font: 300 clamp(150px, 29vw, 440px) / 0.8 var(--font-sans);
+    letter-spacing: -0.07em;
+    color: var(--ivory);
+    pointer-events: none;
+    user-select: none;
+  }
+  .name-in {
+    display: inline-block;
+    text-shadow: 0 30px 80px rgba(120, 85, 25, 0.25);
+  }
+  .name .dot {
+    color: var(--ink);
+  }
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr minmax(360px, 560px) 1fr;
+    align-items: end;
+    gap: 24px;
+    height: 100%;
+  }
+  .lead-col {
+    align-self: center;
+    padding-top: 22vh;
+    display: grid;
+    gap: 28px;
+  }
+  .tagline {
+    max-width: 12ch;
+    font-size: clamp(30px, 2.8vw, 42px);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .actions .btn {
+    height: 48px;
+  }
+  .intro {
+    align-self: center;
+    padding-top: 22vh;
+    max-width: 30ch;
+    justify-self: end;
+    color: var(--ink);
+    font-size: clamp(17px, 1.3vw, 19px);
+  }
+
+  /* The portrait: a black disc with Jody in front, sitting on the bottom edge */
+  .portrait {
+    position: relative;
+    margin: 0;
+    align-self: end;
+    width: 100%;
+    /* the baked circle runs 35/690 past the image bottom: drop the photo so the disc ends at the edge */
+    margin-bottom: -5.07%;
+  }
+  .portrait img {
+    position: relative;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.18));
+  }
+  .disc,
+  .ring {
+    position: absolute;
+    left: 0;
+    top: 14.94%; /* 115 / 770 of the image height, i.e. centre 460 − radius 345 */
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+  }
+  .disc {
+    background:
+      radial-gradient(60% 60% at 35% 30%, #2a241b, transparent 70%),
+      var(--ink);
+    transform-origin: 50% 100%;
+  }
+  .ring {
+    inset-inline: -4%;
+    width: 108%;
+    top: calc(14.94% - 4%);
+    border: 1px solid rgba(10, 9, 8, 0.35);
+  }
+
+  /* ---------- statement ---------- */
+  .statement {
+    position: relative;
+    overflow: clip;
+    background: var(--ink);
+    padding: 0 var(--gutter) clamp(80px, 10vw, 140px);
+    display: grid;
+    justify-items: center;
+  }
+  .sun {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: min(1060px, 150vw);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(180deg, #b98d3f 0%, #cfa553 55%, #e2bf73 100%);
+  }
+  .statement-text {
+    position: relative;
+    max-width: 26ch;
+    padding-top: clamp(36px, 5vw, 64px);
+    min-height: calc(min(1060px, 150vw) / 2 - 20px);
+    text-align: center;
+    font: 300 clamp(26px, 3.2vw, 44px) / 1.22 var(--font-sans);
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .statement-text :global(b) {
+    font-weight: 700;
+  }
+
+  /* ---------- motion (only with motion allowed and scripts on) ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .name-in {
+      animation: rise 1.4s var(--ease) both;
+    }
+    :global(html.js) .disc {
+      animation: grow 1.2s 0.15s var(--ease) both;
+    }
+    :global(html.js) .portrait img {
+      animation: lift 1.2s 0.35s var(--ease) both;
+    }
+  }
+  @keyframes rise {
+    from {
+      transform: translateY(18%);
+      opacity: 0;
+    }
+  }
+  @keyframes grow {
+    from {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+  }
+  @keyframes lift {
+    from {
+      transform: translateY(6%);
+      opacity: 0;
+    }
+  }
+
+  /* ---------- tablets and phones: name, words, then the photo on the edge ---------- */
+  @media (max-width: 960px) {
+    .hero {
+      min-height: 0;
+      display: block;
+    }
+    .name {
+      position: relative;
+      inset: auto;
+      margin: 8px 0 0.16em;
+      font-size: clamp(110px, 36vw, 300px);
+    }
+    .hero-grid {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      gap: 0;
+      text-align: center;
+    }
+    .lead-col {
+      order: 1;
+      padding: 8px 0 0;
+      justify-items: center;
+      gap: 22px;
+    }
+    .tagline {
+      max-width: 15ch;
+      font-size: clamp(28px, 7vw, 40px);
+    }
+    .actions {
+      justify-content: center;
+    }
+    .intro {
+      order: 2;
+      padding: 18px 0 28px;
+      justify-self: center;
+      max-width: 34ch;
+      font-size: 17px;
+    }
+    .portrait {
+      order: 3;
+      width: min(94%, 460px);
+    }
+  }
+</style>

@@ -2,7 +2,7 @@
 // Sticky header that turns solid on scroll (JobGen). Dropdown groups open on hover
 // for mouse users and on click/Enter for keyboard and touch (Hind Zero Waste);
 // Escape or clicking away closes. Phones get a full-screen menu.
-import BrandMark from "./BrandMark.astro";
+import Wordmark from "./Wordmark.astro";
 import LanguageSwitcher from "./LanguageSwitcher.astro";
 import { NAV, SITE, isGroup } from "../../data/site";
 interface Props {
@@ -15,8 +15,7 @@ const { cta = { label: "Get in touch", href: "#contact" }, languages = false } =
 <header class="header" data-header>
   <div class="wrap header-inner">
     <a class="brand" href="/">
-      <BrandMark />
-      <b>{SITE.name}<span>{SITE.suffix}</span></b>
+      <Wordmark />
       <span class="sr-only">, home</span>
     </a>
     <nav class="nav" aria-label="Main">
@@ -43,7 +42,7 @@ const { cta = { label: "Get in touch", href: "#contact" }, languages = false } =
     </nav>
     <div class="header-actions">
       {languages && <LanguageSwitcher />}
-      <a class="btn btn-light btn-small header-cta magnetic" href={cta.href}>{cta.label}</a>
+      <a class="btn btn-accent btn-small header-cta magnetic" href={cta.href}>{cta.label}</a>
       <button type="button" class="menu-btn" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
         <span></span><span></span>
       </button>
@@ -151,16 +150,7 @@ const { cta = { label: "Get in touch", href: "#contact" }, languages = false } =
   .brand {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    font-size: 20px;
-    letter-spacing: -0.02em;
-  }
-  .brand b {
-    font-weight: 650;
-  }
-  .brand b span {
-    color: var(--faint);
-    font-weight: 500;
+    font-size: 24px;
   }
   .nav {
     display: flex;

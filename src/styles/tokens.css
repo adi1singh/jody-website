@@ -1,83 +1,86 @@
 /* ==========================================================================
-   Design tokens: the one file to edit when a new site needs its own look.
-   Default palette is the JobGen one: deep charcoal, warm off-white text,
-   a violet accent, one colour per category and a "spectrum" gradient.
-   Sections with class="light" switch to the warm cream palette.
+   Design tokens: Jody's colours, type, shape and motion. Components only use
+   these variables. Sections switch tone with .light (ivory), .gold and
+   .burgundy; the default is black.
    ========================================================================== */
 
+/* Jody's type: Figtree, light and wide, for headings and interface (as on
+   dawnsaunders.com); Forum, a classic serif, for reading; Cormorant Garamond
+   italic for the gold accent words. All self-hosted (SIL Open Font Licence). */
 @font-face {
-  font-family: "Geist";
-  src: url("/fonts/geist.woff2") format("woff2");
-  font-weight: 100 900;
+  font-family: "Figtree";
+  src: url("/fonts/figtree.woff2") format("woff2");
+  font-weight: 300 700;
   font-display: swap;
 }
 @font-face {
-  font-family: "Instrument Serif";
-  src: url("/fonts/instrument-serif-italic.woff2") format("woff2");
+  font-family: "Forum";
+  src: url("/fonts/forum.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/cormorant-italic.woff2") format("woff2");
   font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-}
-/* Upright Instrument Serif, under its own name so the italic accent words
-   above stay italic everywhere: for editorial statements (--font-serif-roman). */
-@font-face {
-  font-family: "Instrument Serif Roman";
-  src: url("/fonts/instrument-serif.woff2") format("woff2");
-  font-weight: 400;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Geist Mono";
-  src: url("/fonts/geist-mono.woff2") format("woff2");
-  font-weight: 100 900;
+  font-weight: 300 700;
   font-display: swap;
 }
 
 :root {
-  /* Jody: black and gold (her branding shoot and Regan Hillyer's site), with the
-     burgundy of the Live Sexy Now book cover as the second colour. */
+  /* Jody: black, gold and ivory, from the branding shoot (white silk with gold
+     chains) and the gold-and-black look Jody asked for. Burgundy is the book. */
+  --ink: #0a0908;
+  --gold: #d1a957;
+  --gold-deep: #a57d36;
+  --gold-soft: #ead6a6;
+  --gold-sheen: linear-gradient(120deg, #a57d36 0%, #e9cf8f 35%, #c99c48 60%, #f1dfae 80%, #b88a3e 100%);
+  --ivory: #f6f0e6;
+  --burgundy: #6d1f2e;
+  --burgundy-deep: #4a1320;
+
   /* Surfaces and text (dark) */
-  --bg: #0c0b09;
-  --surface: #15130f;
-  --surface-2: #1e1b16;
-  --line: rgba(232, 214, 170, 0.1);
-  --line-strong: rgba(232, 214, 170, 0.2);
-  --text: #f3ece0;
-  --muted: #a39a89;
-  --faint: #6b6458;
+  --bg: #0a0908;
+  --surface: #141210;
+  --surface-2: #1d1a16;
+  --line: rgba(234, 214, 166, 0.12);
+  --line-strong: rgba(234, 214, 166, 0.24);
+  --text: #f6f0e6;
+  --muted: #b3a994;
+  --faint: #7a7262;
 
   /* Brand */
-  --accent: #d4af6a; /* gold */
-  --accent-ink: #0c0b09;
-  --burgundy: #6d1f2e;
+  --accent: #d1a957;
+  --accent-ink: #0a0908;
 
-  /* Category colours: one per pillar, all in the gold and burgundy family */
-  --c1: #d4af6a; /* gold: hypnosis */
-  --c2: #e9d3a1; /* champagne: life coaching */
-  --c3: #b5485a; /* rose burgundy: quit and reset */
-  --c4: #c79a4e; /* deep gold: equestrian mindset */
-  --c5: #e6c98f; /* pale gold */
-  --c6: #9c6b3f; /* bronze */
-  --spectrum: linear-gradient(100deg, #b98a3e, #f1dca6 45%, #d4af6a 70%, #a8783a);
+  /* Category colours, all in the family */
+  --c1: #d1a957;
+  --c2: #ead6a6;
+  --c3: #b5485a;
+  --c4: #c79a4e;
+  --c5: #e6c98f;
+  --c6: #9c6b3f;
+  --spectrum: var(--gold-sheen);
 
   /* Intro curtain */
-  --intro-bg: #0c0b09;
-  --intro-text: #f3ece0;
-  --intro-sub: #d4af6a;
-  --intro-line: #d4af6a;
+  --intro-bg: #0a0908;
+  --intro-text: #f6f0e6;
+  --intro-sub: #d1a957;
+  --intro-line: #d1a957;
 
-/* Type */
-  --font-sans: "Geist", system-ui, sans-serif;
-  --font-mono: "Geist Mono", ui-monospace, monospace;
-  --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif; /* italic accent words */
-  --font-serif-roman: "Instrument Serif Roman", Georgia, "Times New Roman", serif; /* upright, for editorial statements */
+  /* Type */
+  --font-sans: "Figtree", system-ui, sans-serif; /* headings, buttons, labels */
+  --font-read: "Forum", Georgia, "Times New Roman", serif; /* paragraphs */
+  --font-mono: "Figtree", system-ui, sans-serif; /* small labels: Figtree in caps, no mono on this site */
+  --font-serif: "Cormorant Garamond", Georgia, serif; /* italic gold accent words */
+  --font-serif-roman: "Forum", Georgia, serif;
 
   /* Shape and space */
   --radius: 14px;
-  --radius-lg: 22px;
-  --wrap: 1200px;
+  --radius-lg: 28px;
+  --wrap: 1240px;
   --gutter: 32px;
-  --section: clamp(90px, 11vw, 140px);
+  --section: clamp(90px, 11vw, 150px);
 
   /* Motion */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -90,98 +93,45 @@
   --bg: #f6f0e6;
   --surface: #fffcf6;
   --surface-2: #ede3d2;
-  --accent: #9a7330; /* gold dark enough to read on ivory */
+  --accent: #96702c; /* gold dark enough to read on ivory */
   --accent-ink: #ffffff;
-  --line: rgba(22, 20, 17, 0.09);
-  --line-strong: rgba(22, 20, 17, 0.16);
-  --text: #17161a;
-  --muted: #6a665e;
-  --faint: #a39e94;
+  --line: rgba(22, 20, 17, 0.1);
+  --line-strong: rgba(22, 20, 17, 0.2);
+  --text: #15120e;
+  --muted: #5f574a;
+  --faint: #9a917f;
   background: var(--bg);
   color: var(--text);
 }
 
-/* --------------------------------------------------------------------------
-   Alternative palettes. Put data-theme="..." on <html> (Base.astro's
-   `theme` prop) to try one, or copy one into :root above for a new site.
-   -------------------------------------------------------------------------- */
-
-/* Digital Bridge: ink green, electric blue and orange on paper */
-[data-theme="bridge"] {
-  --bg: #0f1a15;
-  --surface: #16231d;
-  --surface-2: #1d2c25;
-  --text: #f7f5ef;
-  --muted: #a9b5ae;
-  --faint: #6c7a72;
-  --accent: #ff794f;
-  --c1: #3a5bff;
-  --c3: #ff794f;
-  --spectrum: linear-gradient(100deg, #3a5bff, #8a7dff 45%, #ff794f);
+/* Solid gold sections (like the yellow on dawnsaunders.com) */
+.gold {
+  --bg: var(--gold);
+  --surface: #dcb969;
+  --surface-2: #c39b4b;
+  --line: rgba(10, 9, 8, 0.14);
+  --line-strong: rgba(10, 9, 8, 0.28);
+  --text: #0a0908;
+  --muted: #3d3222;
+  --faint: #6e5b38;
+  --accent: #0a0908;
+  --accent-ink: #f6f0e6;
+  background: var(--bg);
+  color: var(--text);
 }
 
-/* Hind Zero Waste: warm charcoal, leaf green and clay, with paper-coloured
-   light sections (matches the live site) */
-[data-theme="earth"] {
-  --bg: #1d1a18;
-  --surface: #2a2523;
-  --surface-2: #3a332f;
-  --line: rgba(246, 243, 236, 0.09);
-  --line-strong: rgba(246, 243, 236, 0.16);
-  --text: #f6f3ec;
-  --muted: #c9bdb1;
-  --faint: #8c8076;
-  --accent: #84bb39;
-  --accent-ink: #1d1a18;
-  --c1: #84bb39; /* leaf green */
-  --c2: #e08a62; /* light clay */
-  --c3: #a84f32; /* clay */
-  --c4: #c3d32c; /* lime */
-  --c5: #5f9a2a; /* deep green */
-  --c6: #c9bdb1; /* stone */
-  --spectrum: linear-gradient(100deg, #84bb39, #c3d32c 40%, #e08a62);
-}
-[data-theme="earth"] .light {
-  --bg: #f5efe6;
-  --surface: #ffffff;
-  --surface-2: #ebe3d7;
-  --line: rgba(29, 26, 24, 0.12);
-  --line-strong: rgba(29, 26, 24, 0.24);
-  --text: #26211e;
-  --muted: #5e554e;
-  --faint: #9a8f86;
-  --accent: #a84f32;
-  --accent-ink: #ffffff;
-}
-
-/* Pathwise: night green and warm paper, coral and saffron, one bright colour
-   per area */
-[data-theme="pathwise"] {
-  --bg: #0e1512;
-  --surface: #17221d;
-  --surface-2: #22302a;
-  --line: rgba(233, 227, 214, 0.09);
-  --line-strong: rgba(233, 227, 214, 0.16);
-  --text: #e9e3d6;
-  --muted: #a9a496;
-  --faint: #6f7a73;
-  --accent: #ff6a3d;
-  --accent-ink: #15201b;
-  --c1: #9a82ff; /* training violet */
-  --c2: #ffb23f; /* saffron */
-  --c3: #ff6a3d; /* coral */
-  --c4: #2bc4a8; /* business teal */
-  --c5: #a6c93a; /* construction green */
-  --c6: #e06bb8; /* care pink */
-  --spectrum: linear-gradient(100deg, #ff6a3d, #ffb23f 45%, #e06bb8);
-}
-[data-theme="pathwise"] .light {
-  --bg: #f6f1e7;
-  --surface: #fffdf8;
-  --surface-2: #eee6d6;
-  --line: #e2dacb;
-  --line-strong: #cbc1ad;
-  --text: #15201b;
-  --muted: #5d6963;
-  --faint: #8b948f;
+/* Burgundy sections (the book) */
+.burgundy {
+  --bg: var(--burgundy);
+  --surface: #7b2636;
+  --surface-2: #5a1826;
+  --line: rgba(241, 223, 174, 0.16);
+  --line-strong: rgba(241, 223, 174, 0.3);
+  --text: #f6ecdc;
+  --muted: #dcbfae;
+  --faint: #b48d86;
+  --accent: #e9cf8f;
+  --accent-ink: #4a1320;
+  background: var(--bg);
+  color: var(--text);
 }

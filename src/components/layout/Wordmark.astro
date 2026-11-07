@@ -1,0 +1,24 @@
+---
+// Jody's wordmark: "jodypockran." with the first name bold, the surname light
+// and a gold full stop (after the dawnsaunders.com wordmark). Text, not an
+// image, so it stays sharp and inherits colour. Size it with font-size.
+import { SITE } from "../../data/site";
+const [first, ...rest] = SITE.name.toLowerCase().split(" ");
+---
+<span class="wordmark" aria-label={SITE.name}><b>{first}</b>{rest.join("")}<span class="dot">.</span></span>
+
+<style>
+  .wordmark {
+    font-family: var(--font-sans);
+    font-weight: 300;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  b {
+    font-weight: 700;
+  }
+  .dot {
+    color: var(--gold);
+  }
+</style>

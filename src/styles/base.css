@@ -225,3 +225,90 @@ dd {
   gap: 20px;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
 }
+
+/* ==========================================================================
+   Jody's type system (after dawnsaunders.com): thin, wide Figtree headings,
+   Forum for reading, and gold Cormorant italic for the accent word in a
+   heading (<em>). Interface text (buttons, labels, nav) stays Figtree.
+   ========================================================================== */
+body {
+  font: 400 17px/1.6 var(--font-sans);
+  letter-spacing: 0;
+}
+h1,
+h2,
+h3,
+.h1,
+.h2,
+.section-head h2 {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+}
+.section-head h2,
+.h2 {
+  font-size: clamp(42px, 6vw, 80px);
+  font-weight: 300;
+}
+h1 em,
+h2 em,
+h3 em,
+.h2 em,
+.accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+}
+/* A full stop in gold after a heading, as in "jody." */
+.dot {
+  color: var(--accent);
+}
+.read,
+.section-sub,
+p.lead {
+  font-family: var(--font-read);
+  font-size: clamp(19px, 1.6vw, 22px);
+  line-height: 1.5;
+  letter-spacing: 0.005em;
+}
+.section-sub {
+  margin-top: 22px;
+  max-width: 600px;
+}
+.eyebrow,
+.mono {
+  font: 600 12px/1.4 var(--font-sans);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.btn {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+}
+.btn-ink {
+  background: var(--ink);
+  color: var(--ivory);
+}
+.btn-ink:hover {
+  background: #1f1b16;
+}
+.btn-outline {
+  background: transparent;
+  color: inherit;
+  border: 1.5px solid currentColor;
+}
+.btn-outline:hover {
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+.gold-sheen {
+  background: var(--gold-sheen);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

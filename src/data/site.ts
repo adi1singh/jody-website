@@ -2,7 +2,7 @@
 // and src/styles/tokens.css; the components read from here.
 
 export const SITE = {
-  name: "Jody",
+  name: "Jody Pockran",
   suffix: "",
   tagline: "Hypnotherapy, life coaching and mindset. Home of Live Sexy Now.",
   description:
@@ -15,7 +15,17 @@ export const SITE = {
   // empty and the forms show switched off with a note, so nobody fills them in for nothing.
   form: { endpoint: "", extraFields: {} as Record<string, string> },
   // The intro curtain's words.
-  intro: { word: "live sexy now", sub: "CONFIDENCE · CALM · REINVENTION" },
+  intro: { word: "jody pockran", sub: "CONFIDENCE · CALM · REINVENTION" },
+  // Online booking calendar (Calendly, Cal.com, Acuity…). Empty: "Book" buttons go to the request form.
+  booking: "",
+  // Jody's new business accounts (to create). Empty ones are hidden.
+  socials: [
+    { label: "Instagram", href: "" },
+    { label: "Facebook", href: "" },
+    { label: "TikTok", href: "" },
+    { label: "YouTube", href: "" },
+    { label: "LinkedIn", href: "" },
+  ],
 };
 
 export type NavItem = { label: string; href: string; desc?: string };
@@ -23,12 +33,12 @@ export type NavGroup = { label: string; items: NavItem[] };
 
 export const NAV: (NavItem | NavGroup)[] = [
   {
-    label: "Work with Jody",
+    label: "Work with me",
     items: [
-      { label: "Hypnosis", href: "/#pillars", desc: "Anxiety, habits, blocks" },
-      { label: "Life coaching", href: "/#pillars", desc: "Monthly mentoring" },
-      { label: "Equestrian mindset", href: "/#pillars", desc: "For riders who compete" },
-      { label: "Prices", href: "/#prices", desc: "And how booking works" },
+      { label: "Hypnosis", href: "/#hypnosis", desc: "Anxiety, habits, blocks" },
+      { label: "Life coaching", href: "/#coaching", desc: "Monthly mentoring" },
+      { label: "Equestrian mindset", href: "/#riders", desc: "For riders who compete" },
+      { label: "How a session works", href: "/#session", desc: "Prices and booking" },
     ],
   },
   { label: "Free audio", href: "/#free" },
@@ -40,9 +50,9 @@ export const FOOTER = [
   {
     title: "Work with Jody",
     links: [
-      { label: "Hypnosis", href: "/#pillars" },
-      { label: "Life coaching", href: "/#pillars" },
-      { label: "Equestrian mindset", href: "/#pillars" },
+      { label: "Hypnosis", href: "/#hypnosis" },
+      { label: "Life coaching", href: "/#coaching" },
+      { label: "Equestrian mindset", href: "/#riders" },
       { label: "Book a session", href: "/#contact" },
     ],
   },
