@@ -13,7 +13,7 @@ Jody's personal-brand site: hypnotherapy, life coaching and mindset coaching, an
 - **References Jody loves:** Regan Hillyer (gold and black, flow, imagery, email pop-up, video up front, trust logos), Marie Forleo (marieforleo.com), Mel Robbins (friendly, podcast; Jody wants hers more luxe), Marisa Peer (free downloads, app), and the site built for the career-counsellor friend with a book and podcast.
 - **Languages:** English only.
 - **Live preview:** https://jody-website.vercel.app (Vercel project linked to this repo: every push to `main` redeploys)
-- **Status:** second version (redesign after dawnsaunders.com), one page. Waiting on Jody's material.
+- **Status:** version 3, editorial redesign from the owner's brief (7 Nov 2026). A frontend-only visual prototype for Jody's approval: no backend is connected. Waiting on Jody's material.
 
 ## Prices and terms (from the meeting)
 
@@ -37,6 +37,31 @@ Jody's personal-brand site: hypnotherapy, life coaching and mindset coaching, an
 - [ ] Choose: booking calendar (Calendly, Cal.com, Acuity…), CRM, form endpoint; then set `form.endpoint` in `src/data/site.ts` (the free-audio and book sign-ups send a `list` field so the CRM can tell them apart)
 - [ ] Jody to read every line in `src/data/jody.ts` marked TO CONFIRM (FAQ answers especially)
 
+## Version 3: design system
+
+The redesign brief asks for "luxury editorial fashion photography meets a powerful personal development brand, with subtle cinematic equestrian influences": brighter, less text, photography-led, restrained. References: Regan Hillyer, Marie Forleo, Mel Robbins, Marisa Peer (studied, not copied).
+
+- **Colour** (`src/styles/tokens.css`): black `#171514`, champagne gold `#C4A46B` (details only: labels, hairlines, numerals, hover), warm ivory `#F7F3EC` (the default), white, burgundy `#6A273B` (only for Live Sexy Now). Sections switch tone with `.dark`, `.white` or `.burgundy`; every part adapts through the same variables. No metallic gradients, glows or gold borders.
+- **Type:** Cormorant Garamond for headlines (light, large, italic for the second half of a line), Manrope for body, navigation, buttons and small-caps labels. Fluid scale `--step-hero`, `--step-1`, `--step-2`, `--step-3`. Classes in `src/styles/base.css`: `.display`, `.h2`, `.h3`, `.lead`, `.read`, `.eyebrow`, `.btn-primary`, `.btn-line`, `.link-arrow`, `.preview-note`.
+- **Photography:** every image goes through `src/components/jody/Photo.astro`. Each slot is listed in `PHOTOS` in `src/data/jody.ts` with a description of the shot and its aspect ratio: that list is the shot list for Jody's photographer. Empty slots show a labelled "Photo to come" placeholder of the right shape; to use a real photo, put it in `public/photos/`, set `src` (and `focus` to keep the face in frame). No layout changes needed.
+- **Motion:** slow image wipes (`.reveal-image`), lines that rise in the hero, fades on scroll (`.reveal`), quiet hover states. Everything settles still with reduced motion.
+- **Preview honesty:** forms and sign-ups show "Preview" notes and stay switched off until `form.endpoint` is set; podcast episodes are shown as planned, not published; testimonials are labelled placeholders until Jody sends real ones.
+
+## What's on the page (version 3)
+
+1. Cinematic hero: "Change the story. Change your life.", one action (`Hero.astro`)
+2. Introducing Jody (`Intro.astro`, `#about`)
+3. The three pillars: hypnosis (strongest), life coaching, equestrian mindset (`Pillars.astro`, `#work`, `#hypnosis`, `#coaching`, `#riders`)
+4. The transformation experience: 90-minute whole-life analysis, personal recording, 21 nights; prices and terms (`Experience.astro`, `#experience`)
+5. Testimonials, labelled placeholders until real ones arrive (`Testimonials.astro`)
+6. Live Sexy Now: book launch with a temporary cover and waitlist (`Book.astro`, `#book`)
+7. Podcast (planned episodes) and speaking (`Podcast.astro`, `#podcast`)
+8. Free audio (`FreeAudio.astro`, `#free`), questions (`Faq.astro`, `#faq`)
+9. Closing with Jody and the booking request (`Closing.astro`, `#contact`)
+
+Navigation: Home, About, Work with me, Live Sexy Now, Podcast, Contact, and Book a session.
+
+<!-- version 2 notes below -->
 ## What's on the page (version 2)
 
 Look after [dawnsaunders.com](https://www.dawnsaunders.com/), which the owner chose: giant lowercase words with a coloured full stop, big circles, thin Figtree headings over Forum text, rounded cards almost edge to edge. Jody's colours: metallic gold, black, ivory, and burgundy for the book.
