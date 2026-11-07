@@ -142,61 +142,84 @@ const config = { endpoint, list, done, extraFields: SITE.form.extraFields ?? {},
 </script>
 
 <style>
+  /* Pill fields and a metallic gold button. Colours come from the section tone
+     (black, .burgundy or .light ivory), so it sits right on each. */
   .signup {
     display: grid;
     gap: 16px;
   }
   fieldset {
     display: grid;
-    gap: 16px;
+    gap: 18px;
     min-width: 0;
     margin: 0;
     padding: 0;
     border: 0;
   }
   fieldset[disabled] {
-    opacity: 0.6;
+    opacity: 0.55;
+  }
+  fieldset[disabled] * {
+    cursor: not-allowed;
   }
   .row {
     display: grid;
-    grid-template-columns: 1fr 1.4fr;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
     gap: 12px;
   }
   .field {
     display: grid;
-    gap: 6px;
+    gap: 8px;
   }
   label {
-    font-size: 14px;
-    font-weight: 500;
+    padding-left: 20px;
+    font: 600 11px/1.4 var(--font-sans);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
   input:not([type="checkbox"]) {
     width: 100%;
-    min-height: 50px;
-    padding: 12px 16px;
-    border: 1.5px solid var(--line-strong);
+    min-height: 54px;
+    padding: 12px 22px;
+    border: 1px solid var(--line-strong);
     border-radius: 999px;
-    background: var(--bg);
+    background: color-mix(in srgb, var(--text) 5%, transparent);
     color: var(--text);
-    font-size: 16px;
+    font: 400 16px/1.2 var(--font-sans);
+    transition:
+      border-color 0.3s var(--ease),
+      background 0.3s var(--ease),
+      box-shadow 0.3s var(--ease);
+  }
+  input:not([type="checkbox"]):hover {
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--line-strong));
   }
   input:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
+    background: color-mix(in srgb, var(--text) 7%, transparent);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent);
   }
   [aria-invalid="true"] {
     border-color: var(--c3);
   }
   .error {
     min-height: 0;
-    color: var(--c3);
+    padding-left: 20px;
+    color: color-mix(in srgb, var(--c3) 70%, var(--text));
     font-size: 14px;
   }
+  .error:empty {
+    display: none;
+  }
   .choices-label {
-    margin-bottom: 8px;
-    font-size: 14px;
-    font-weight: 500;
+    margin-bottom: 10px;
+    padding-left: 20px;
+    font: 600 11px/1.4 var(--font-sans);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
   .chips {
     display: flex;
@@ -206,20 +229,28 @@ const config = { endpoint, list, done, extraFields: SITE.form.extraFields ?? {},
   .chip {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
+    gap: 9px;
+    padding: 9px 16px 9px 12px;
     border: 1px solid var(--line-strong);
     border-radius: 999px;
-    font-weight: 400;
+    font: 400 15px/1.2 var(--font-sans);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--text);
     cursor: pointer;
+    transition:
+      border-color 0.3s var(--ease),
+      background 0.3s var(--ease);
   }
   .chip input {
     accent-color: var(--accent);
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
+    margin: 0;
   }
   .chip:has(input:checked) {
-    border-color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
   }
   .chip:has(input:focus-visible) {
     outline: 2px solid var(--accent);
@@ -227,22 +258,53 @@ const config = { endpoint, list, done, extraFields: SITE.form.extraFields ?? {},
   }
   button {
     justify-self: start;
+    height: 54px;
+    padding: 0 30px;
+    background: var(--gold-sheen);
+    background-size: 160% 100%;
+    background-position: 0 0;
+    color: var(--ink);
+    box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--gold) 60%, transparent);
+    transition:
+      background-position 0.6s var(--ease),
+      transform 0.3s var(--ease);
+  }
+  button:hover {
+    background-position: 100% 0;
   }
   .small {
     color: var(--muted);
-    font-size: 13px;
+    font: 400 13px/1.5 var(--font-sans);
   }
   .notice {
-    padding: 12px 16px;
-    border: 1px dashed var(--line-strong);
-    border-radius: var(--radius);
+    position: relative;
+    padding: 14px 22px 14px 38px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: color-mix(in srgb, var(--text) 4%, transparent);
     color: var(--muted);
-    font-size: 14px;
+    font: 400 14px/1.5 var(--font-sans);
+  }
+  .notice::before {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: 22px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .notice strong {
+    color: var(--text);
+    font-weight: 600;
   }
   .notice a,
   .status :global(a) {
     color: var(--text);
     text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 3px;
   }
   .trap {
     position: absolute;
@@ -252,20 +314,21 @@ const config = { endpoint, list, done, extraFields: SITE.form.extraFields ?? {},
     display: none;
   }
   .status {
-    padding: 12px 16px;
+    padding: 12px 18px;
     border-radius: var(--radius);
-    background: color-mix(in srgb, var(--c3) 14%, transparent);
+    background: color-mix(in srgb, var(--c3) 16%, transparent);
     font-size: 14px;
   }
   .signup :global(.done) {
-    padding: 18px 20px;
+    padding: 20px 24px;
     border: 1px solid var(--accent);
-    border-radius: var(--radius);
-    font-weight: 500;
+    border-radius: var(--radius-lg);
+    font: 400 19px/1.45 var(--font-read);
   }
   @media (max-width: 560px) {
-    .row {
-      grid-template-columns: 1fr;
+    button {
+      width: 100%;
+      justify-self: stretch;
     }
   }
 </style>
