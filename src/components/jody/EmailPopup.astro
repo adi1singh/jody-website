@@ -1,3 +1,287 @@
 ---
-// Placeholder: being built.
+// Jody's email pop-up: a small gold-and-black card inviting visitors to get
+// the free audio (Jody's reference site had one). Sends with
+// Signup list="free-audio-popup", so the CRM can tell it apart.
+// Rules: never on first paint. Opens once, after the visitor has scrolled
+// past ~45% of the page or after ~25 seconds, whichever comes first, and not
+// while they are typing in a form or reading the free-audio section. Never
+// again after closing it or signing up anywhere on the page (localStorage,
+// wrapped in try/catch). A real modal <dialog>: focus moves in and returns,
+// Escape, the close button and clicking the backdrop close it. A bottom sheet
+// on phones. With JavaScript off it never shows (rendered `hidden`).
+// No motion with reduced motion.
+//
+// <EmailPopup slot="end" />   (in Base.astro's end slot)
+import Signup from "../convert/Signup.astro";
 ---
+<dialog class="popup" aria-labelledby="popup-title" aria-describedby="popup-text" aria-modal="true" hidden data-email-popup>
+  <div class="card">
+    <span class="sun" aria-hidden="true"></span>
+    <button type="button" class="close" aria-label="Close" data-close>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+    </button>
+    <div class="inner">
+      <p class="eyebrow">A gift from Jody</p>
+      <h2 id="popup-title" class="title">Sleep easier <em>tonight</em><span class="dot">.</span></h2>
+      <p id="popup-text" class="text">
+        Free hypnosis audios for sleep, anxiety, low days and money. Leave your email and I’ll send them as soon as they’re recorded.
+      </p>
+      <Signup list="free-audio-popup" submit="Send me the audio" done="You’re on the list. Watch your inbox." />
+    </div>
+  </div>
+</dialog>
+
+<script>
+  const KEY = "jody-popup";
+  const dlg = document.querySelector<HTMLDialogElement>("[data-email-popup]");
+  const store = {
+    get() {
+      try {
+        return localStorage.getItem(KEY);
+      } catch {
+        return null;
+      }
+    },
+    set(v: string) {
+      try {
+        localStorage.setItem(KEY, v);
+      } catch {}
+    },
+  };
+
+  if (dlg && typeof dlg.showModal === "function" && !store.get()) {
+    let shown = false;
+    let returnTo: HTMLElement | null = null;
+    let timer = 0;
+
+    const busy = () => {
+      const a = document.activeElement;
+      if (a && a.matches("input, textarea, select")) return true; // typing somewhere
+      if (document.querySelector("dialog[open]:not([data-email-popup]), [role=dialog]:not([hidden])")) return true;
+      const free = document.getElementById("free");
+      if (free) {
+        const r = free.getBoundingClientRect();
+        if (r.top < innerHeight * 0.6 && r.bottom > innerHeight * 0.4) return true; // already reading it
+      }
+      return false;
+    };
+
+    const stop = () => {
+      removeEventListener("scroll", onScroll);
+      clearTimeout(timer);
+    };
+
+    const open = () => {
+      if (shown || store.get()) return stop();
+      if (busy()) {
+        // try again a little later, once
+        clearTimeout(timer);
+        timer = window.setTimeout(open, 8000);
+        return;
+      }
+      shown = true;
+      stop();
+      returnTo = document.activeElement as HTMLElement | null;
+      dlg.hidden = false;
+      dlg.showModal();
+      dlg.querySelector<HTMLElement>("[data-close]")?.focus();
+    };
+
+    const close = (why: string) => {
+      store.set(why);
+      dlg.classList.add("is-closing");
+      const done = () => {
+        dlg.classList.remove("is-closing");
+        if (dlg.open) dlg.close();
+        dlg.hidden = true;
+        returnTo?.focus?.({ preventScroll: true });
+      };
+      matchMedia("(prefers-reduced-motion: reduce)").matches ? done() : setTimeout(done, 220);
+    };
+
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      if (max > 0 && scrollY / max > 0.45) open();
+    };
+
+    // wait a beat after load so it is never part of first paint
+    setTimeout(() => {
+      addEventListener("scroll", onScroll, { passive: true });
+      timer = window.setTimeout(open, 25000);
+    }, 1500);
+
+    dlg.querySelector("[data-close]")?.addEventListener("click", () => close("dismissed"));
+    dlg.addEventListener("cancel", (e) => {
+      e.preventDefault(); // Escape: close our way
+      close("dismissed");
+    });
+    dlg.addEventListener("click", (e) => {
+      if (e.target === dlg) close("dismissed"); // the backdrop
+    });
+
+    // signed up anywhere on the page: never show it again
+    document.querySelectorAll<HTMLFormElement>("[data-signup]").forEach((form) => {
+      new MutationObserver(() => {
+        if (form.querySelector(".done")) {
+          store.set("signed-up");
+          if (!dlg.contains(form)) stop();
+        }
+      }).observe(form, { childList: true });
+    });
+  }
+</script>
+
+<style>
+  .popup {
+    width: min(500px, calc(100% - 32px));
+    max-width: none;
+    max-height: calc(100dvh - 32px);
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-lg);
+    background: transparent;
+    color: var(--text);
+    overflow: visible;
+  }
+  .popup::backdrop {
+    background: color-mix(in srgb, var(--ink) 62%, transparent);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+  .card {
+    position: relative;
+    max-height: calc(100dvh - 32px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line-strong);
+    background: var(--ink);
+    box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.8);
+    isolation: isolate;
+  }
+  /* a gold half-sun rising over the top edge */
+  .sun {
+    position: absolute;
+    z-index: -1;
+    top: -196px;
+    left: 50%;
+    width: 300px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(200deg, var(--gold-soft), var(--gold) 50%, var(--gold-deep));
+    box-shadow: 0 0 80px 10px color-mix(in srgb, var(--gold) 30%, transparent);
+  }
+  .inner {
+    display: grid;
+    gap: 14px;
+    padding: 136px clamp(22px, 5vw, 40px) clamp(24px, 5vw, 34px);
+    text-align: left;
+  }
+  .title {
+    font-size: clamp(32px, 7vw, 42px);
+    letter-spacing: -0.04em;
+  }
+  .title em {
+    padding-right: 0.04em;
+  }
+  .text {
+    margin-bottom: 8px;
+    font: 400 17px/1.45 var(--font-read);
+    color: var(--muted);
+  }
+  .close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--ink) 82%, transparent);
+    color: var(--ivory);
+    transition: background 0.3s var(--ease);
+  }
+  .close:hover {
+    background: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .popup[open] {
+      animation: pop-in 0.6s var(--ease) both;
+    }
+    .popup[open]::backdrop {
+      animation: fade 0.5s ease both;
+    }
+    .popup:global(.is-closing) {
+      animation: pop-out 0.22s ease-in both;
+    }
+    .popup:global(.is-closing)::backdrop {
+      animation: fade 0.22s ease reverse both;
+    }
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px) scale(0.97);
+    }
+  }
+  @keyframes pop-out {
+    to {
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+    }
+  }
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* Phones: a bottom sheet */
+  @media (max-width: 560px) {
+    .popup {
+      width: 100%;
+      margin: auto 0 0;
+      max-height: 88dvh;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+    .card {
+      max-height: 88dvh;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      border-bottom: 0;
+    }
+    .sun {
+      top: -186px;
+      width: 250px;
+    }
+    .inner {
+      gap: 10px;
+      padding-top: 88px;
+      padding-bottom: calc(22px + env(safe-area-inset-bottom));
+    }
+    .text {
+      font-size: 16px;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .popup[open] {
+        animation-name: sheet-in;
+      }
+      .popup:global(.is-closing) {
+        animation-name: sheet-out;
+      }
+    }
+  }
+  @keyframes sheet-in {
+    from {
+      transform: translateY(100%);
+    }
+  }
+  @keyframes sheet-out {
+    to {
+      transform: translateY(100%);
+    }
+  }
+</style>
