@@ -1,4 +1,187 @@
 ---
-// Placeholder: being built (see the page plan in src/pages/index.astro).
+// Questions, after dawnsaunders.com's FAQ: a black section with "Questions,
+// answered." on the left and, on the right, questions between thin gold-tinted
+// rules, each with a + in a thin outlined circle that turns into × when open.
+// Built on <details>, so it works without JavaScript; a small script animates
+// the height open and closed (skipped with reduced motion). Publishes FAQPage
+// structured data. The care note (CARE_NOTE) sits underneath, small and quiet.
+// Content: FAQ and CARE_NOTE from src/data/jody.ts.
+// Usage: <Faq /> (id="faq"; one per page).
+import { FAQ, CARE_NOTE } from "../../data/jody";
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+};
 ---
-<section class="section" id="stub-faq"><div class="wrap"><p class="eyebrow">Faq · being built</p></div></section>
+<section class="faq section" id="faq" aria-labelledby="faq-title">
+  <div class="wrap grid-faq">
+    <div class="head">
+      <p class="eyebrow reveal">FAQ</p>
+      <h2 id="faq-title" class="h2 reveal">Questions, answered<span class="dot">.</span></h2>
+      <p class="read sub reveal">The things people most often ask before their first session.</p>
+    </div>
+    <div class="list" data-faq-list>
+      {FAQ.map((f) => (
+        <details class="reveal">
+          <summary>
+            <span class="q">{f.q}</span>
+            <span class="icon" aria-hidden="true"></span>
+          </summary>
+          <div class="answer"><p>{f.a}</p></div>
+        </details>
+      ))}
+    </div>
+  </div>
+  <p class="wrap care">{CARE_NOTE}</p>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+</section>
+
+<script>
+  // Smooth height animation on open and close; native <details> otherwise.
+  const still = matchMedia("(prefers-reduced-motion: reduce)");
+  document.querySelectorAll<HTMLDetailsElement>("[data-faq-list] details").forEach((d) => {
+    const summary = d.querySelector("summary")!;
+    const answer = d.querySelector<HTMLElement>(".answer")!;
+    let anim: Animation | null = null;
+    summary.addEventListener("click", (e) => {
+      if (still.matches || !answer.animate) return;
+      e.preventDefault();
+      anim?.cancel();
+      if (d.open) {
+        d.classList.add("closing");
+        anim = answer.animate({ height: [`${answer.offsetHeight}px`, "0px"], opacity: [1, 0] }, { duration: 380, easing: "cubic-bezier(0.22,1,0.36,1)" });
+        anim.onfinish = () => {
+          d.open = false;
+          d.classList.remove("closing");
+        };
+      } else {
+        d.open = true;
+        anim = answer.animate({ height: ["0px", `${answer.offsetHeight}px`], opacity: [0, 1] }, { duration: 480, easing: "cubic-bezier(0.22,1,0.36,1)" });
+      }
+    });
+  });
+</script>
+
+<style>
+  .faq {
+    background: var(--ink);
+  }
+  /* A soft gold hairline at the top, as on the reference. */
+  .faq::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--gold) 45%, transparent), transparent);
+  }
+  .grid-faq {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: clamp(40px, 7vw, 110px);
+    align-items: start;
+  }
+  .head {
+    position: sticky;
+    top: 120px;
+  }
+  .head .h2 {
+    margin-top: 18px;
+  }
+  .sub {
+    margin-top: 22px;
+    max-width: 22em;
+    color: var(--muted);
+  }
+  .list {
+    border-top: 1px solid var(--line-strong);
+  }
+  details {
+    border-bottom: 1px solid var(--line-strong);
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 26px 0;
+    cursor: pointer;
+    list-style: none;
+    font-size: clamp(19px, 1.8vw, 24px);
+    font-weight: 300;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    transition: color 0.3s;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary:hover {
+    color: var(--gold-soft);
+  }
+  .icon {
+    position: relative;
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    transition: transform 0.45s var(--ease), border-color 0.3s, background 0.3s;
+  }
+  .icon::before,
+  .icon::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 13px;
+    height: 1.5px;
+    margin: -0.75px 0 0 -6.5px;
+    background: currentColor;
+    border-radius: 2px;
+  }
+  .icon::after {
+    transform: rotate(90deg);
+  }
+  summary:hover .icon {
+    border-color: var(--gold);
+  }
+  details[open]:not(:global(.closing)) .icon {
+    transform: rotate(45deg);
+    border-color: var(--gold);
+    background: var(--gold);
+    color: var(--ink);
+  }
+  .answer {
+    overflow: hidden;
+  }
+  .answer p {
+    padding: 0 64px 28px 0;
+    font-family: var(--font-read);
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--muted);
+    max-width: 38em;
+  }
+  .care {
+    margin-top: clamp(56px, 7vw, 96px);
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--faint);
+  }
+  @media (max-width: 860px) {
+    .grid-faq {
+      grid-template-columns: 1fr;
+    }
+    .head {
+      position: static;
+    }
+    .answer p {
+      padding-right: 0;
+    }
+  }
+</style>
