@@ -1,4 +1,371 @@
 ---
-// Placeholder: being built (the version 2 file is in git history: git show main:src/components/jody/Testimonials.astro).
+// Testimonials (#testimonials): client words, one at a time, set large in the
+// display serif. A calm white pause between the experience and the burgundy
+// book launch: no cards, no stars, no photos of strangers, just the words.
+// - With JavaScript: the quotes share one space and crossfade slowly every
+//   8 seconds, with a counter ("01 / 03"), quiet previous/next buttons and a
+//   pause button. It pauses on hover and focus, and never moves by itself with
+//   reduced motion.
+// - Without JavaScript: every quote is listed, one under the other.
+// - TESTIMONIALS (src/data/jody.ts) is empty until Jody has real client words
+//   with permission. Until then three clearly labelled placeholders show. Never
+//   write a testimonial for a client.
+//
+// <Testimonials />                      (reads TESTIMONIALS)
+// <Testimonials items={[{ quote, name, detail }]} />
+import { TESTIMONIALS } from "../../data/jody";
+interface Item {
+  quote: string;
+  name: string;
+  detail?: string;
+}
+interface Props {
+  items?: Item[];
+}
+const real = Astro.props.items ?? TESTIMONIALS;
+const placeholder = real.length === 0;
+const items: Item[] = placeholder
+  ? [
+      { quote: "Client words will appear here, in their own voice.", name: "Client name", detail: "Placeholder" },
+      { quote: "A second client’s words will sit here, once Jody has their permission.", name: "Client name", detail: "Placeholder" },
+      { quote: "A third story will go here. Real words only, never written for them.", name: "Client name", detail: "Placeholder" },
+    ]
+  : real;
+const pad = (n: number) => String(n).padStart(2, "0");
+const total = pad(items.length);
 ---
-<section class="section"><div class="wrap"><p class="eyebrow">Testimonials · being built</p></div></section>
+<section id="testimonials" class="section white testimonials" aria-labelledby="testimonials-title">
+  <div class="wrap grid">
+    <header class="side reveal">
+      <p class="eyebrow">Kind words</p>
+      <h2 id="testimonials-title" class="h3">In their <em>own words.</em></h2>
+      {placeholder && <p class="preview-note">Placeholder · real client words to come</p>}
+
+      {items.length > 1 && (
+        <div class="controls" data-controls hidden>
+          <p class="count" aria-hidden="true"><span data-current>01</span> <span class="sep">/</span> {total}</p>
+          <div class="buttons">
+            <button type="button" class="arrow" data-prev aria-label="Previous quote"><span aria-hidden="true">←</span></button>
+            <button type="button" class="arrow" data-next aria-label="Next quote"><span aria-hidden="true">→</span></button>
+            <button type="button" class="pause" data-pause aria-pressed="false">Pause</button>
+          </div>
+        </div>
+      )}
+    </header>
+
+    <div class="quotes" data-quotes aria-live="off" role="group" aria-roledescription="carousel" aria-label="Client quotes">
+      {items.map((t, i) => (
+        <figure class:list={["quote", { "is-active": i === 0, "is-placeholder": placeholder }]} data-quote aria-roledescription="slide" aria-label={`${i + 1} of ${items.length}`}>
+          <span class="mark" aria-hidden="true">“</span>
+          <blockquote>
+            <p>{t.quote}</p>
+          </blockquote>
+          <figcaption>
+            <span class="num" aria-hidden="true">{pad(i + 1)}</span>
+            <span class="who">
+              <span class="name">{t.name}</span>
+              {t.detail && <span class="detail">{t.detail}</span>}
+            </span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>("#testimonials").forEach((root) => {
+    const quotes = [...root.querySelectorAll<HTMLElement>("[data-quote]")];
+    const box = root.querySelector<HTMLElement>("[data-quotes]");
+    const controls = root.querySelector<HTMLElement>("[data-controls]");
+    if (!box || !controls || quotes.length < 2) return;
+    const current = controls.querySelector<HTMLElement>("[data-current]")!;
+    const pauseBtn = controls.querySelector<HTMLButtonElement>("[data-pause]")!;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const DELAY = 8000;
+    let index = 0;
+    let timer = 0;
+    let userPaused = reduce;
+    let hovering = false;
+
+    box.classList.add("is-enhanced");
+    controls.hidden = false;
+    if (reduce) pauseBtn.hidden = true;
+
+    const show = (n: number, announce = false) => {
+      index = (n + quotes.length) % quotes.length;
+      quotes.forEach((q, i) => {
+        const on = i === index;
+        q.classList.toggle("is-active", on);
+        q.setAttribute("aria-hidden", on ? "false" : "true");
+      });
+      current.textContent = String(index + 1).padStart(2, "0");
+      box.setAttribute("aria-live", announce ? "polite" : "off");
+    };
+    const stop = () => window.clearInterval(timer);
+    const start = () => {
+      stop();
+      if (userPaused || hovering) return;
+      timer = window.setInterval(() => show(index + 1), DELAY);
+    };
+
+    controls.querySelector("[data-prev]")!.addEventListener("click", () => {
+      show(index - 1, true);
+      start();
+    });
+    controls.querySelector("[data-next]")!.addEventListener("click", () => {
+      show(index + 1, true);
+      start();
+    });
+    pauseBtn.addEventListener("click", () => {
+      userPaused = !userPaused;
+      pauseBtn.setAttribute("aria-pressed", String(userPaused));
+      pauseBtn.textContent = userPaused ? "Play" : "Pause";
+      start();
+    });
+    // Pause while the reader is with it: pointer over the section or focus inside.
+    root.addEventListener("pointerenter", () => {
+      hovering = true;
+      stop();
+    });
+    root.addEventListener("pointerleave", () => {
+      hovering = false;
+      start();
+    });
+    root.addEventListener("focusin", () => {
+      hovering = true;
+      stop();
+    });
+    root.addEventListener("focusout", (e) => {
+      if (root.contains(e.relatedTarget as Node)) return;
+      hovering = false;
+      start();
+    });
+
+    show(0);
+    // Only run while on screen.
+    new IntersectionObserver(([entry]) => (entry.isIntersecting ? start() : stop())).observe(root);
+  });
+</script>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: clamp(40px, 6vw, 112px);
+    align-items: start;
+  }
+  .side {
+    display: grid;
+    gap: 22px;
+    justify-items: start;
+    position: sticky;
+    top: 120px;
+  }
+  .side h2 {
+    margin: 0;
+    font-weight: 300;
+  }
+  .controls {
+    display: grid;
+    gap: 22px;
+    margin-top: clamp(16px, 4vw, 56px);
+  }
+  .controls[hidden] {
+    display: none;
+  }
+  .count {
+    margin: 0;
+    font: 300 clamp(40px, 4vw, 60px) / 1 var(--font-display);
+    letter-spacing: -0.01em;
+    color: var(--text);
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+  .count .sep,
+  .count {
+    color: var(--faint, var(--muted));
+  }
+  .count [data-current] {
+    color: var(--text);
+  }
+  .buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .arrow {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text);
+    font: 400 18px/1 var(--font-sans);
+    cursor: pointer;
+    transition:
+      border-color 0.4s var(--ease),
+      color 0.4s var(--ease);
+  }
+  .arrow:hover {
+    border-color: var(--detail);
+    color: var(--accent);
+  }
+  .pause {
+    margin-left: 10px;
+    padding: 6px 0;
+    border: 0;
+    border-bottom: 1px solid var(--line-strong);
+    background: none;
+    color: var(--muted);
+    font: 600 11px/1.2 var(--font-sans);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .pause:hover {
+    color: var(--text);
+    border-color: var(--detail);
+  }
+  .pause[hidden] {
+    display: none;
+  }
+
+  /* Without JavaScript: every quote, one under the other */
+  .quotes {
+    display: grid;
+    gap: clamp(64px, 8vw, 112px);
+  }
+  .quote {
+    position: relative;
+    margin: 0;
+  }
+  .mark {
+    display: block;
+    height: 0.5em;
+    margin-bottom: 8px;
+    font: 300 clamp(80px, 9vw, 140px) / 1 var(--font-display);
+    color: var(--detail);
+  }
+  blockquote {
+    margin: 0;
+  }
+  blockquote p {
+    margin: 0;
+    max-width: 20ch;
+    font: 300 clamp(36px, 5.4vw, 84px) / 1.04 var(--font-display);
+    letter-spacing: -0.015em;
+    color: var(--text);
+    text-wrap: balance;
+  }
+  .is-placeholder blockquote p {
+    font-style: italic;
+    color: var(--muted);
+  }
+  figcaption {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: clamp(32px, 4vw, 52px);
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    max-width: 560px;
+  }
+  .num {
+    font: 400 15px/1 var(--font-display);
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    font-variant-numeric: lining-nums;
+  }
+  .who {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 14px;
+  }
+  .name {
+    font: 600 var(--label) / 1.4 var(--font-sans);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .detail {
+    font: 400 var(--small) / 1.4 var(--font-sans);
+    color: var(--muted);
+  }
+
+  /* With JavaScript: one quote at a time, slow crossfade in the same space */
+  .quotes:global(.is-enhanced) {
+    gap: 0;
+  }
+  .quotes:global(.is-enhanced) .quote {
+    grid-area: 1 / 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition:
+      opacity 1.4s var(--ease-in-out),
+      transform 1.6s var(--ease),
+      visibility 0s linear 1.4s;
+  }
+  .quotes:global(.is-enhanced) .quote:global(.is-active) {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 1.4s var(--ease-in-out) 0.25s,
+      transform 1.6s var(--ease) 0.25s,
+      visibility 0s;
+  }
+
+  @media (max-width: 860px) {
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .side {
+      position: static;
+      gap: 18px;
+    }
+    .controls {
+      order: 10;
+      grid-auto-flow: column;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-top: 0;
+    }
+    /* Controls sit under the quote on phones */
+    .side {
+      display: contents;
+    }
+    .side > .eyebrow {
+      order: 1;
+    }
+    .side > h2 {
+      order: 2;
+    }
+    .side > .preview-note {
+      order: 3;
+    }
+    .quotes {
+      order: 4;
+      margin-top: 8px;
+    }
+    .controls {
+      order: 5;
+      padding-top: 8px;
+    }
+    .count {
+      font-size: 34px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .quotes:global(.is-enhanced) .quote,
+    .quotes:global(.is-enhanced) .quote:global(.is-active) {
+      transform: none;
+      transition: none;
+    }
+  }
+</style>
