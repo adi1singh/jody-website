@@ -124,21 +124,25 @@ const p = PHOTOS.portrait;
     color: var(--muted);
     letter-spacing: 0.01em;
   }
+  /* Phones: the photo on its own, the words under it, so nothing covers Jody. */
   @media (max-width: 760px) {
     .band {
-      aspect-ratio: 4 / 5;
+      aspect-ratio: auto;
+      background: var(--surface);
     }
     .band img {
+      position: relative;
+      aspect-ratio: 1;
+      height: auto;
       object-position: 24% 20%;
     }
     .band::after {
-      background: linear-gradient(to top, color-mix(in srgb, var(--ink) 92%, transparent) 0%, color-mix(in srgb, var(--ink) 55%, transparent) 34%, transparent 56%);
+      display: none;
     }
     figcaption {
-      left: 22px;
-      right: 22px;
-      bottom: 24px;
+      position: static;
       max-width: none;
+      padding: 24px 22px 28px;
     }
     .intro {
       grid-template-columns: 1fr;

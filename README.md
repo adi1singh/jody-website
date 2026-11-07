@@ -12,7 +12,7 @@ Jody's personal-brand site: hypnotherapy, life coaching and mindset coaching, an
 - **Look:** gold and black, clean, luxurious, less text, more modern and a bit brighter than the reference. Burgundy and gold for the book. People buy from people: Jody's face throughout.
 - **References Jody loves:** Regan Hillyer (gold and black, flow, imagery, email pop-up, video up front, trust logos), Marie Forleo (marieforleo.com), Mel Robbins (friendly, podcast; Jody wants hers more luxe), Marisa Peer (free downloads, app), and the site built for the career-counsellor friend with a book and podcast.
 - **Languages:** English only.
-- **Status:** first version built (one page). Waiting on Jody's material.
+- **Status:** second version (redesign after dawnsaunders.com), one page. Waiting on Jody's material.
 
 ## Prices and terms (from the meeting)
 
@@ -24,7 +24,8 @@ Jody's personal-brand site: hypnotherapy, life coaching and mindset coaching, an
 
 ## Waiting on
 
-- [ ] Jody: branding photos (black and gold shoot) and horse photos. They replace `public/placeholders/` (portrait: photo-3, horses: photo-5, pillars: photo-1, 2, 4)
+- [ ] Jody: the **original, full-size** branding photo. The site uses a screenshot of the Facebook post (only 923px wide), so the About and booking photos are a little soft. Then redo the hero cut-out (see "Photos" below)
+- [ ] Jody: horse photos and more branding photos (one photo is used three times for now)
 - [ ] Jody: the "pillars" brief email (full list of services and wording)
 - [ ] Jody: client feedback, to add a testimonial section (`TestimonialWall` or `CurvedRail`)
 - [ ] Jody: domain for Live Sexy Now (and whether the site lives on a Jody domain or the book's), business email, phone
@@ -35,6 +36,28 @@ Jody's personal-brand site: hypnotherapy, life coaching and mindset coaching, an
 - [ ] Choose: booking calendar (Calendly, Cal.com, Acuity…), CRM, form endpoint; then set `form.endpoint` in `src/data/site.ts` (the free-audio and book sign-ups send a `list` field so the CRM can tell them apart)
 - [ ] Jody to read every line in `src/data/jody.ts` marked TO CONFIRM (FAQ answers especially)
 
+## What's on the page (version 2)
+
+Look after [dawnsaunders.com](https://www.dawnsaunders.com/), which the owner chose: giant lowercase words with a coloured full stop, big circles, thin Figtree headings over Forum text, rounded cards almost edge to edge. Jody's colours: metallic gold, black, ivory, and burgundy for the book.
+
+1. Hero: "jody." in ivory on gold, Jody on a black disc, the promise and two buttons (book, free audio); a gold disc with Jody's statement spills into the next section (`Hero.astro`)
+2. Ways to work with me: big-word cards "hypnosis." (with what it helps with), "coaching.", "riders.", and "Sound familiar?" in clients' words (`Services.astro`)
+3. How a session works, "One session. Twenty-one nights.", prices and terms (`Session.astro`)
+4. Free audio, "Start tonight.": four audios marked "recording now", sign-up for the CRM, the $9 membership as coming soon (`FreeAudio.astro`)
+5. "live sexy now.": the book with a drawn draft cover, the podcast and a waitlist (`Book.astro`)
+6. About: the branding photo with "Hypnotherapist. Life coach. Horse lover. And now, the next chapter." and credentials (`About.astro`)
+7. What clients are saying: built, but hidden until real quotes are added to `TESTIMONIALS` in `src/data/jody.ts` (`Testimonials.astro`)
+8. FAQ and the Lifeline note (`Faq.astro`); book a session: gold card with terms and the request form (`BookSession.astro`, `#contact`)
+9. Footer with a giant "live sexy now." over a gold sun; email pop-up offering the free audio (once per visitor, after scrolling or 25s); chat helper
+
+Sections live in `src/components/jody/`, content in `src/data/jody.ts`, colours and fonts in `src/styles/tokens.css`. When ready, set in `src/data/site.ts`: `form.endpoint` (all forms and sign-ups go live), `booking` (calendar link for every "Book" button), `socials` (shown in the footer), `email` and `phone`.
+
+## Photos
+
+- `public/jody-hero.webp`: Jody cut out of the branding photo with the circle crop baked in (centre 345,460, radius 345 in a 690×770 image; `Hero.astro` matches it). Made with `rembg` (isnet-general-use and u2net_human_seg masks combined), then the desk removed. Redo from the full-size original when it arrives.
+- `public/jody-portrait.jpg`: the full branding photo. `public/og.jpg`: the share image for links.
+
+<!-- version 1 notes below -->
 ## What's on the page
 
 Hero (gold aurora, rotating word) → statement → four pillars (ColourPanels) → "Sound familiar?" problem cards → how a session works (Steps) → prices and terms → free audio sign-up → Live Sexy Now book and podcast with waitlist → photo band (horses) → Meet Jody → FAQ → booking request form → care note (Lifeline 13 11 14) → chat helper. Content is in `src/data/jody.ts`; colours in `src/styles/tokens.css`; the sign-up form is `src/components/convert/Signup.astro` (made for this site).
