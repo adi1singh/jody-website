@@ -245,7 +245,9 @@ const config = { endpoint, extraFields: SITE.form.extraFields ?? {}, email: SITE
     aspect-ratio: 4 / 5;
     border-radius: 999px 999px 0 0;
     overflow: hidden;
-    background: var(--surface);
+    /* A warm studio-grey backdrop: close to the shoot's wall, so the soft edge
+       of the cut-out around the hair disappears (it shows on black). */
+    background: color-mix(in srgb, var(--stone) 72%, var(--faint));
     isolation: isolate;
   }
   /* Show only the upper part of the image (x 12–432, y 0–525 of 690 × 770),
@@ -256,6 +258,10 @@ const config = { endpoint, extraFields: SITE.form.extraFields ?? {}, email: SITE
     top: 0;
     left: -2.9%;
     width: 164.3%;
+  }
+  /* The cut-out has transparency: let the arch's backdrop show through */
+  .shift :global(.photo) {
+    background: transparent;
   }
   /* A fine second arch, offset: one quiet line, not a frame */
   .portrait::before {
