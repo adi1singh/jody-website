@@ -1,4 +1,602 @@
 ---
-// Placeholder: being built.
+// Closing and contact (#contact). The last word, on black: Jody's portrait in
+// a tall arch on the right, a confident serif headline on the left (second
+// line in italic), one sentence and ONE action. Not a standard contact form:
+// the session request sits behind "Book a session", a <details> disclosure
+// that opens an elegant, underlined form in place (works without JavaScript).
+// - SITE.booking set: the main action opens that calendar link, and the form
+//   stays available behind a quieter "Or send a message".
+// - SITE.form.endpoint empty: the form is a clearly labelled preview (fields
+//   switched off) with Jody's email as the way to get in touch.
+// - With an endpoint: validation messages under each field, sends in the
+//   background, success only once the service accepts it, a hidden honeypot
+//   field (same pattern as src/components/convert/ContactForm.astro). Without
+//   JavaScript it posts as a normal form.
+// - Small enhancement: any link to #contact opens the form as it arrives.
+// The portrait is PHOTOS.cutout (/jody-hero.webp): it has a circular crop
+// baked into its lower edge, so the arch frames only its upper part (face
+// and shoulders) and that edge never shows.
+// Words: CLOSING, TERMS and PHOTOS in src/data/jody.ts; email, booking and
+// endpoint in src/data/site.ts.
+//
+// <Closing />
+import Photo from "./Photo.astro";
+import { CLOSING, PHOTOS, TERMS } from "../../data/jody";
+import { SITE } from "../../data/site";
+const endpoint = SITE.form.endpoint;
+const live = Boolean(endpoint);
+const booking = SITE.booking;
+const topics = [
+  "Hypnosis",
+  "Quit smoking or vaping",
+  "Weight (mental gastric bypass)",
+  "Life coaching",
+  "Equestrian mindset coaching",
+  "Speaking or podcast",
+  "Something else",
+];
+const config = { endpoint, extraFields: SITE.form.extraFields ?? {}, email: SITE.email, phone: SITE.phone };
 ---
-<section class="section"><div class="wrap"><p class="eyebrow">Closing · being built</p></div></section>
+<section class="closing dark" id="contact" aria-labelledby="closing-title">
+  <div class="wrap grid">
+    <div class="portrait reveal">
+      <div class="arch">
+        <div class="shift">
+          <Photo photo={PHOTOS.cutout} ratio="690/770" sizes="(max-width: 900px) 110vw, 50vw" />
+        </div>
+      </div>
+    </div>
+
+    <div class="copy">
+      <p class="eyebrow reveal">Work with Jody</p>
+      <h2 id="closing-title" class="title reveal">
+        <span>{CLOSING.title[0]}</span>
+        <em>{CLOSING.title[1]}</em>
+      </h2>
+      <p class="lead reveal">{CLOSING.text}</p>
+
+      <div class="action reveal">
+        {booking && (
+          <a class="btn btn-primary" href={booking} target="_blank" rel="noopener">{CLOSING.cta.label} <span aria-hidden="true">→</span></a>
+        )}
+        <details class="book" data-book>
+          <summary class:list={booking ? "link-arrow" : "btn btn-primary"}>
+            <span class="when-closed">{booking ? "Or send a message" : CLOSING.cta.label}</span>
+            <span class="when-open">Close the form</span>
+            <span class="chev" aria-hidden="true"></span>
+          </summary>
+
+          <form class="form" action={live ? endpoint : undefined} method="post" novalidate data-closing-form data-config={JSON.stringify(config)}>
+            <div class="form-head">
+              <p class="form-title">Request a session</p>
+              {live ? (
+                <p class="form-sub">Tell me a little about what’s going on. I’ll reply personally to find a time.</p>
+              ) : (
+                <p class="form-sub">
+                  <span class="preview-note">Preview · online requests open soon</span>
+                  <span class="alt">For now, email me at <a href={`mailto:${SITE.email}?subject=${encodeURIComponent("Booking a session")}`}>{SITE.email}</a> and I’ll reply personally.</span>
+                </p>
+              )}
+            </div>
+            <fieldset disabled={!live}>
+              <legend class="sr-only">Your session request</legend>
+              <div class="row">
+                <div class="field" data-field>
+                  <label for="cl-name">Name</label>
+                  <input id="cl-name" name="name" autocomplete="name" required data-msg="Please enter your name." />
+                  <p class="error" data-error aria-live="polite"></p>
+                </div>
+                <div class="field" data-field>
+                  <label for="cl-email">Email</label>
+                  <input id="cl-email" name="email" type="email" autocomplete="email" required data-msg="Please enter your email address." />
+                  <p class="error" data-error aria-live="polite"></p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="field" data-field>
+                  <label for="cl-phone">Phone <span class="optional">(optional)</span></label>
+                  <input id="cl-phone" name="phone" type="tel" autocomplete="tel" />
+                  <p class="error" data-error aria-live="polite"></p>
+                </div>
+                <div class="field" data-field>
+                  <label for="cl-topic">What is it about?</label>
+                  <select id="cl-topic" name="topic">
+                    <option value="">Choose one</option>
+                    {topics.map((t) => <option>{t}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div class="field" data-field>
+                <label for="cl-message">Message</label>
+                <textarea id="cl-message" name="message" rows="3" required data-msg="Please write a short message."></textarea>
+                <p class="error" data-error aria-live="polite"></p>
+              </div>
+              <div class="trap" aria-hidden="true">
+                <label>Leave this empty <input name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+              </div>
+              <button type="submit" class="btn btn-primary" data-submit>Send request <span aria-hidden="true">→</span></button>
+            </fieldset>
+            <div class="status" data-status tabindex="-1"></div>
+          </form>
+        </details>
+      </div>
+
+      <div class="small reveal">
+        <p class="mail">Or write to <a href={`mailto:${SITE.email}`}>{SITE.email}</a>{SITE.phone && <> · <a href={`tel:${SITE.phone.replace(/[^\d+]/g, "")}`}>{SITE.phone}</a></>}</p>
+        <ul class="terms">{TERMS.map((t) => <li>{t}</li>)}</ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Open the request form when a visitor follows any link to #contact.
+  const book = document.querySelector<HTMLDetailsElement>("[data-book]");
+  if (book) {
+    const openIfContact = () => {
+      if (location.hash === "#contact") book.open = true;
+    };
+    openIfContact();
+    addEventListener("hashchange", openIfContact);
+    document.addEventListener("click", (e) => {
+      const a = (e.target as HTMLElement).closest<HTMLAnchorElement>("a[href]");
+      if (a && a.hash === "#contact" && a.pathname === location.pathname) book.open = true;
+    });
+  }
+
+  // Validation and background sending (only when an endpoint is set).
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  document.querySelectorAll<HTMLFormElement>("[data-closing-form]").forEach((form) => {
+    const cfg = JSON.parse(form.dataset.config!) as { endpoint: string; extraFields: Record<string, string>; email: string; phone: string };
+    if (!cfg.endpoint) return;
+    const button = form.querySelector<HTMLButtonElement>("[data-submit]")!;
+    const status = form.querySelector<HTMLElement>("[data-status]")!;
+    const controls = [...form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("input:not([name=_gotcha]), textarea")];
+    const check = (el: HTMLInputElement | HTMLTextAreaElement) => {
+      const v = el.value.trim();
+      if (!v) return el.required ? (el.dataset.msg ?? "Please fill this in.") : "";
+      if (el.type === "email" && !EMAIL.test(v)) return "Enter an email address like name@example.com.";
+      if (el.type === "tel" && !/^\+?\d{8,15}$/.test(v.replace(/[\s()-]/g, ""))) return "Enter a phone number with 8 to 15 digits.";
+      return "";
+    };
+    const show = (el: HTMLInputElement | HTMLTextAreaElement, msg: string) => {
+      const slot = el.closest("[data-field]")?.querySelector<HTMLElement>("[data-error]");
+      if (slot) slot.textContent = msg;
+      msg ? el.setAttribute("aria-invalid", "true") : el.removeAttribute("aria-invalid");
+    };
+    controls.forEach((el) => {
+      el.addEventListener("blur", () => el.value && show(el, check(el)));
+      el.addEventListener("input", () => el.hasAttribute("aria-invalid") && show(el, check(el)));
+    });
+    const direct = `Email <a href="mailto:${cfg.email}">${cfg.email}</a>${cfg.phone ? ` or call ${cfg.phone}` : ""}.`;
+    const fail = (html: string) => {
+      status.innerHTML = html;
+      status.focus();
+    };
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      let first: HTMLElement | null = null;
+      controls.forEach((el) => {
+        const msg = check(el);
+        show(el, msg);
+        if (msg && !first) first = el;
+      });
+      if (first) return (first as HTMLElement).focus();
+      if (form.querySelector<HTMLInputElement>("[name=_gotcha]")?.value) return; // likely a bot
+      const data: Record<string, string> = {};
+      new FormData(form).forEach((v, k) => {
+        if (k !== "_gotcha" && String(v).trim()) data[k] = String(v).trim();
+      });
+      button.disabled = true;
+      try {
+        const res = await fetch(cfg.endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ ...cfg.extraFields, ...data, _subject: "Session request", page: location.href }),
+        });
+        let body: { ok?: boolean; success?: boolean } = {};
+        try {
+          body = await res.clone().json();
+        } catch {}
+        if (res.ok && body.ok !== false && body.success !== false) {
+          const name = (data.name ?? "").split(" ")[0];
+          const done = document.createElement("div");
+          done.className = "done";
+          done.tabIndex = -1;
+          done.innerHTML = `<p class="done-title"></p><p>Your request is with Jody, who will reply personally to find a time. Nothing to pay upfront.</p>`;
+          done.querySelector(".done-title")!.textContent = `Thank you${name ? `, ${name}` : ""}.`;
+          form.replaceChildren(done);
+          done.focus();
+        } else fail(`<strong>Sorry, your request wasn’t sent</strong> (error ${res.status}). Everything you typed is still here. ${direct}`);
+      } catch {
+        fail(`<strong>Sorry, your request wasn’t sent.</strong> Please check your connection; everything you typed is still here. ${direct}`);
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
+</script>
+
+<style>
+  .closing {
+    position: relative;
+    padding-top: clamp(96px, 11vw, 168px);
+    overflow: clip;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(40px, 6vw, 110px);
+    align-items: end;
+  }
+
+  /* The portrait: a tall arch, sitting on the section's lower edge */
+  .portrait {
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    align-self: end;
+    width: 100%;
+    max-width: 500px;
+    justify-self: end;
+  }
+  .arch {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: 999px 999px 0 0;
+    overflow: hidden;
+    background: var(--surface);
+    isolation: isolate;
+  }
+  /* Show only the upper part of the image (x 12–432, y 0–525 of 690 × 770),
+     centred on Jody's face: the circular crop along its lower edge stays
+     outside the arch. */
+  .shift {
+    position: absolute;
+    top: 0;
+    left: -2.9%;
+    width: 164.3%;
+  }
+  /* A fine second arch, offset: one quiet line, not a frame */
+  .portrait::before {
+    content: "";
+    position: absolute;
+    inset: -14px -14px 0;
+    border: 1px solid var(--line-strong);
+    border-bottom: 0;
+    border-radius: 999px 999px 0 0;
+    pointer-events: none;
+  }
+
+  .copy {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    display: grid;
+    justify-items: start;
+    gap: 30px;
+    padding-bottom: clamp(72px, 9vw, 140px);
+  }
+  .title {
+    margin: 0;
+    font-size: clamp(50px, 6.4vw, 104px);
+    font-weight: 300;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+  }
+  .title span,
+  .title em {
+    display: block;
+  }
+  .lead {
+    margin: 0;
+    max-width: 30ch;
+    color: var(--muted);
+  }
+
+  .action {
+    display: grid;
+    justify-items: start;
+    gap: 22px;
+    width: 100%;
+    margin-top: 8px;
+  }
+  .book {
+    width: 100%;
+  }
+  summary {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 14px;
+    width: max-content;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary:focus-visible {
+    outline: 1px solid var(--detail);
+    outline-offset: 4px;
+  }
+  summary.btn {
+    height: 58px;
+    padding: 0 34px;
+  }
+  .when-open,
+  .book[open] .when-closed {
+    display: none;
+  }
+  .book[open] .when-open {
+    display: inline;
+  }
+  .chev {
+    width: 8px;
+    height: 8px;
+    margin-top: -4px;
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.5s var(--ease);
+  }
+  .book[open] .chev {
+    margin-top: 4px;
+    transform: rotate(-135deg);
+  }
+  .book[open] summary.btn {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--line-strong);
+  }
+
+  /* The request form: a quieter panel that opens in place */
+  .form {
+    margin-top: 28px;
+    padding: clamp(24px, 3.4vw, 44px);
+    background: var(--surface);
+    border-top: 1px solid var(--detail);
+    max-width: 680px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .book[open] .form {
+      animation: unfold 0.7s var(--ease) both;
+    }
+  }
+  @keyframes unfold {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
+  .form-head {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+  .form-title {
+    margin: 0;
+    font: 400 var(--step-3) / 1.2 var(--font-display);
+  }
+  .form-sub {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    font: 400 14.5px/1.6 var(--font-sans);
+    color: var(--muted);
+  }
+  .form-sub .preview-note {
+    color: var(--text);
+  }
+  .form-sub .preview-note::before {
+    border-color: var(--detail);
+    background: var(--detail);
+  }
+  .form-sub a,
+  .mail a,
+  .status :global(a) {
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-color: var(--detail);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    overflow-wrap: anywhere;
+  }
+  fieldset {
+    display: grid;
+    gap: 26px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  fieldset[disabled] > * {
+    opacity: 0.55;
+  }
+  fieldset[disabled] * {
+    cursor: not-allowed;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 26px 32px;
+  }
+  .field {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+  }
+  label {
+    font: 600 var(--label) / 1.4 var(--font-sans);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .optional {
+    letter-spacing: 0.1em;
+    text-transform: none;
+    font-weight: 400;
+  }
+  input,
+  select,
+  textarea {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 0;
+    border: 0;
+    border-bottom: 1px solid var(--line-strong);
+    border-radius: 0;
+    background: transparent;
+    color: var(--text);
+    font: 400 17px/1.4 var(--font-sans);
+    transition: border-color 0.4s var(--ease);
+  }
+  select {
+    appearance: none;
+    padding-right: 28px;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+      linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position:
+      calc(100% - 11px) 52%,
+      calc(100% - 6px) 52%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+  }
+  select option {
+    background: var(--surface);
+    color: var(--text);
+  }
+  textarea {
+    resize: vertical;
+    min-height: 96px;
+  }
+  input:hover,
+  select:hover,
+  textarea:hover {
+    border-bottom-color: var(--text);
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-bottom-color: var(--detail);
+    box-shadow: 0 1px 0 0 var(--detail);
+  }
+  [aria-invalid="true"] {
+    border-bottom-color: var(--c3);
+  }
+  p.error {
+    margin: 0;
+    font: 500 13px/1.4 var(--font-sans);
+    color: var(--text);
+  }
+  p.error::before {
+    content: "— ";
+    color: var(--detail);
+  }
+  p.error:empty {
+    display: none;
+  }
+  .trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  button[data-submit] {
+    justify-self: start;
+    gap: 12px;
+  }
+  .status:empty {
+    display: none;
+  }
+  .status {
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid var(--c3);
+    font-size: 14.5px;
+  }
+  .form :global(.done) {
+    display: grid;
+    gap: 10px;
+    outline: none;
+    color: var(--muted);
+  }
+  .form :global(.done-title) {
+    margin: 0;
+    font: italic 300 var(--step-2) / 1.1 var(--font-display);
+    color: var(--text);
+  }
+
+  .small {
+    display: grid;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    width: 100%;
+    max-width: 560px;
+    font: 400 13.5px/1.6 var(--font-sans);
+    color: var(--muted);
+  }
+  .mail {
+    margin: 0;
+  }
+  .terms {
+    display: grid;
+    gap: 3px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 12.5px;
+    color: var(--faint);
+  }
+  .terms li::before {
+    content: "";
+    display: inline-block;
+    width: 12px;
+    height: 1px;
+    margin: 0 12px 0 0;
+    vertical-align: middle;
+    background: var(--detail);
+  }
+
+  /* Phones and tablets: portrait first, rising from the words below */
+  @media (max-width: 900px) {
+    .closing {
+      padding-top: 72px;
+    }
+    .grid {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .portrait {
+      grid-column: 1;
+      grid-row: 1;
+      justify-self: center;
+      width: min(78%, 400px);
+      margin-bottom: 48px;
+    }
+    .copy {
+      grid-column: 1;
+      grid-row: 2;
+      gap: 24px;
+      padding-bottom: 80px;
+    }
+    @media (max-width: 600px) {
+    .title {
+      font-size: clamp(44px, 12.4vw, 58px);
+    }
+    summary.btn {
+      width: 100%;
+      justify-content: center;
+    }
+    .action > .btn {
+      width: 100%;
+    }
+    .form {
+      margin-inline: calc(var(--gutter) * -1);
+      padding: 28px var(--gutter) 32px;
+    }
+  }
+</style>
