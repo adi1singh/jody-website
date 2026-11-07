@@ -1,4 +1,383 @@
 ---
-// Placeholder: being built (see the page plan in src/pages/index.astro).
+// Services: "Ways to work with me". After dawnsaunders.com's book cards
+// ("loren." / "dawn."): big rounded cards that sit almost edge to edge, each
+// topped by a giant lowercase word with a full stop ("hypnosis.", "coaching.",
+// "riders."), then the title, tagline, a short Forum paragraph, the price and
+// two buttons. Hypnosis is the main pillar: a full-width gold card with what it
+// helps with as a list of thin ruled lines. Between it and the other two cards,
+// "Sound familiar?" quotes clients' own words (PROBLEMS) with what they point to.
+// Content: SERVICES and PROBLEMS in src/data/jody.ts. Each card's `tone` picks
+// its surface (gold / dark / ivory) and its `id` is the anchor the nav uses.
+// The giant words size to their card (container query units), so they never
+// overflow on a phone. No JavaScript; the cards fade in with .reveal.
+import { SERVICES, PROBLEMS, BOOK_HREF } from "../../data/jody";
+import { SITE } from "../../data/site";
+
+const book = SITE.booking || BOOK_HREF;
+const [main, ...rest] = SERVICES;
+const second: Record<string, { label: string; href: string }> = {
+  hypnosis: { label: "How it works", href: "#session" },
+  coaching: { label: "See prices", href: "#session" },
+  riders: { label: "Ask a question", href: "#contact" },
+};
+const toneClass = (tone: string) => (tone === "gold" ? "gold" : tone === "ivory" ? "light" : "dark");
 ---
-<section class="section" id="stub-services"><div class="wrap"><p class="eyebrow">Services · being built</p></div></section>
+<section class="services" aria-labelledby="services-title">
+  <header class="head wrap reveal">
+    <p class="eyebrow">Work with me</p>
+    <h2 id="services-title" class="h2">Ways to <em>work</em> with me<span class="dot">.</span></h2>
+  </header>
+
+  <div class="cards">
+    {main && (
+      <article id={main.id} class:list={["card-s", "card-main", toneClass(main.tone)]} aria-labelledby={`${main.id}-title`}>
+        <span class="sun" aria-hidden="true"></span>
+        <p class="word" aria-hidden="true">{main.word}<span class="stop">.</span></p>
+        <div class="main-grid">
+          <div class="body">
+            <h3 id={`${main.id}-title`} class="title">{main.title}</h3>
+            <p class="tagline">{main.tagline}</p>
+            <p class="text read">{main.text}</p>
+            <p class="price">{main.price}</p>
+            <div class="btn-row">
+              <a class="btn btn-ink magnetic" href={book}>Book a session <span aria-hidden="true">→</span></a>
+              <a class="btn btn-outline" href={second[main.id]?.href ?? "#contact"}>{second[main.id]?.label ?? "Ask a question"}</a>
+            </div>
+          </div>
+          {main.helpsWith.length > 0 && (
+            <div class="helps">
+              <p class="helps-label">Helps with</p>
+              <ul class="helps-list" data-reveal-group>
+                {main.helpsWith.map((h) => <li class="reveal">{h}</li>)}
+              </ul>
+            </div>
+          )}
+        </div>
+      </article>
+    )}
+
+    {PROBLEMS.length > 0 && (
+      <div class="familiar" aria-labelledby="familiar-title">
+        <h3 id="familiar-title" class="familiar-title reveal">Sound <em>familiar</em>?</h3>
+        <ul class="quotes" data-reveal-group>
+          {PROBLEMS.map((p) => (
+            <li class="quote reveal">
+              <q>{p.said}</q>
+              <span class="fix"><span aria-hidden="true">→ </span><span class="sr-only">What helps: </span>{p.fix}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {rest.length > 0 && (
+      <div class="pair" data-reveal-group>
+        {rest.map((s) => (
+          <article id={s.id} class:list={["card-s", "reveal", toneClass(s.tone)]} aria-labelledby={`${s.id}-title`}>
+            <p class="word" aria-hidden="true">{s.word}<span class="stop">.</span></p>
+            <div class="body">
+              <h3 id={`${s.id}-title`} class="title">{s.title}</h3>
+              <p class="tagline">{s.tagline}</p>
+              <p class="text read">{s.text}</p>
+              {s.helpsWith.length > 0 && (
+                <ul class="pills" aria-label={`${s.title} helps with`}>
+                  {s.helpsWith.map((h) => <li>{h}</li>)}
+                </ul>
+              )}
+              <p class="price">{s.price}</p>
+              <div class="btn-row">
+                <a class:list={["btn", s.tone === "dark" ? "btn-accent" : "btn-ink"]} href={book}>Book a session <span aria-hidden="true">→</span></a>
+                <a class="btn btn-outline" href={second[s.id]?.href ?? "#contact"}>{second[s.id]?.label ?? "Ask a question"}</a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .services {
+    position: relative;
+    overflow: clip;
+    background: var(--ink);
+    color: var(--text);
+    padding: var(--section) 0 clamp(10px, 1.2vw, 16px);
+  }
+  .head {
+    text-align: center;
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    margin-bottom: clamp(48px, 6vw, 80px);
+  }
+
+  /* ---------- the cards: nearly edge to edge, as on dawnsaunders.com ---------- */
+  .cards {
+    display: grid;
+    gap: clamp(10px, 1.2vw, 16px);
+    padding-inline: clamp(10px, 1.2vw, 16px);
+    max-width: 1680px;
+    margin-inline: auto;
+  }
+  .card-s {
+    position: relative;
+    overflow: clip;
+    container-type: inline-size;
+    border-radius: var(--radius-lg);
+    padding: clamp(28px, 4vw, 64px) clamp(22px, 4vw, 64px) clamp(32px, 4.5vw, 64px);
+    scroll-margin-top: 96px;
+  }
+  .card-s.dark {
+    background:
+      radial-gradient(70% 55% at 50% 0%, color-mix(in srgb, var(--gold) 9%, transparent), transparent 70%),
+      var(--surface);
+    border: 1px solid var(--line);
+  }
+  .card-main.gold {
+    background:
+      radial-gradient(60% 70% at 50% 18%, color-mix(in srgb, var(--ivory) 38%, transparent), transparent 72%),
+      linear-gradient(160deg, color-mix(in srgb, var(--gold) 72%, var(--gold-soft)) 0%, var(--gold) 45%, color-mix(in srgb, var(--gold) 55%, var(--gold-deep)) 100%);
+  }
+
+  /* The giant word, sized to its card so it always fits */
+  .word {
+    position: relative;
+    margin: 0 0 clamp(20px, 3cqi, 44px);
+    text-align: center;
+    font: 300 18cqi / 0.86 var(--font-sans);
+    letter-spacing: -0.065em;
+    white-space: nowrap;
+    padding-bottom: 0.06em; /* room for descenders (y, p) */
+    user-select: none;
+  }
+  .card-main .word {
+    font-size: min(19cqi, 300px);
+  }
+  .gold .word {
+    color: var(--ivory);
+    text-shadow: 0 30px 80px color-mix(in srgb, var(--gold-deep) 35%, transparent);
+  }
+  .gold .stop {
+    color: var(--ink);
+  }
+  .dark .word {
+    color: var(--ivory);
+  }
+  .dark .stop {
+    color: var(--gold);
+  }
+  .light .word {
+    color: var(--ink);
+  }
+  .light .stop {
+    color: var(--accent);
+  }
+
+  /* A half sun behind the main card's list, for depth */
+  .sun {
+    position: absolute;
+    right: -12%;
+    bottom: -40%;
+    width: 62%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+    background: radial-gradient(circle at 40% 30%, color-mix(in srgb, var(--ivory) 16%, transparent), transparent 65%);
+    pointer-events: none;
+  }
+
+  .body {
+    position: relative;
+    display: grid;
+    gap: 14px;
+    justify-items: start;
+    max-width: 560px;
+  }
+  .pair .body {
+    margin-inline: auto;
+    justify-items: center;
+    text-align: center;
+  }
+  .title {
+    font-size: clamp(28px, 2.6vw, 40px);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  .tagline {
+    font: 500 15px/1.4 var(--font-sans);
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+  .gold .tagline {
+    color: var(--ink);
+  }
+  .text {
+    font-size: clamp(17px, 1.3vw, 19px);
+    color: var(--muted);
+  }
+  .gold .text {
+    color: color-mix(in srgb, var(--ink) 82%, transparent);
+  }
+  .price {
+    margin-top: 6px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line-strong);
+    font: 300 clamp(22px, 2vw, 28px) / 1.1 var(--font-sans);
+    letter-spacing: -0.02em;
+  }
+  .btn-row {
+    margin-top: 8px;
+  }
+  .pair .btn-row {
+    justify-content: center;
+  }
+
+  /* ---------- hypnosis: copy on the left, what it helps with on the right ---------- */
+  .main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(32px, 6vw, 120px);
+    align-items: start;
+    max-width: 1200px;
+    margin-inline: auto;
+  }
+  .helps {
+    position: relative;
+  }
+  .helps-label {
+    font: 600 12px/1.4 var(--font-sans);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .helps-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line-strong);
+  }
+  .helps-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line-strong);
+    font: 300 clamp(20px, 1.9vw, 27px) / 1.2 var(--font-sans);
+    letter-spacing: -0.02em;
+  }
+  .helps-list li::before {
+    content: "";
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ink);
+    transform: translateY(-3px);
+  }
+
+  /* ---------- sound familiar? ---------- */
+  .familiar {
+    padding: clamp(64px, 9vw, 130px) clamp(12px, 4vw, 64px);
+    max-width: 1320px;
+    width: 100%;
+    margin-inline: auto;
+  }
+  .familiar-title {
+    text-align: center;
+    font-size: clamp(34px, 4.4vw, 60px);
+    margin-bottom: clamp(36px, 5vw, 64px);
+  }
+  .familiar-title em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 500;
+    color: var(--gold);
+  }
+  .quotes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: clamp(24px, 4vw, 64px);
+  }
+  .quote {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    padding: 26px 0 30px;
+    border-top: 1px solid var(--line-strong);
+  }
+  .quote q {
+    quotes: "“" "”";
+    font: 400 clamp(22px, 2vw, 28px) / 1.25 var(--font-read);
+    color: var(--ivory);
+  }
+  .fix {
+    font: 600 12px/1.4 var(--font-sans);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* ---------- coaching and riders, side by side ---------- */
+  .pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(10px, 1.2vw, 16px);
+  }
+  .pair .word {
+    font-size: 19cqi;
+  }
+  .pills {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .pills li {
+    padding: 7px 14px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    font: 500 13px/1.3 var(--font-sans);
+    letter-spacing: 0.01em;
+  }
+  .dark .pills li {
+    border-color: color-mix(in srgb, var(--gold) 35%, transparent);
+    color: var(--gold-soft);
+  }
+
+  /* ---------- tablets and phones ---------- */
+  @media (max-width: 960px) {
+    .main-grid {
+      grid-template-columns: 1fr;
+    }
+    .quotes {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .pair {
+      grid-template-columns: 1fr;
+    }
+    .sun {
+      width: 110%;
+      bottom: -25%;
+    }
+  }
+  @media (max-width: 600px) {
+    .quotes {
+      grid-template-columns: 1fr;
+    }
+    .quote {
+      padding: 20px 0 22px;
+    }
+    .btn-row .btn {
+      flex: 1 1 auto;
+    }
+  }
+</style>
