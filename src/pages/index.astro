@@ -1,36 +1,41 @@
 ---
-// Jody Pockran's home page. Look after dawnsaunders.com (giant lowercase name,
-// circles, thin Figtree headings over Forum text), in black, gold and ivory.
-// Every section is its own file in src/components/jody/; content is in
-// src/data/jody.ts. Flow: hero + statement → ways to work with me → how a
-// session works and prices → free audio → the book and podcast → about →
-// what clients say (hidden until real quotes) → FAQ → book a session.
+// Jody Pockran's home page (version 3: editorial). One connected story:
+// 1 cinematic hero → 2 introducing Jody → 3 the three pillars → 4 the
+// transformation experience (with prices) → 5 testimonials → 6 Live Sexy Now
+// → 7 podcast and speaking → 8 free audio → questions → 9 closing and contact.
+// Each section is one file in src/components/jody/; words and the photo shot
+// list are in src/data/jody.ts; the design system is src/styles/tokens.css +
+// base.css (see README, "Design system").
+// Visual prototype for Jody's approval: forms show as switched off until a
+// form service is chosen; nothing here talks to a backend.
 import Base from "../layouts/Base.astro";
 import Hero from "../components/jody/Hero.astro";
-import Services from "../components/jody/Services.astro";
-import Session from "../components/jody/Session.astro";
-import FreeAudio from "../components/jody/FreeAudio.astro";
-import Book from "../components/jody/Book.astro";
-import About from "../components/jody/About.astro";
+import Intro from "../components/jody/Intro.astro";
+import Pillars from "../components/jody/Pillars.astro";
+import Experience from "../components/jody/Experience.astro";
 import Testimonials from "../components/jody/Testimonials.astro";
+import Book from "../components/jody/Book.astro";
+import Podcast from "../components/jody/Podcast.astro";
+import FreeAudio from "../components/jody/FreeAudio.astro";
 import Faq from "../components/jody/Faq.astro";
-import BookSession from "../components/jody/BookSession.astro";
+import Closing from "../components/jody/Closing.astro";
 import EmailPopup from "../components/jody/EmailPopup.astro";
 import ChatAssistant from "../components/widgets/ChatAssistant.astro";
 import { ASSISTANT, BOOK_HREF } from "../data/jody";
 import { SITE } from "../data/site";
 const book = { label: "Book a session", href: SITE.booking || BOOK_HREF };
 ---
-<Base title="Jody Pockran · Hypnotherapy, life coaching and mindset" cta={book} intro={false} grain={false}>
+<Base title="Jody Pockran · Hypnotherapy, life coaching and equestrian mindset" cta={book} intro={false} grain={false}>
   <Hero />
-  <Services />
-  <Session />
-  <FreeAudio />
-  <Book />
-  <About />
+  <Intro />
+  <Pillars />
+  <Experience />
   <Testimonials />
+  <Book />
+  <Podcast />
+  <FreeAudio />
   <Faq />
-  <BookSession />
+  <Closing />
 
   <EmailPopup slot="end" />
   <ChatAssistant slot="end" name="Jody’s helper" greeting="Hi! I can answer quick questions about sessions, prices and the free audio. What would you like to know?" answers={ASSISTANT} />

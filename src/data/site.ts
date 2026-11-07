@@ -4,7 +4,7 @@
 export const SITE = {
   name: "Jody Pockran",
   suffix: "",
-  tagline: "Hypnotherapy, life coaching and mindset. Home of Live Sexy Now.",
+  tagline: "Hypnotherapy, life coaching and equestrian mindset coaching. Author of Live Sexy Now.",
   description:
     "Hypnosis and life coaching with Jody, for anxiety, overwhelm, old habits and the blocks that keep you small. Book a session, or start tonight with a free audio.",
   // To confirm with Jody: the email for the site (a business address once the domain is bought).
@@ -32,35 +32,30 @@ export type NavItem = { label: string; href: string; desc?: string };
 export type NavGroup = { label: string; items: NavItem[] };
 
 export const NAV: (NavItem | NavGroup)[] = [
-  {
-    label: "Work with me",
-    items: [
-      { label: "Hypnosis", href: "/#hypnosis", desc: "Anxiety, habits, blocks" },
-      { label: "Life coaching", href: "/#coaching", desc: "Monthly mentoring" },
-      { label: "Equestrian mindset", href: "/#riders", desc: "For riders who compete" },
-      { label: "How a session works", href: "/#session", desc: "Prices and booking" },
-    ],
-  },
-  { label: "Free audio", href: "/#free" },
-  { label: "The book", href: "/#book" },
+  { label: "Home", href: "/" },
   { label: "About", href: "/#about" },
+  { label: "Work with me", href: "/#work" },
+  { label: "Live Sexy Now", href: "/#book" },
+  { label: "Podcast", href: "/#podcast" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export const FOOTER = [
   {
-    title: "Work with Jody",
+    title: "Work with me",
     links: [
       { label: "Hypnosis", href: "/#hypnosis" },
       { label: "Life coaching", href: "/#coaching" },
       { label: "Equestrian mindset", href: "/#riders" },
-      { label: "Book a session", href: "/#contact" },
+      { label: "How a session works", href: "/#experience" },
     ],
   },
   {
-    title: "Free",
+    title: "Explore",
     links: [
+      { label: "Live Sexy Now", href: "/#book" },
+      { label: "Podcast and speaking", href: "/#podcast" },
       { label: "Free audio", href: "/#free" },
-      { label: "Live Sexy Now, the book", href: "/#book" },
       { label: "Questions", href: "/#faq" },
     ],
   },

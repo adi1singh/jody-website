@@ -1,151 +1,209 @@
-// Jody's content, from the "Avatar x Jody" meeting (5 Nov 2026) and the brief.
-// Everything here is read by the page sections in src/components/jody/.
-// Lines marked TO CONFIRM are our wording or a plan Jody hasn't checked yet.
-// Never invent testimonials, figures or prices: empty lists hide their section.
+// Jody Pockran's content (version 3). Every section reads from here.
+// Sources: the "Avatar x Jody" meeting (5 Nov 2026) and the redesign brief.
+// Lines marked TO CONFIRM are our wording; Jody approves before launch.
+// Never invent testimonials, guests, episodes, figures or prices.
 
-/** Where every "Book" button goes. SITE.booking (a calendar link) wins when set. */
+/** Where every booking button goes. SITE.booking (a calendar link) wins when set. */
 export const BOOK_HREF = "#contact";
 
+// ---------------------------------------------------------------------------
+// Photography. One entry per photo slot on the page = the shot list for Jody's
+// photographer. Empty `src` shows a labelled placeholder of the right shape
+// (see components/jody/Photo.astro). To use a real photo: put the file in
+// public/photos/ and set `src` (and `focus` to keep the face in frame).
+// ---------------------------------------------------------------------------
+export interface PhotoSlot {
+  src?: string;
+  alt: string;
+  /** What the photograph should show (the placeholder displays this). */
+  brief: string;
+  ratio: string;
+  focus?: string;
+}
+
 export const PHOTOS = {
-  /** Cut out of the branding shoot, with the circle crop baked in (see README). */
-  hero: { src: "/jody-hero.webp", alt: "Jody Pockran smiling, in a white silk blouse printed with gold chains", width: 690, height: 770 },
-  /** The full branding photo (grey studio wall, white proteas). */
-  portrait: { src: "/jody-portrait.jpg", alt: "Jody Pockran at a glass desk beside white proteas", width: 923, height: 920 },
-};
+  /** Hero. The only real photo so far: the branding shoot (low resolution; full-size original requested). */
+  hero: {
+    src: "/jody-portrait.jpg",
+    alt: "Jody Pockran in a white silk blouse printed with gold chains, beside white proteas",
+    brief: "Jody, black and gold branding shoot, looking to camera",
+    ratio: "4/5",
+    focus: "22% 30%",
+  },
+  /** Cut-out of the same shoot, for the closing section. */
+  cutout: {
+    src: "/jody-hero.webp",
+    alt: "Jody Pockran smiling",
+    brief: "Jody, cut out from the branding shoot",
+    ratio: "690/770",
+  },
+  intro: { alt: "Jody Pockran", brief: "Jody, warm close portrait in natural light, ivory or white styling", ratio: "3/4" },
+  introDetail: { alt: "Jody's hands resting on a horse's neck", brief: "Detail: Jody's hand on a horse's neck, gold jewellery", ratio: "1/1" },
+  hypnosis: { alt: "Jody in a calm session room", brief: "Jody in session: soft window light, client's view, calm and close", ratio: "4/5" },
+  coaching: { alt: "Jody in conversation", brief: "Jody mid-conversation, laughing, editorial black and gold", ratio: "3/4" },
+  riders: { alt: "Jody with her horse", brief: "Jody with her horse in the arena or paddock, golden hour", ratio: "3/4" },
+  experience: { alt: "Countryside at dusk", brief: "Cinematic: the acreage at dusk, horses grazing in the distance", ratio: "21/9" },
+  book: { alt: "Jody beside a horse in a landscape", brief: "Book cover shoot: Jody beside a horse, wide landscape, low sun", ratio: "16/9" },
+  podcast: { alt: "Jody at the podcast microphone", brief: "Jody in the studio at the microphone, black and gold", ratio: "4/5" },
+  speaking: { alt: "Jody speaking on stage", brief: "Jody speaking on stage, warm light", ratio: "3/2" },
+  closing: { alt: "Jody looking out over the paddocks", brief: "Jody looking out over the paddocks at sunset, from behind or side-on", ratio: "16/9" },
+} satisfies Record<string, PhotoSlot>;
 
+// ---------------------------------------------------------------------------
+// Words
+// ---------------------------------------------------------------------------
 export const HERO = {
-  /** Big line on the left of the hero. */
-  tagline: "Feel at home in your own life again.",
-  /** Small serif intro on the right. TO CONFIRM */
-  intro:
-    "I’m Jody Pockran, a master hypnotherapist and life coach. I help people, especially women in overwhelm, clear what’s been holding them back and feel confident in their own skin again.",
+  /** Two lines; the second is set in italic. */
+  title: ["Change the story.", "Change your life."],
+  sub: "Hypnotherapy and life coaching with Jody Pockran, for people ready to let go of what’s been holding them back.",
+  cta: { label: "Work with Jody", href: "#work" },
 };
 
-/** The gold-circle statement under the hero. Words in **stars** are bold. TO CONFIRM */
-export const STATEMENT =
-  "I am a **hypnotherapist**, a **life coach**, a **horse lover** and soon an **author**. I believe confidence isn’t something you’re born with. It’s something you remember.";
+// TO CONFIRM: all intro wording.
+export const INTRO = {
+  eyebrow: "Introducing Jody",
+  title: "Hello, I’m Jody.",
+  lead: "I’m a master hypnotherapist and life coach, and I believe the story you tell yourself shapes everything.",
+  body: "I don’t just look at the problem in front of you. I look at your whole life: where the pattern began, what it’s been protecting, and who you are without it. Then we change the story, gently and for good.",
+  /** Three short lines about the approach. */
+  approach: [
+    { title: "Your whole life first", text: "Every session starts with the whole picture, not just the symptom." },
+    { title: "Change at the root", text: "Hypnosis works where habits and old beliefs actually live." },
+    { title: "Calm, like the horses", text: "Life on the acreage with my horses taught me presence. I bring it to every session." },
+  ],
+  credentials: ["Master hypnotherapist", "Master life coach", "NLP practitioner", "Equestrian mindset coach"],
+};
 
-export const CREDENTIALS = ["Master hypnotherapist", "Master life coach", "NLP practitioner", "Equestrian mindset coach", "Speaker and podcast host"];
-
-/** The pillars. `word` is the giant word on the card, as in "hypnosis." */
-export const SERVICES = [
+export const PILLARS = [
   {
     id: "hypnosis",
-    word: "hypnosis",
+    number: "01",
     title: "Hypnosis",
-    tagline: "One deep session. A recording made just for you.",
-    text: "We start with a whole-life analysis, then a session tailored to you. The moment of change is recorded on your phone, and you listen every night for 21 nights so it sets in.",
+    line: "One deep session. A recording made just for you. Twenty-one nights to make it yours.",
+    for: ["Anxiety and overwhelm", "Depression and low mood", "Quit smoking and vaping", "Weight: the mental gastric bypass", "Money and abundance blocks", "Childhood trauma", "Phobias and fears"],
     price: "$250 a session",
-    helpsWith: [
-      "Anxiety and overwhelm",
-      "Depression and low mood",
-      "Quit smoking and vaping",
-      "Weight: the mental gastric bypass",
-      "Money and abundance blocks",
-      "Childhood trauma",
-      "Phobias and fears",
-    ],
-    tone: "gold",
+    cta: { label: "How a session works", href: "#experience" },
+    photo: "hypnosis",
   },
   {
     id: "coaching",
-    word: "coaching",
+    number: "02",
     title: "Life coaching",
-    tagline: "Mentoring, not therapy.",
-    text: "Set the goals together, meet regularly, track progress and clear whatever gets in the way, with a hypnosis session when something needs shifting.",
+    line: "Mentoring, not therapy. Goals set together, monthly check-ins, and support when life shifts.",
+    for: ["Reinvention after a big change", "Goals and accountability", "Confidence"],
     price: "Monthly packages",
-    helpsWith: ["Goal setting", "Regular check-ins", "Reinvention after a big change", "Confidence"],
-    tone: "dark",
+    cta: { label: "Ask about coaching", href: "#contact" },
+    photo: "coaching",
   },
   {
     id: "riders",
-    word: "riders",
-    title: "Equestrian mindset coaching",
-    tagline: "For riders who compete. New.",
-    text: "Calm nerves, sharper focus and a competition mindset you can trust, from someone who lives with horses every day.",
-    price: "Ask Jody",
-    helpsWith: ["Competition nerves", "Focus under pressure", "Confidence after a fall", "Rider and horse connection"],
-    tone: "ivory",
+    number: "03",
+    title: "Equestrian mindset",
+    line: "For riders who compete: calm nerves, sharper focus and a competition mindset you can trust.",
+    for: ["Competition nerves", "Focus under pressure", "Confidence after a fall"],
+    price: "New",
+    cta: { label: "Ask about riders", href: "#contact" },
+    photo: "riders",
   },
-];
+] as const;
 
-/** What Jody's clients say, in their words (for problem-led copy). */
+/** Clients' own words for what brings them (problem-led). */
 export const PROBLEMS = [
-  { said: "My mind won’t switch off.", fix: "Anxiety and overwhelm" },
-  { said: "I’ve tried everything to quit.", fix: "Quit smoking and vaping" },
-  { said: "I know what to eat. I just can’t stick to it.", fix: "Mental gastric bypass" },
-  { said: "Money never seems to stay.", fix: "Money blocks" },
-  { said: "The past still runs the show.", fix: "Childhood trauma" },
-  { said: "Talking about it hasn’t helped.", fix: "Depression and low mood" },
+  "My mind won’t switch off.",
+  "I’ve tried everything to quit.",
+  "I know what to eat. I just can’t stick to it.",
+  "Money never seems to stay.",
+  "The past still runs the show.",
 ];
 
-export const STEPS = [
-  { title: "Book your time", text: "Choose a time that suits you. Nothing to pay upfront." },
-  { title: "Whole-life analysis", text: "A detailed look at your whole life, not just the problem. Allow at least an hour and a half." },
-  { title: "Your session", text: "Hypnosis tailored to you. The transformation, about 20 minutes, is recorded on your own phone as it happens." },
-  { title: "21 nights", text: "Listen to your recording every night as you fall asleep, for at least 21 days, so the change sets in." },
-];
+/** The hypnosis journey, in three moments. */
+export const EXPERIENCE = {
+  eyebrow: "The transformation experience",
+  title: ["One session.", "Twenty-one nights."],
+  intro: "A hypnosis session with Jody is calm, unhurried and made entirely around you.",
+  steps: [
+    { number: "01", title: "Your whole-life analysis", time: "90 minutes", text: "We talk through your whole life, not just the problem, so the session is built on what’s really going on." },
+    { number: "02", title: "Your personal recording", time: "During your session", text: "While you’re in hypnosis, the moment of change is recorded straight onto your phone. It’s yours to keep." },
+    { number: "03", title: "Twenty-one nights", time: "At home", text: "You listen every night as you fall asleep, for at least 21 nights, so the new story settles in." },
+  ],
+  care: "Hypnotherapy and coaching work alongside medical and psychological care, never instead of it. Everyone’s experience is different. If you’re in crisis, call Lifeline on 13 11 14, or 000 in an emergency.",
+};
 
 export const PRICES = [
-  { name: "Hypnosis session", price: "$250", per: "per session", includes: ["Whole-life analysis (1.5 hours or more)", "A session tailored to you", "Your personal recording to keep"], featured: true },
-  { name: "Quit smoking or vaping", price: "Ask", per: "one focused session", includes: ["Usually a single session", "Your personal recording", "Priced separately"] },
-  { name: "Life coaching", price: "Monthly", per: "packages", includes: ["Goals set together", "Regular check-ins", "Hypnosis when something needs clearing"] },
+  { name: "Hypnosis session", price: "$250", note: "Whole-life analysis, tailored session and your personal recording" },
+  { name: "Quit smoking or vaping", price: "On request", note: "Usually one focused session" },
+  { name: "Life coaching", price: "Monthly", note: "Packages with regular check-ins" },
 ];
+export const TERMS = ["Prices in Australian dollars", "Nothing to pay upfront", "Cancel within 24 hours and half the fee applies"];
 
-export const TERMS = [
-  "Prices in Australian dollars.",
-  "Nothing to pay upfront: book, then pay for the session itself.",
-  "Cancel within 24 hours of your time and half the fee applies.",
-];
-
-/** Free audios (lead capture). Jody is recording them. TO CONFIRM titles and lengths. */
-export const AUDIOS = [
-  { title: "Sleep", text: "Let the day go and drift off.", ready: false },
-  { title: "Anxiety", text: "Settle a busy mind and a tight chest.", ready: false },
-  { title: "Feeling low", text: "A lift for the heavy days.", ready: false },
-  { title: "Money rewiring", text: "Loosen old beliefs about money.", ready: false },
-];
-/** The paid tier planned after the free audios (freemium). TO CONFIRM */
-export const MEMBERSHIP = { price: "$9", per: "a month", text: "The full audio library, new recordings each month. Coming soon." };
+/** Real client words only. Empty: the section shows labelled placeholders. */
+export const TESTIMONIALS: { quote: string; name: string; detail?: string }[] = [];
 
 export const BOOK = {
   title: "Live Sexy Now",
-  word: "live sexy now",
-  status: "Coming soon",
-  text: "It’s not about how you look. It’s how you feel when you walk into a room: confident, alive and back in your own life. A book about confidence and reinvention.",
-  podcast: "Every chapter becomes a podcast conversation, with guests who’ve lived it. Recorded in the studio, released before the book.",
-  /** The cover isn't designed yet: burgundy and gold, bold lettering, a horse and a landscape. */
+  kicker: "The book · Coming soon",
+  line: "Confidence. Reinvention. Coming home to yourself.",
+  text: "It’s not about how you look. It’s how you feel when you walk into a room. Jody’s first book is about confidence and reinvention, for anyone ready to feel alive in their own life again.",
+  /** No cover yet: burgundy and gold, bold lettering, Jody beside a horse in a landscape. */
   cover: null as null | { src: string; alt: string },
 };
 
-/** Real client words only. Empty: the testimonials section is hidden. */
-export const TESTIMONIALS: { quote: string; name: string; detail?: string }[] = [];
+export const PODCAST = {
+  title: "The Live Sexy Now podcast",
+  status: "In production",
+  text: "One chapter, one conversation. Each episode takes a chapter of the book and explores it with a guest who has lived it. Recorded in the studio, released before the book.",
+  /** Planned format, not published episodes. No guest names until confirmed. */
+  planned: ["Chapter one", "Chapter two", "Chapter three"],
+  /** Published episodes (title, guest, link). Empty until launch. */
+  episodes: [] as { title: string; guest: string; href: string }[],
+};
 
-/** Instagram reels or posts to show (links), once the business account exists. */
-export const REELS: { href: string; caption: string; thumb?: string }[] = [];
+export const SPEAKING = {
+  title: "Speaking",
+  text: "Jody speaks and commentates on confidence, mindset and reinvention, for events, teams and the equestrian world.",
+  cta: { label: "Enquire about speaking", href: "#contact" },
+};
+
+export const AUDIOS = [
+  { title: "Sleep", text: "Let the day go and drift off." },
+  { title: "Anxiety", text: "Settle a busy mind." },
+  { title: "Feeling low", text: "A lift for the heavy days." },
+  { title: "Money rewiring", text: "Loosen old beliefs about money." },
+];
+export const FREE_AUDIO = {
+  eyebrow: "Free hypnosis audio",
+  title: "Start tonight.",
+  text: "Short hypnosis recordings by Jody, free to download. Leave your email and they’re yours as soon as they’re ready.",
+  status: "Being recorded now",
+};
 
 // TO CONFIRM with Jody: every answer below.
 export const FAQ = [
   { q: "What does hypnosis feel like?", a: "Most people describe it as deeply relaxed and focused, like the moment just before sleep. You can hear everything and you stay in control." },
   { q: "How long is a session?", a: "Allow at least an hour and a half. We begin with a whole-life analysis, then move into the session itself." },
-  { q: "What is the recording?", a: "While you’re in hypnosis, I record the part of the session where the change happens, straight onto your phone. You listen every night as you fall asleep for at least 21 days, so it sets in." },
-  { q: "Do I pay upfront?", a: "No. You book, and pay for the session itself. If you cancel within 24 hours of your time, half the fee applies, because that time can’t be offered to someone else." },
-  { q: "Is quitting smoking really one session?", a: "Usually, yes. Quit smoking and quit vaping are focused one-off sessions, priced separately. Ask me for the price." },
-  { q: "What’s the difference between hypnosis and life coaching?", a: "Hypnosis clears something specific, often in one session. Life coaching is ongoing mentoring, monthly, with goals and regular check-ins. Many people use both." },
+  { q: "What is the recording?", a: "While you’re in hypnosis, I record the part of the session where the change happens, straight onto your phone. You listen every night as you fall asleep for at least 21 nights." },
+  { q: "Do I pay upfront?", a: "No. You book, and pay for the session itself. If you cancel within 24 hours of your time, half the fee applies." },
+  { q: "Is quitting smoking really one session?", a: "Usually, yes. Quit smoking and quit vaping are focused one-off sessions, priced separately." },
+  { q: "What’s the difference between hypnosis and life coaching?", a: "Hypnosis clears something specific, often in one session. Life coaching is ongoing mentoring, monthly, with goals and regular check-ins." },
   { q: "Is hypnosis instead of seeing my doctor?", a: "No. Hypnotherapy and coaching work alongside medical and psychological care, not instead of it. If you are in crisis, call Lifeline on 13 11 14, or 000 in an emergency." },
 ];
 
-export const CARE_NOTE =
-  "Hypnotherapy and coaching work alongside medical and psychological care, not instead of it. If you’re in crisis, call Lifeline on 13 11 14, or 000 in an emergency.";
+export const CLOSING = {
+  title: ["Your next chapter", "starts with one conversation."],
+  text: "Nothing to pay upfront. Just a time that suits you.",
+  cta: { label: "Book a session", href: BOOK_HREF },
+};
+
+export const CARE_NOTE = EXPERIENCE.care;
 
 export const ASSISTANT = [
-  { keys: ["price", "cost", "how much", "fee", "$"], chip: "Prices", text: "A hypnosis session is $250 and includes a whole-life analysis and your own recording. Quit smoking and vaping are priced separately, and life coaching is monthly.", link: { label: "See prices", href: "#session" } },
+  { keys: ["price", "cost", "how much", "fee", "$"], chip: "Prices", text: "A hypnosis session is $250 and includes a whole-life analysis and your own recording. Quit smoking and vaping are priced separately, and life coaching is monthly.", link: { label: "See prices", href: "#experience" } },
   { keys: ["book", "appointment", "time", "available"], chip: "Book a session", text: "Send a request and Jody will reply to find a time. Nothing to pay upfront.", link: { label: "Book a session", href: "#contact" } },
-  { keys: ["free", "download", "audio", "sleep"], chip: "Free audio", text: "Free audios for sleep, anxiety, feeling low and money are on the way. Leave your email and you’ll get them first.", link: { label: "Get the free audio", href: "#free" } },
+  { keys: ["free", "download", "audio", "sleep"], chip: "Free audio", text: "Free audios for sleep, anxiety, feeling low and money are on the way. Leave your email and you’ll get them first.", link: { label: "Free audio", href: "#free" } },
   { keys: ["cancel", "cancellation", "reschedule"], chip: "Cancelling", text: "Cancel within 24 hours of your time and half the fee applies. Earlier than that is fine." },
   { keys: ["smok", "vap", "quit", "cigarette"], text: "Quit smoking and quit vaping are usually one focused session, priced separately.", link: { label: "Ask Jody", href: "#contact" } },
   { keys: ["weight", "food", "gastric", "eat"], text: "The mental gastric bypass is Jody’s hypnosis approach to weight loss: it starts with how you think about food.", link: { label: "Book a session", href: "#contact" } },
   { keys: ["horse", "equestrian", "rider", "riding", "competition"], chip: "Riders", text: "Equestrian mindset coaching is for riders and competitors who want calm nerves and a competition mindset they can trust.", link: { label: "Ask about it", href: "#riders" } },
   { keys: ["live sexy now", "podcast", "the book", "your book", "author"], chip: "The book", text: "Live Sexy Now is Jody’s book about confidence and reinvention, with a podcast to match. Join the list to hear first.", link: { label: "About the book", href: "#book" } },
-  { keys: ["recording", "21", "listen"], text: "During your session Jody records the transformation onto your phone. You listen every night for at least 21 days." },
+  { keys: ["speak", "event", "talk", "keynote"], text: "Jody speaks on confidence, mindset and reinvention. Send an enquiry with your event details.", link: { label: "Enquire", href: "#contact" } },
 ];

@@ -1,22 +1,19 @@
 /* ==========================================================================
-   Design tokens: Jody's colours, type, shape and motion. Components only use
-   these variables. Sections switch tone with .light (ivory), .gold and
-   .burgundy; the default is black.
+   Jody Pockran: design tokens (version 3, editorial).
+   Luxury through restraint: ivory for breathing room, black for drama,
+   champagne gold only for small details, burgundy only for Live Sexy Now.
+   No metallic gradients, no glows. Components use these variables only.
+
+   Section tones: default is ivory. Add .dark (black), .white or .burgundy
+   to a section; each sets the same set of variables, so parts adapt.
    ========================================================================== */
 
-/* Jody's type: Figtree, light and wide, for headings and interface (as on
-   dawnsaunders.com); Forum, a classic serif, for reading; Cormorant Garamond
-   italic for the gold accent words. All self-hosted (SIL Open Font Licence). */
+/* Cormorant Garamond: editorial headlines (upright and italic).
+   Manrope: body, navigation, buttons, labels. Both SIL Open Font Licence. */
 @font-face {
-  font-family: "Figtree";
-  src: url("/fonts/figtree.woff2") format("woff2");
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/cormorant.woff2") format("woff2");
   font-weight: 300 700;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Forum";
-  src: url("/fonts/forum.woff2") format("woff2");
-  font-weight: 400;
   font-display: swap;
 }
 @font-face {
@@ -26,112 +23,139 @@
   font-weight: 300 700;
   font-display: swap;
 }
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/manrope.woff2") format("woff2");
+  font-weight: 300 800;
+  font-display: swap;
+}
 
 :root {
-  /* Jody: black, gold and ivory, from the branding shoot (white silk with gold
-     chains) and the gold-and-black look Jody asked for. Burgundy is the book. */
-  --ink: #0a0908;
-  --gold: #d1a957;
-  --gold-deep: #a57d36;
-  --gold-soft: #ead6a6;
-  --gold-sheen: linear-gradient(120deg, #a57d36 0%, #e9cf8f 35%, #c99c48 60%, #f1dfae 80%, #b88a3e 100%);
-  --ivory: #f6f0e6;
-  --burgundy: #6d1f2e;
-  --burgundy-deep: #4a1320;
+  /* Brand palette (from the brief) */
+  --black: #171514;
+  --gold: #c4a46b; /* champagne: details only */
+  --gold-ink: #8a6d3b; /* the same gold, dark enough for small text on ivory (AA) */
+  --ivory: #f7f3ec;
+  --white: #ffffff;
+  --burgundy: #6a273b;
+  --stone: #e9e2d6; /* placeholder photos, quiet fills */
 
-  /* Surfaces and text (dark) */
-  --bg: #0a0908;
-  --surface: #141210;
-  --surface-2: #1d1a16;
-  --line: rgba(234, 214, 166, 0.12);
-  --line-strong: rgba(234, 214, 166, 0.24);
-  --text: #f6f0e6;
-  --muted: #b3a994;
-  --faint: #7a7262;
+  /* Kept for kit parts that still refer to them */
+  --ink: var(--black);
+  --ivory-2: #efe8dc;
 
-  /* Brand */
-  --accent: #d1a957;
-  --accent-ink: #0a0908;
+  /* Default tone: ivory */
+  --bg: var(--ivory);
+  --surface: var(--white);
+  --surface-2: #efe8dc;
+  --line: rgba(23, 21, 20, 0.1);
+  --line-strong: rgba(23, 21, 20, 0.22);
+  --text: var(--black);
+  --muted: #5e564d;
+  --faint: #8d8478;
+  --accent: var(--gold-ink); /* accent text on light */
+  --accent-ink: var(--white);
+  --detail: var(--gold); /* hairlines, numerals, small marks */
 
-  /* Category colours, all in the family */
-  --c1: #d1a957;
-  --c2: #ead6a6;
-  --c3: #b5485a;
-  --c4: #c79a4e;
-  --c5: #e6c98f;
-  --c6: #9c6b3f;
-  --spectrum: var(--gold-sheen);
+  /* Kit category colours, quietened to the palette */
+  --c1: var(--gold);
+  --c2: #d8c29a;
+  --c3: var(--burgundy);
+  --c4: var(--gold);
+  --c5: #d8c29a;
+  --c6: #8a6d3b;
+  --spectrum: linear-gradient(90deg, var(--gold), var(--gold));
 
-  /* Intro curtain */
-  --intro-bg: #0a0908;
-  --intro-text: #f6f0e6;
-  --intro-sub: #d1a957;
-  --intro-line: #d1a957;
+  /* Intro curtain (off on this site) */
+  --intro-bg: var(--black);
+  --intro-text: var(--ivory);
+  --intro-sub: var(--gold);
+  --intro-line: var(--gold);
 
   /* Type */
-  --font-sans: "Figtree", system-ui, sans-serif; /* headings, buttons, labels */
-  --font-read: "Forum", Georgia, "Times New Roman", serif; /* paragraphs */
-  --font-mono: "Figtree", system-ui, sans-serif; /* small labels: Figtree in caps, no mono on this site */
-  --font-serif: "Cormorant Garamond", Georgia, serif; /* italic gold accent words */
-  --font-serif-roman: "Forum", Georgia, serif;
+  --font-display: "Cormorant Garamond", "Times New Roman", serif;
+  --font-sans: "Manrope", system-ui, sans-serif;
+  --font-read: var(--font-sans);
+  --font-mono: var(--font-sans);
+  --font-serif: var(--font-display); /* kit name for the accent serif */
+  --font-serif-roman: var(--font-display);
 
-  /* Shape and space */
-  --radius: 14px;
-  --radius-lg: 28px;
-  --wrap: 1240px;
-  --gutter: 32px;
-  --section: clamp(90px, 11vw, 150px);
+  /* Type scale (fluid). Headlines are serif and light; body is Manrope. */
+  --step-hero: clamp(52px, 8.4vw, 132px);
+  --step-1: clamp(40px, 5.6vw, 86px); /* section headlines */
+  --step-2: clamp(30px, 3.4vw, 50px); /* sub-headlines, big quotes */
+  --step-3: clamp(22px, 2vw, 30px); /* lead text in serif */
+  --body: 17px;
+  --small: 14px;
+  --label: 11.5px;
 
-  /* Motion */
+  /* Shape and space: square-ish, editorial; the only radius is on buttons */
+  --radius: 2px;
+  --radius-lg: 2px;
+  --pill: 999px;
+  --wrap: 1320px;
+  --narrow: 760px;
+  --gutter: clamp(20px, 4vw, 56px);
+  --section: clamp(96px, 12vw, 176px);
+  --gap: clamp(24px, 3vw, 40px);
+
+  /* Motion: slow and smooth */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --ease-in-out: cubic-bezier(0.8, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --slow: 1.2s;
 }
 
-/* Warm cream sections, for rhythm between dark ones */
-.light {
-  --bg: #f6f0e6;
-  --surface: #fffcf6;
-  --surface-2: #ede3d2;
-  --accent: #96702c; /* gold dark enough to read on ivory */
-  --accent-ink: #ffffff;
-  --line: rgba(22, 20, 17, 0.1);
-  --line-strong: rgba(22, 20, 17, 0.2);
-  --text: #15120e;
-  --muted: #5f574a;
-  --faint: #9a917f;
+.white {
+  --bg: var(--white);
+  --surface: var(--ivory);
+  --surface-2: #efe8dc;
   background: var(--bg);
   color: var(--text);
 }
 
-/* Solid gold sections (like the yellow on dawnsaunders.com) */
-.gold {
-  --bg: var(--gold);
-  --surface: #dcb969;
-  --surface-2: #c39b4b;
-  --line: rgba(10, 9, 8, 0.14);
-  --line-strong: rgba(10, 9, 8, 0.28);
-  --text: #0a0908;
-  --muted: #3d3222;
-  --faint: #6e5b38;
-  --accent: #0a0908;
-  --accent-ink: #f6f0e6;
+.dark {
+  --bg: var(--black);
+  --surface: #211e1c;
+  --surface-2: #2b2724;
+  --line: rgba(247, 243, 236, 0.12);
+  --line-strong: rgba(247, 243, 236, 0.26);
+  --text: var(--ivory);
+  --muted: #b9b0a3;
+  --faint: #857c71;
+  --accent: var(--gold);
+  --accent-ink: var(--black);
+  --detail: var(--gold);
   background: var(--bg);
   color: var(--text);
 }
 
-/* Burgundy sections (the book) */
 .burgundy {
   --bg: var(--burgundy);
-  --surface: #7b2636;
-  --surface-2: #5a1826;
-  --line: rgba(241, 223, 174, 0.16);
-  --line-strong: rgba(241, 223, 174, 0.3);
-  --text: #f6ecdc;
-  --muted: #dcbfae;
-  --faint: #b48d86;
-  --accent: #e9cf8f;
-  --accent-ink: #4a1320;
+  --surface: #5a1f31;
+  --surface-2: #7a3047;
+  --line: rgba(247, 243, 236, 0.16);
+  --line-strong: rgba(247, 243, 236, 0.3);
+  --text: var(--ivory);
+  --muted: #e2c9c6;
+  --faint: #b99597;
+  --accent: var(--gold);
+  --accent-ink: var(--black);
+  --detail: var(--gold);
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Kit parts use .light for the light tone: same as the default here. */
+.light {
+  --bg: var(--ivory);
+  --surface: var(--white);
+  --text: var(--black);
+  --muted: #5e564d;
+  --line: rgba(23, 21, 20, 0.1);
+  --line-strong: rgba(23, 21, 20, 0.22);
+  --accent: var(--gold-ink);
+  --accent-ink: var(--white);
   background: var(--bg);
   color: var(--text);
 }
