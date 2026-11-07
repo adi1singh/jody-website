@@ -1,4 +1,335 @@
 ---
-// Placeholder: being built.
+// The transformation experience (version 3): how a hypnosis session with Jody
+// unfolds, then what it costs. A white section: the headline ("One session.
+// Twenty-one nights."), the intro line, and the three moments as a horizontal
+// timeline with large serif numerals on a fine gold line that draws itself
+// as it scrolls into view (stacked vertically, line on the left, on phones).
+// Then a wide cinematic countryside photograph, then a compact ruled price
+// list (name … price, note under; not cards), the terms in small text, the
+// booking button and the care note, calm and small. No promises of results.
+// After: understand the process, see the price, book.
+// No script: the line draw is a CSS scroll-driven animation (supporting
+// browsers, motion allowed); otherwise the line is simply drawn.
+//
+// <Experience />   (id="experience"; words in EXPERIENCE, PRICES, TERMS)
+import Photo from "./Photo.astro";
+import { EXPERIENCE, PRICES, TERMS, PHOTOS, BOOK_HREF } from "../../data/jody";
+import { SITE } from "../../data/site";
+const bookHref = SITE.booking || BOOK_HREF;
 ---
-<section class="section"><div class="wrap"><p class="eyebrow">Experience · being built</p></div></section>
+<section id="experience" class="experience white" aria-labelledby="experience-title">
+  <div class="wrap head">
+    <p class="eyebrow reveal">{EXPERIENCE.eyebrow}</p>
+    <h2 id="experience-title" class="h2 reveal">{EXPERIENCE.title[0]} <em>{EXPERIENCE.title[1]}</em></h2>
+    <p class="lead reveal">{EXPERIENCE.intro}</p>
+  </div>
+
+  <div class="wrap timeline">
+    <span class="rail" aria-hidden="true"><span class="rail-line"></span></span>
+    <ol class="steps" data-reveal-group>
+      {EXPERIENCE.steps.map((s) => (
+        <li class="step reveal">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="step-num" aria-hidden="true">{s.number}</span>
+          <p class="step-time">{s.time}</p>
+          <h3 class="step-title">{s.title}</h3>
+          <p class="step-text">{s.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <div class="band">
+    <Photo photo={PHOTOS.experience} ratio="21/9" reveal sizes="100vw" class="band-photo" />
+  </div>
+
+  <div class="wrap prices">
+    <div class="prices-head">
+      <p class="eyebrow reveal">Prices</p>
+      <h3 class="h3 reveal">Simple, <em>and nothing upfront.</em></h3>
+      <ul class="terms reveal">
+        {TERMS.map((t) => <li>{t}</li>)}
+      </ul>
+    </div>
+    <div class="prices-body">
+      <dl class="price-list" data-reveal-group>
+        {PRICES.map((p) => (
+          <div class="price-row reveal">
+            <dt>{p.name}</dt>
+            <dd class="amount">{p.price}</dd>
+            <dd class="note">{p.note}</dd>
+          </div>
+        ))}
+      </dl>
+      <div class="book reveal">
+        <a class="btn btn-primary" href={bookHref}>Book a session</a>
+      </div>
+      <p class="care reveal">{EXPERIENCE.care.replace("13 11 14", "13\u00a011\u00a014")}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .experience {
+    padding-block: var(--section);
+    overflow: clip;
+  }
+  .head {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    grid-template-areas: "e e" "t l";
+    gap: 22px clamp(32px, 6vw, 120px);
+    align-items: end;
+  }
+  .head .eyebrow {
+    grid-area: e;
+  }
+  .head .h2 {
+    grid-area: t;
+    margin: 0;
+  }
+  .head .lead {
+    grid-area: l;
+    margin: 0;
+    max-width: 26ch;
+    padding-bottom: 0.4em;
+  }
+
+  /* ---------- Timeline ---------- */
+  .timeline {
+    position: relative;
+    margin-top: clamp(72px, 9vw, 130px);
+  }
+  .rail {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: var(--line);
+    overflow: clip;
+  }
+  .rail-line {
+    position: absolute;
+    inset: 0;
+    background: var(--detail);
+    transform-origin: left center;
+  }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .rail-line {
+        animation-name: draw-x;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-duration: auto;
+        animation-timeline: view();
+        animation-range: entry 10% cover 45%;
+      }
+    }
+  }
+  @keyframes draw-x {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+  @keyframes draw-y {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(32px, 5vw, 80px);
+  }
+  .step {
+    position: relative;
+    padding-top: 40px;
+  }
+  .dot {
+    position: absolute;
+    top: -4px;
+    left: 0;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--detail);
+  }
+  .step-num {
+    display: block;
+    font: italic 300 clamp(80px, 9vw, 140px) / 0.8 var(--font-display);
+    letter-spacing: -0.03em;
+    color: var(--detail);
+  }
+  .step-time {
+    margin: 30px 0 0;
+    font: 600 var(--label) / 1.4 var(--font-sans);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .step-title {
+    margin: 12px 0 0;
+    font: 400 clamp(26px, 2.4vw, 34px) / 1.1 var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  .step-text {
+    margin: 14px 0 0;
+    max-width: 34ch;
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  /* ---------- Cinematic band ---------- */
+  .band {
+    margin-block: clamp(96px, 11vw, 170px);
+  }
+
+  /* ---------- Prices ---------- */
+  .prices {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: var(--gap) clamp(32px, 6vw, 120px);
+  }
+  .prices-head .h3 {
+    margin: 22px 0 0;
+    font-weight: 300;
+    max-width: 12ch;
+  }
+  .terms {
+    list-style: none;
+    margin: 28px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .terms li::before {
+    content: "—";
+    margin-right: 10px;
+    color: var(--detail);
+  }
+  .price-list {
+    margin: 0;
+    border-top: 1px solid var(--line-strong);
+  }
+  .price-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: "n l a" "o o o";
+    align-items: baseline;
+    column-gap: 16px;
+    padding: 24px 0 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .price-row::before {
+    content: "";
+    grid-area: l;
+    align-self: center;
+    border-bottom: 1px dotted var(--line-strong);
+    transform: translateY(6px);
+  }
+  dt {
+    grid-area: n;
+    font: 400 clamp(24px, 2.2vw, 30px) / 1.15 var(--font-display);
+  }
+  .amount {
+    grid-area: a;
+    margin: 0;
+    font: 400 clamp(24px, 2.2vw, 30px) / 1.15 var(--font-display);
+    font-variant-numeric: lining-nums;
+  }
+  .note {
+    grid-area: o;
+    margin: 8px 0 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .book {
+    margin-top: 40px;
+  }
+  .care {
+    margin: 36px 0 0;
+    max-width: 62ch;
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: var(--faint);
+  }
+
+  @media (max-width: 900px) {
+    .head {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "e" "t" "l";
+    }
+    .head .lead {
+      margin-top: 8px;
+    }
+    .timeline {
+      padding-left: 32px;
+    }
+    .rail {
+      left: 4px;
+      right: auto;
+      top: 6px;
+      bottom: 0;
+      width: 1px;
+      height: auto;
+    }
+    .rail-line {
+      transform-origin: center top;
+    }
+    @supports (animation-timeline: view()) {
+      @media (prefers-reduced-motion: no-preference) {
+        .rail-line {
+          animation-name: draw-y;
+          animation-range: entry 0% cover 70%;
+        }
+      }
+    }
+    .steps {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 64px;
+    }
+    .step {
+      padding-top: 0;
+    }
+    .dot {
+      top: 6px;
+      left: -32px;
+    }
+    .step-num {
+      font-size: 84px;
+    }
+    .step-time {
+      margin-top: 20px;
+    }
+    .band :global(.band-photo) {
+      aspect-ratio: 4 / 3 !important;
+    }
+    .prices {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 40px;
+    }
+    .price-row {
+      grid-template-columns: minmax(0, auto) 1fr auto;
+    }
+    .book .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

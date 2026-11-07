@@ -1,4 +1,184 @@
 ---
-// Placeholder: being built.
+// Introducing Jody (version 3). The bright editorial pause after the black
+// hero: a magazine-spread composition with a tall portrait and a smaller
+// detail image overlapping its corner, a very large serif greeting ("Hello,
+// I'm Jody." at Marie Forleo's "I'M MARIE." scale), the serif lead, one short
+// paragraph, the three approach points as a quiet ruled list (not cards),
+// the credentials on one small line, and one link on to the work.
+// After: understand who Jody is in ten seconds, then keep scrolling.
+// No script: reveals come from the shared motion layer; complete without JS.
+// Phones: greeting first, then the photo pair, then the words.
+//
+// <Intro />   (id="about"; words in INTRO, photos PHOTOS.intro / introDetail)
+import Photo from "./Photo.astro";
+import { INTRO, PHOTOS } from "../../data/jody";
+const roman = ["i", "ii", "iii"];
 ---
-<section class="section"><div class="wrap"><p class="eyebrow">Intro · being built</p></div></section>
+<section id="about" class="intro white section" aria-labelledby="intro-title">
+  <div class="wrap grid">
+    <header class="head">
+      <p class="eyebrow reveal">{INTRO.eyebrow}</p>
+      <h2 id="intro-title" class="title reveal">{INTRO.title.split(", ")[0]},<br /><em>{INTRO.title.split(", ").slice(1).join(", ")}</em></h2>
+    </header>
+
+    <div class="photos">
+      <Photo photo={PHOTOS.intro} ratio="3/4" reveal class="portrait" sizes="(max-width: 900px) 84vw, 40vw" />
+      <div class="detail">
+        <Photo photo={PHOTOS.introDetail} ratio="1/1" reveal sizes="(max-width: 900px) 46vw, 18vw" />
+      </div>
+    </div>
+
+    <div class="copy">
+      <p class="lead reveal">{INTRO.lead}</p>
+      <p class="read reveal">{INTRO.body}</p>
+
+      <ol class="approach" data-reveal-group>
+        {INTRO.approach.map((a, i) => (
+          <li class="reveal">
+            <span class="num" aria-hidden="true">{roman[i]}</span>
+            <div>
+              <h3>{a.title}</h3>
+              <p>{a.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <p class="creds reveal">
+        <span class="visually-hidden">Credentials: </span>{INTRO.credentials.join("  ·  ")}
+      </p>
+
+      <a class="link-arrow reveal" href="#work">How I can help <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-areas:
+      "p p p p p p . h h h h h"
+      "p p p p p p . c c c c c";
+    grid-template-rows: auto 1fr;
+    column-gap: var(--gap);
+  }
+  .head {
+    grid-area: h;
+    padding-top: clamp(8px, 2vw, 24px);
+  }
+  .title {
+    margin: 28px 0 0;
+    font-size: clamp(56px, 7.6vw, 124px);
+    font-weight: 300;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+  }
+  .photos {
+    grid-area: p;
+    position: relative;
+    align-self: start;
+    padding-bottom: 16%;
+  }
+  .photos :global(.portrait) {
+    width: 80%;
+  }
+  .detail {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 42%;
+    padding: 12px 0 0 12px;
+    background: var(--bg);
+  }
+  .copy {
+    grid-area: c;
+    display: grid;
+    justify-items: start;
+    align-content: start;
+    gap: 28px;
+    margin-top: clamp(32px, 4vw, 56px);
+  }
+  .lead {
+    margin: 0;
+    max-width: 30ch;
+  }
+  .read {
+    margin: 0;
+    max-width: 46ch;
+  }
+  .approach {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    width: 100%;
+    border-top: 1px solid var(--line-strong);
+  }
+  .approach li {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 8px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .num {
+    font: italic 400 20px/1.2 var(--font-display);
+    color: var(--accent);
+  }
+  .approach h3 {
+    margin: 0;
+    font: 400 22px/1.2 var(--font-display);
+    letter-spacing: 0;
+  }
+  .approach p {
+    margin: 4px 0 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .creds {
+    margin: 0;
+    font: 600 var(--label) / 1.9 var(--font-sans);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: pre-wrap;
+  }
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .link-arrow {
+    margin-top: 8px;
+  }
+
+  @media (max-width: 900px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "h" "p" "c";
+      grid-template-rows: none;
+    }
+    .title {
+      font-size: clamp(64px, 20vw, 104px);
+      margin-bottom: 40px;
+    }
+    .photos {
+      padding-bottom: 18%;
+    }
+    .photos :global(.portrait) {
+      width: 84%;
+    }
+    .detail {
+      width: 46%;
+      padding: 10px 0 0 10px;
+    }
+    .copy {
+      margin-top: 44px;
+      gap: 24px;
+    }
+  }
+</style>
