@@ -47,7 +47,7 @@ const fill = ratio === "auto";
     <div class="ph" role="img" aria-label={`Photo to come: ${brief}`}>
       <span class="ph-tag">Photo to come</span>
       <span class="ph-brief">{brief}</span>
-      <span class="ph-ratio" aria-hidden="true">{ratio.replace("/", " : ")}</span>
+      {!fill && <span class="ph-ratio" aria-hidden="true">{ratio.replace("/", " : ")}</span>}
     </div>
   )}
 </figure>
