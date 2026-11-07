@@ -12,6 +12,7 @@ Jody's personal-brand site: hypnotherapy, life coaching and mindset coaching, an
 - **Look:** gold and black, clean, luxurious, less text, more modern and a bit brighter than the reference. Burgundy and gold for the book. People buy from people: Jody's face throughout.
 - **References Jody loves:** Regan Hillyer (gold and black, flow, imagery, email pop-up, video up front, trust logos), Marie Forleo (marieforleo.com), Mel Robbins (friendly, podcast; Jody wants hers more luxe), Marisa Peer (free downloads, app), and the site built for the career-counsellor friend with a book and podcast.
 - **Languages:** English only.
+- **Live preview:** https://jody-website.vercel.app (Vercel project linked to this repo: every push to `main` redeploys)
 - **Status:** second version (redesign after dawnsaunders.com), one page. Waiting on Jody's material.
 
 ## Prices and terms (from the meeting)
