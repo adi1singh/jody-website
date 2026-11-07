@@ -1,4 +1,280 @@
 ---
-// Placeholder: being built (see the page plan in src/pages/index.astro).
+// What clients say, after dawnsaunders.com's "What readers are saying": a gold
+// section with a row of slim vertical name strips; the open one widens into a
+// big black quote card. Click a strip, Tab to it, or use the arrow keys
+// (Home / End too); dots below show where you are.
+// - Phones: a swipeable row of quote cards (scroll snap), no strips.
+// - Without JavaScript: every quote shows as a card in a simple list.
+// - Real client words only. With no items the section renders nothing.
+// Usage: <Testimonials /> reads TESTIMONIALS from src/data/jody.ts;
+// pass `items` to override (e.g. for a test page).
+import { TESTIMONIALS } from "../../data/jody";
+interface Props {
+  items?: { quote: string; name: string; detail?: string }[];
+}
+const { items = TESTIMONIALS } = Astro.props;
 ---
-<section class="section" id="stub-testimonials"><div class="wrap"><p class="eyebrow">Testimonials · being built</p></div></section>
+{items.length > 0 && (
+  <section class="tst section gold" id="testimonials" aria-labelledby="tst-title">
+    <div class="wrap">
+      <h2 id="tst-title" class="h2 reveal">What clients are saying<span class="stop">.</span></h2>
+
+      <div class="strips" data-tst style={`--n:${items.length}`}>
+        {items.map((t, i) => (
+          <article class:list={["item", { "is-open": i === 0 }]} data-item style={`--i:${i}`}>
+            <button type="button" class="strip" aria-expanded={i === 0 ? "true" : "false"} aria-controls={`tst-q-${i}`} data-strip>
+              <span class="star" aria-hidden="true">✦</span>
+              <span class="strip-name">{t.name}</span>
+              <span class="sr-only">: read what {t.name} said</span>
+            </button>
+            <figure class="quote" id={`tst-q-${i}`}>
+              <span class="mark" aria-hidden="true">“</span>
+              <blockquote><p>{t.quote}</p></blockquote>
+              <figcaption>
+                <b>{t.name}</b>
+                {t.detail && <span>{t.detail}</span>}
+              </figcaption>
+            </figure>
+          </article>
+        ))}
+      </div>
+
+      {items.length > 1 && (
+        <div class="dots" aria-hidden="true" data-dots>
+          {items.map((_, i) => <span class:list={{ on: i === 0 }}></span>)}
+        </div>
+      )}
+    </div>
+  </section>
+)}
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-tst]").forEach((root) => {
+    const items = [...root.querySelectorAll<HTMLElement>("[data-item]")];
+    const strips = items.map((it) => it.querySelector<HTMLButtonElement>("[data-strip]")!);
+    const dots = [...(root.parentElement?.querySelectorAll<HTMLElement>("[data-dots] span") ?? [])];
+    const open = (n: number, focus = false) => {
+      items.forEach((it, i) => {
+        it.classList.toggle("is-open", i === n);
+        strips[i].setAttribute("aria-expanded", String(i === n));
+      });
+      dots.forEach((d, i) => d.classList.toggle("on", i === n));
+      if (focus) strips[n].focus();
+    };
+    strips.forEach((s, i) => {
+      s.addEventListener("click", () => open(i));
+      s.addEventListener("keydown", (e) => {
+        const last = items.length - 1;
+        const to =
+          e.key === "ArrowRight" || e.key === "ArrowDown" ? (i === last ? 0 : i + 1)
+          : e.key === "ArrowLeft" || e.key === "ArrowUp" ? (i === 0 ? last : i - 1)
+          : e.key === "Home" ? 0
+          : e.key === "End" ? last
+          : -1;
+        if (to < 0) return;
+        e.preventDefault();
+        open(to, true);
+      });
+    });
+    // Phones: keep the dots in step with the swiped card.
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((en) => en.isIntersecting && dots.forEach((d, i) => d.classList.toggle("on", items[i] === en.target))),
+      { root, threshold: 0.6 },
+    );
+    if (matchMedia("(max-width: 760px)").matches) items.forEach((it) => io.observe(it));
+  });
+</script>
+
+<style>
+  .tst .h2 {
+    margin: 0 0 clamp(36px, 5vw, 64px);
+  }
+  .stop {
+    color: var(--ivory);
+  }
+
+  /* Base (no JavaScript, and phones): every quote as a card. */
+  .strips {
+    display: grid;
+    gap: 14px;
+  }
+  .strip {
+    display: none;
+  }
+  .quote {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: clamp(28px, 4vw, 52px);
+    border-radius: var(--radius-lg);
+    background: var(--ink);
+    color: var(--ivory);
+    overflow: hidden;
+  }
+  .mark {
+    font: italic 400 96px/0.6 var(--font-serif);
+    color: var(--gold);
+    height: 36px;
+  }
+  blockquote p {
+    font-family: var(--font-read);
+    font-size: clamp(22px, 2.5vw, 36px);
+    line-height: 1.4;
+    max-width: 34em;
+  }
+  figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    align-items: baseline;
+    margin-top: auto;
+    font-size: 14px;
+  }
+  figcaption b {
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+  }
+  figcaption span {
+    color: var(--faint);
+  }
+  .dots {
+    display: none;
+  }
+
+  /* Desktop with JavaScript: the strips. */
+  @media (min-width: 761px) {
+    :global(html.js) .strips {
+      display: flex;
+      gap: 10px;
+      height: clamp(380px, 34vw, 460px);
+    }
+    :global(html.js) .item {
+      flex: 0 0 64px;
+      min-width: 0;
+      transition: flex-basis 0.7s var(--ease), flex-grow 0.7s var(--ease);
+    }
+    :global(html.js) .item:global(.is-open) {
+      flex: 1 1 auto;
+    }
+    :global(html.js) .strip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 100%;
+      padding: 22px 0;
+      border: 0;
+      border-radius: 999px;
+      background: var(--ivory);
+      color: var(--ink);
+      transition: background 0.3s, transform 0.3s var(--ease);
+    }
+    :global(html.js) .item:nth-child(odd) .strip {
+      background: color-mix(in srgb, var(--gold-deep) 55%, var(--gold));
+    }
+    :global(html.js) .strip:hover {
+      transform: translateY(-4px);
+    }
+    .star {
+      font-size: 11px;
+      color: var(--gold-deep);
+    }
+    .item:nth-child(odd) .star {
+      color: var(--ivory);
+    }
+    .strip-name {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font: 600 12px/1 var(--font-sans);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-height: 75%;
+    }
+    /* The open strip stays focusable (arrow keys keep working) but is visually hidden. */
+    :global(html.js) .item:global(.is-open) .strip {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+    :global(html.js) .item:global(.is-open):has(.strip:focus-visible) .quote {
+      outline: 2px solid var(--ink);
+      outline-offset: 4px;
+    }
+    :global(html.js) .quote {
+      display: none;
+      height: 100%;
+    }
+    :global(html.js) .item:global(.is-open) .quote {
+      display: flex;
+      animation: tst-in 0.6s var(--ease) both;
+    }
+    :global(html.js) .dots {
+      display: flex;
+    }
+  }
+  .dots {
+    gap: 6px;
+    margin-top: 22px;
+  }
+  .dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ink) 30%, transparent);
+    transition: width 0.4s var(--ease), background 0.3s;
+  }
+  .dots span:global(.on) {
+    width: 26px;
+    background: var(--ink);
+  }
+  @keyframes tst-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* Phones with JavaScript: a swipeable row. */
+  @media (max-width: 760px) {
+    :global(html.js) .strips {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      margin-inline: calc(var(--gutter) * -1);
+      padding-inline: var(--gutter);
+      scroll-padding-inline: var(--gutter);
+      scrollbar-width: none;
+    }
+    :global(html.js) .strips::-webkit-scrollbar {
+      display: none;
+    }
+    :global(html.js) .item {
+      flex: 0 0 86%;
+      scroll-snap-align: start;
+      display: flex;
+    }
+    :global(html.js) .item .quote {
+      flex: 1;
+      min-height: 340px;
+    }
+    :global(html.js) .dots {
+      display: flex;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .item,
+    .quote {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+</style>
