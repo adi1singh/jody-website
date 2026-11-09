@@ -463,12 +463,9 @@ export default function StoryMotion() {
 
         root.dataset.motionReady = "true";
         root.addEventListener("toggle", refresh, { capture: true, signal: events.signal });
-        root.querySelectorAll("img").forEach((image) => {
-          if (!image.complete) {
-            image.addEventListener("load", refresh, { once: true, signal: events.signal });
-            image.addEventListener("error", refresh, { once: true, signal: events.signal });
-          }
-        });
+        // All photographs reserve their exact frame dimensions in CSS. Refreshing
+        // pins for a lazy image decode adds no geometry information and can
+        // interrupt an anchor jump, so only fonts/disclosures refresh the layout.
         document.fonts.ready.then(refresh).catch(() => undefined);
         refresh();
       } catch (error) {
