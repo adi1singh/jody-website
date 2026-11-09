@@ -463,9 +463,11 @@ export default function StoryMotion() {
 
         root.dataset.motionReady = "true";
         root.addEventListener("toggle", refresh, { capture: true, signal: events.signal });
+        window.addEventListener("jody:layout", refresh, { signal: events.signal });
         // All photographs reserve their exact frame dimensions in CSS. Refreshing
         // pins for a lazy image decode adds no geometry information and can
-        // interrupt an anchor jump, so only fonts/disclosures refresh the layout.
+        // interrupt an anchor jump. Fonts, disclosures and form-state changes
+        // refresh only when the page geometry can actually change.
         document.fonts.ready.then(refresh).catch(() => undefined);
         refresh();
       } catch (error) {
