@@ -3,7 +3,7 @@
 // hero: a magazine-spread composition with a tall portrait and a smaller
 // detail image overlapping its corner, a very large serif greeting ("Hello,
 // I'm Jody." at Marie Forleo's "I'M MARIE." scale), the serif lead, one short
-// paragraph, the three approach points as a quiet ruled list (not cards),
+// paragraph,
 // the credentials on one small line, and one link on to the work.
 // After: understand who Jody is in ten seconds, then keep scrolling.
 // No script: reveals come from the shared motion layer; complete without JS.
@@ -13,7 +13,6 @@
 import Photo from "./Photo.astro";
 import ChapterMark from "./ChapterMark.astro";
 import { CHAPTERS, INTRO, PHOTOS } from "../../data/jody";
-const roman = ["i", "ii", "iii"];
 ---
 <section id="about" class="intro white section" aria-labelledby="intro-title">
   <div class="wrap grid">
@@ -33,17 +32,6 @@ const roman = ["i", "ii", "iii"];
       <p class="lead reveal">{INTRO.lead}</p>
       <p class="read reveal">{INTRO.body}</p>
 
-      <ol class="approach" data-reveal-group>
-        {INTRO.approach.map((a, i) => (
-          <li class="reveal">
-            <span class="num" aria-hidden="true">{roman[i]}</span>
-            <div>
-              <h3>{a.title}</h3>
-              <p>{a.text}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
 
       <p class="creds reveal">
         <span class="visually-hidden">Credentials: </span>{INTRO.credentials.join(", ")}
@@ -70,7 +58,7 @@ const roman = ["i", "ii", "iii"];
   }
   .title {
     margin: 0;
-    font-size: clamp(56px, 7.6vw, 124px);
+    font-size: clamp(54px, 6.4vw, 104px);
     font-weight: 300;
     line-height: 0.92;
     letter-spacing: -0.025em;

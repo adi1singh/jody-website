@@ -1,9 +1,9 @@
 ---
 // Jody Pockran's home page (version 4: the story in chapters). After the
 // cinematic hero, a gold thread runs down the page through six chapters:
-// I the story you've been telling → II meet Jody → III how the story changes
-// (the session, prices) → IV ways to work together → V the next chapter (Live
-// Sexy Now, podcast, speaking, free audio, questions) → VI your chapter
+// I the story you've been telling → II meet Jody → III ways to work together
+// → IV how the story changes (the session, prices) → V the next chapter (Live
+// Sexy Now, podcast and speaking; then free audio, questions) → VI your chapter
 // (booking). Testimonials appear between IV and V once real ones exist.
 // Each section is one file in src/components/jody/; words and the photo shot
 // list are in src/data/jody.ts; the design system is src/styles/tokens.css +
@@ -19,7 +19,6 @@ import Pillars from "../components/jody/Pillars.astro";
 import Experience from "../components/jody/Experience.astro";
 import Testimonials from "../components/jody/Testimonials.astro";
 import Book from "../components/jody/Book.astro";
-import Podcast from "../components/jody/Podcast.astro";
 import FreeAudio from "../components/jody/FreeAudio.astro";
 import Faq from "../components/jody/Faq.astro";
 import Closing from "../components/jody/Closing.astro";
@@ -34,11 +33,10 @@ const book = { label: "Book a session", href: SITE.booking || BOOK_HREF };
   <Thread>
     <Story />
     <Intro />
-    <Experience />
     <Pillars />
+    <Experience />
     <Testimonials />
     <Book />
-    <Podcast />
     <FreeAudio />
     <Faq />
     <Closing />

@@ -13,7 +13,7 @@ Jody's personal-brand site: hypnotherapy, life coaching and mindset coaching, an
 - **References Jody loves:** Regan Hillyer (gold and black, flow, imagery, email pop-up, video up front, trust logos), Marie Forleo (marieforleo.com), Mel Robbins (friendly, podcast; Jody wants hers more luxe), Marisa Peer (free downloads, app), and the site built for the career-counsellor friend with a book and podcast.
 - **Languages:** English only.
 - **Live preview:** https://jody-website.vercel.app (Vercel project linked to this repo: every push to `main` redeploys)
-- **Status:** version 4 (9 Nov 2026): the story in chapters, black and gold, complete with temporary stock photography (CC0, graded to one look; sources in `public/photos/CREDITS.md`) so Jody sees the finished feel before her own shoot. Built on version 3, the editorial redesign from the owner's brief (7 Nov 2026). A frontend-only visual prototype for Jody's approval: no backend is connected. Waiting on Jody's material.
+- **Status:** version 5 (9 Nov 2026): the book concept kept but tightened (about 40% shorter), every chapter built around one large photograph, three high-resolution landscape photos (2600px, Wikimedia Commons, credited in the footer). Before that, version 4 (9 Nov 2026): the story in chapters, black and gold, complete with temporary stock photography (CC0, graded to one look; sources in `public/photos/CREDITS.md`) so Jody sees the finished feel before her own shoot. Built on version 3, the editorial redesign from the owner's brief (7 Nov 2026). A frontend-only visual prototype for Jody's approval: no backend is connected. Waiting on Jody's material.
 
 ## Prices and terms (from the meeting)
 

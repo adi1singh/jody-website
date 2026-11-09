@@ -27,6 +27,11 @@ const { chapter } = Astro.props;
     letter-spacing: 0.08em;
     color: var(--gold-text);
   }
+  .num,
+  .name {
+    position: relative;
+    z-index: 1;
+  }
   .name {
     font: italic 400 clamp(19px, 1.6vw, 23px) / 1.2 var(--font-display);
     color: var(--text);

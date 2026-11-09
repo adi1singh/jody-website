@@ -39,15 +39,10 @@ const topics = [
 const config = { endpoint, extraFields: SITE.form.extraFields ?? {}, email: SITE.email, phone: SITE.phone };
 ---
 <section class="closing dark" id="contact" aria-labelledby="closing-title">
-  <div class="field" aria-hidden="true">
-    <Photo photo={PHOTOS.closing} ratio="auto" reveal sizes="100vw" />
-  </div>
   <div class="wrap grid">
     <div class="portrait reveal">
       <div class="arch">
-        <div class="shift">
-          <Photo photo={PHOTOS.cutout} ratio="690/770" sizes="(max-width: 900px) 110vw, 50vw" />
-        </div>
+        <Photo photo={PHOTOS.rider} ratio="auto" sizes="(max-width: 900px) 90vw, 36vw" focus="66% 55%" />
       </div>
     </div>
 
@@ -241,7 +236,7 @@ const config = { endpoint, extraFields: SITE.form.extraFields ?? {}, email: SITE
   }
   .closing {
     position: relative;
-    padding-top: 0;
+    padding-top: var(--section);
     overflow: clip;
   }
   .grid {
@@ -271,25 +266,20 @@ const config = { endpoint, extraFields: SITE.form.extraFields ?? {}, email: SITE
     background: color-mix(in srgb, var(--stone) 72%, var(--faint));
     isolation: isolate;
   }
-  /* Show only the upper part of the image (x 12–432, y 0–525 of 690 × 770),
-     centred on Jody's face: the circular crop along its lower edge stays
-     outside the arch. */
-  .shift {
+  /* The rider at sunset fills the arch: your chapter, riding on */
+  .arch :global(.photo) {
     position: absolute;
-    top: 0;
-    left: -2.9%;
-    width: 164.3%;
+    inset: 0;
   }
-  /* The cut-out has transparency: let the arch's backdrop show through */
-  .shift :global(.photo) {
-    background: transparent;
+  .portrait::before {
+    border-color: color-mix(in srgb, var(--gold) 55%, transparent) !important;
   }
   /* A fine second arch, offset: one quiet line, not a frame */
   .portrait::before {
     content: "";
     position: absolute;
     inset: -14px -14px 0;
-    border: 1px solid var(--line-strong);
+    border: 1px solid color-mix(in srgb, var(--gold) 55%, transparent);
     border-bottom: 0;
     border-radius: 999px 999px 0 0;
     pointer-events: none;
@@ -591,7 +581,7 @@ const config = { endpoint, extraFields: SITE.form.extraFields ?? {}, email: SITE
   /* Phones and tablets: portrait first, rising from the words below */
   @media (max-width: 900px) {
     .closing {
-      padding-top: 0;
+      padding-top: 72px;
     }
     .grid {
       grid-template-columns: 1fr;

@@ -19,3 +19,13 @@ These photos stand in until Jody's own shoot. All are CC0 (public domain dedicat
 | `hands-on-horse.jpg` | Girl hugging horse | CC0 | https://www.rawpixel.com/image/6036287/girl-hugging-horse-free-public-domain-cc0-photo |
 
 Jody's own photos: `public/jody-portrait.jpg` (branding shoot) and `public/jody-hero.webp` (cut-out of it).
+
+## High-resolution photos (Wikimedia Commons, Quality images)
+
+CC BY-SA 4.0: free to use and adapt with credit to the photographer. Graded to the site's look.
+
+| File | Title | Photographer | Licence | Source |
+| --- | --- | --- | --- | --- |
+| `sunbeams-horses.jpg` | Dülmen, Merfeld, Dülmener Wildpferde in der Wildbahn -- 2016 -- 4740.jpg | Dietmar Rabich | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Merfeld,_D%C3%BClmener_Wildpferde_in_der_Wildbahn_--_2016_--_4740.jpg |
+| `horses-golden-grazing.jpg` | Dülmen, Merfeld, Dülmener Wildpferde in der Wildbahn -- 2021 -- 4412.jpg | Dietmar Rabich | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_Merfeld,_D%C3%BClmener_Wildpferde_in_der_Wildbahn_--_2021_--_4412.jpg |
+| `horse-tree-light.jpg` | Dülmen, Börnste, Weide -- 2015 -- 9921.jpg | Dietmar Rabich | CC BY-SA 4.0 | https://commons.wikimedia.org/wiki/File:D%C3%BClmen,_B%C3%B6rnste,_Weide_--_2015_--_9921.jpg |

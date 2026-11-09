@@ -1,262 +1,226 @@
 ---
-// Live Sexy Now (#book): Jody's book, presented like a launch campaign. The
-// one burgundy section on the page, so it lands as an event.
-// - A huge serif title across the width, then the wide cover-shoot image
-//   (PHOTOS.book: Jody beside a horse in a landscape) used full-bleed.
-// - The cover sits over the bottom edge of that image. Until BOOK.cover is set
-//   it is a temporary cover built in HTML/CSS (burgundy and champagne, bold
-//   lettering, the cover photo in the middle) and is captioned as temporary.
-//   Set BOOK.cover = { src, alt } in src/data/jody.ts and the real one shows.
-// - The line, a few sentences and the waitlist sign-up (Signup, list
-//   "book-waitlist"), which shows honestly as not yet connected.
-// Luxury comes from type, image and space. The only metallic touch on the
-// site is the foil-stamped lettering on the cover.
-//
-// <Book />
-import { BOOK, CHAPTERS, PHOTOS } from "../../data/jody";
+// Chapter V, "The next chapter": Live Sexy Now, the book, its podcast and
+// Jody's speaking, as one burgundy chapter. Left: the cover, set at a slight
+// angle with foil-stamped gold lettering (the site's one metallic touch;
+// temporary until BOOK.cover is set). Right: the title, one line, a short
+// text and the waitlist. Below, a quiet strip: the podcast (planned episodes,
+// clearly marked as planned) and speaking, each with a small photograph.
+// Content: BOOK, PODCAST, SPEAKING, CHAPTERS.next, PHOTOS (src/data/jody.ts).
 import ChapterMark from "./ChapterMark.astro";
 import Photo from "./Photo.astro";
 import Signup from "../convert/Signup.astro";
+import { BOOK, CHAPTERS, PHOTOS, PODCAST, SPEAKING } from "../../data/jody";
 ---
-<section id="book" class="burgundy book" aria-labelledby="book-title">
+<section id="book" class="section burgundy book" aria-labelledby="book-title">
   <div class="wrap top">
-    <ChapterMark chapter={CHAPTERS.next} />
-    <h2 id="book-title" class="title reveal">{BOOK.title}</h2>
-    <p class="subtitle reveal">A book by Jody Pockran, coming soon</p>
-  </div>
-
-  <div class="scene">
-    <Photo photo={PHOTOS.book} ratio="auto" reveal sizes="100vw" />
-  </div>
-
-  <div class="wrap body">
     <div class="cover-col reveal">
       {BOOK.cover ? (
-        <figure class="cover is-real">
-          <img src={BOOK.cover.src} alt={BOOK.cover.alt} loading="lazy" decoding="async" />
-        </figure>
+        <img class="cover-img" src={BOOK.cover.src} alt={BOOK.cover.alt} loading="lazy" decoding="async" />
       ) : (
         <figure class="cover" aria-label={`Temporary cover: ${BOOK.title} by Jody Pockran`}>
-          <div class="cover-face">
-            <p class="cover-author" aria-hidden="true">Jody Pockran</p>
-            <div class="cover-photo">
-              <Photo photo={PHOTOS.book} ratio="auto" />
-            </div>
-            <p class="cover-title" aria-hidden="true">
-              {BOOK.title.split(" ").map((w) => <span>{w}</span>)}
-            </p>
+          <div class="face">
+            <p class="author" aria-hidden="true">Jody Pockran</p>
+            <div class="art"><Photo photo={PHOTOS.book} ratio="auto" sizes="300px" /></div>
+            <p class="foil" aria-hidden="true">Live<br />Sexy<br /><em>Now</em></p>
           </div>
-          <figcaption class="preview-note">Temporary cover, final design to come</figcaption>
+          <figcaption>Temporary cover, final design to come</figcaption>
         </figure>
       )}
     </div>
 
-    <div class="copy" data-reveal-group>
+    <div class="copy">
+      <ChapterMark chapter={CHAPTERS.next} />
+      <h2 id="book-title" class="title reveal">{BOOK.title}</h2>
+      <p class="sub reveal">A book by Jody Pockran, coming soon</p>
       <p class="line reveal">{BOOK.line}</p>
-      <p class="read reveal">{BOOK.text}</p>
+      <p class="text reveal">{BOOK.text}</p>
       <div class="join reveal">
-        <p class="eyebrow">Join the waitlist</p>
-        <p class="join-text">Be the first to read it, and hear when the podcast begins.</p>
-        <Signup list="book-waitlist" submit="Join the waitlist" done="You’re on the waitlist. You’ll hear first." note="Launch news only. Unsubscribe any time." />
+        <Signup list="book-waitlist" submit="Join the waitlist" done="You’re on the waitlist. You’ll hear first." note="" />
       </div>
     </div>
+  </div>
+
+  <div class="wrap media" id="podcast">
+    <article class="item reveal" aria-labelledby="podcast-title">
+      <div class="thumb"><Photo photo={PHOTOS.podcast} ratio="1/1" sizes="160px" /></div>
+      <div>
+        <p class="kicker">The podcast, {PODCAST.status.toLowerCase()}</p>
+        <h3 id="podcast-title">One chapter, one conversation</h3>
+        <p class="desc">Each episode takes a chapter of the book and explores it with a guest who has lived it.</p>
+        <ul class="eps" aria-label="Planned episodes, not yet recorded">
+          {PODCAST.planned.map((p, i) => <li><span>{String(i + 1).padStart(2, "0")}</span>{p}<em>planned</em></li>)}
+        </ul>
+      </div>
+    </article>
+    <article class="item reveal" aria-labelledby="speaking-title">
+      <div class="thumb"><Photo photo={PHOTOS.speaking} ratio="1/1" sizes="160px" /></div>
+      <div>
+        <p class="kicker">On stage</p>
+        <h3 id="speaking-title">{SPEAKING.title}</h3>
+        <p class="desc">{SPEAKING.text}</p>
+        <a class="link-arrow" href={SPEAKING.cta.href}>{SPEAKING.cta.label}</a>
+      </div>
+    </article>
   </div>
 </section>
 
 <style>
-  .book {
-    padding-top: var(--section);
-    padding-bottom: var(--section);
-    overflow: clip;
-  }
-  .meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    padding-bottom: 22px;
-    border-bottom: 1px solid var(--line);
-  }
-  .meta p {
-    margin: 0;
-  }
-  .soon {
-    color: var(--detail);
-    margin-left: -4px;
-  }
-  .by {
-    color: var(--muted);
-  }
-  .title {
-    margin: clamp(28px, 4vw, 48px) 0 clamp(40px, 5vw, 72px);
-    font-size: clamp(64px, 13.2vw, 220px);
-    font-weight: 300;
-    line-height: 0.86;
-    letter-spacing: -0.035em;
-    text-wrap: balance;
-  }
-  .title {
-    color: var(--ivory);
-  }
-  .subtitle {
-    margin: calc(-1 * clamp(24px, 3vw, 48px)) 0 clamp(40px, 5vw, 72px);
-    font: italic 300 clamp(24px, 2.6vw, 38px) / 1.2 var(--font-display);
-    color: var(--gold);
-  }
-
-  /* The cover shoot, edge to edge */
-  .scene {
-    height: clamp(420px, 52vw, 820px);
-  }
-  .scene :global(.ph-ratio) {
-    display: none;
-  }
-
-  /* Cover overlaps the image; copy sits beside it */
-  .body {
+  .top {
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-    gap: clamp(40px, 7vw, 128px);
-    align-items: start;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(40px, 7vw, 120px);
+    align-items: center;
   }
-  .cover-col {
-    margin-top: clamp(-260px, -16vw, -120px);
-    position: relative;
-    z-index: 1;
-  }
+  /* The temporary cover: burgundy board, photo window, foil lettering */
   .cover {
     margin: 0;
     display: grid;
-    gap: 16px;
-    max-width: 440px;
+    justify-items: center;
+    gap: 18px;
   }
-  .cover-face {
-    width: 100%;
+  .face {
+    width: min(100%, 380px);
     aspect-ratio: 2 / 3;
     display: grid;
     grid-template-rows: auto 1fr auto;
-    gap: clamp(14px, 1.6vw, 22px);
-    padding: clamp(20px, 2.4vw, 34px);
-    background: var(--surface);
-    color: var(--ivory);
-    outline: 1px solid var(--line);
+    gap: 18px;
+    padding: 28px 26px 30px;
+    background: #5a1f31;
+    box-shadow:
+      inset 6px 0 0 rgba(0, 0, 0, 0.18),
+      0 40px 70px -30px rgba(10, 4, 6, 0.75);
+    transform: rotate(-2.5deg);
+    transition: transform 0.9s var(--ease);
   }
-  .cover-author {
-    margin: 0;
+  .cover:hover .face {
+    transform: rotate(0deg);
+  }
+  .author {
     text-align: center;
-    font: 600 clamp(10px, 0.9vw, 12px) / 1 var(--font-sans);
+    font: 600 10.5px/1 var(--font-sans);
     letter-spacing: 0.42em;
     text-transform: uppercase;
     color: var(--gold);
   }
-  .cover-photo {
-    min-height: 0;
+  .art {
     position: relative;
+    min-height: 0;
+    outline: 1px solid color-mix(in srgb, var(--gold) 55%, transparent);
+    outline-offset: 5px;
   }
-  .cover-photo :global(.photo) {
+  .art :global(.photo) {
     position: absolute;
     inset: 0;
   }
-  /* On the small cover only the "Photo to come" tag shows; the brief is on the big image above */
-  .cover-photo :global(.ph-brief),
-  .cover-photo :global(.ph-ratio) {
-    display: none;
-  }
-  .cover-title {
-    margin: 0;
-    display: grid;
-    justify-items: center;
-    font: 500 clamp(40px, 4.6vw, 70px) / 0.84 var(--font-display);
+  .foil {
+    text-align: center;
+    font: 600 clamp(40px, 4vw, 58px) / 0.86 var(--font-display);
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    /* Foil-stamped gold: the one metallic touch on the site, as on a real cover */
     background: linear-gradient(115deg, #a8844a 0%, #e8d3a2 28%, #c4a46b 46%, #f3e4bf 62%, #b08c52 82%, #d9bf8a 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .cover-title span:last-child {
-    font-style: italic;
+  .foil em {
     font-weight: 400;
     text-transform: none;
     letter-spacing: 0;
   }
-  .cover-author {
-    color: var(--gold) !important;
-  }
-  .cover.is-real img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-  .cover .preview-note {
+  figcaption {
+    font-size: 12.5px;
     color: var(--muted);
   }
-
-  .copy {
-    padding-top: clamp(40px, 5vw, 80px);
-    display: grid;
-    gap: 24px;
-    max-width: 600px;
+  .cover-img {
+    width: min(100%, 380px);
+    margin: 0 auto;
+  }
+  .title {
+    font: 300 clamp(56px, 7.4vw, 116px) / 0.9 var(--font-display);
+    letter-spacing: -0.03em;
+  }
+  .sub {
+    margin-top: 14px;
+    font: italic 300 clamp(22px, 2.2vw, 32px) / 1.2 var(--font-display);
+    color: var(--gold);
   }
   .line {
-    margin: 0;
-    font: 300 var(--step-2) / 1.1 var(--font-display);
-    letter-spacing: -0.01em;
-    text-wrap: balance;
+    margin-top: clamp(24px, 3vw, 36px);
+    font: 400 clamp(22px, 1.9vw, 28px) / 1.3 var(--font-display);
   }
-  .copy .read {
-    margin: 0;
+  .text {
+    margin-top: 12px;
+    max-width: 50ch;
+    color: var(--muted);
   }
   .join {
-    display: grid;
-    gap: 14px;
-    margin-top: clamp(16px, 3vw, 40px);
-    padding-top: clamp(28px, 3vw, 40px);
-    border-top: 1px solid var(--line);
-  }
-  .join > p {
-    margin: 0;
-  }
-  .join-text {
-    color: var(--muted);
-    font-size: var(--small);
-    margin-bottom: 6px !important;
+    margin-top: clamp(24px, 3vw, 36px);
+    max-width: 560px;
   }
 
-  @media (max-width: 860px) {
-    .body {
-      grid-template-columns: 1fr;
-      gap: 8px;
-    }
-    .cover-col {
-      margin-top: -96px;
-      width: min(72%, 320px);
-      margin-inline: auto;
-    }
-    .cover {
-      justify-items: center;
-      text-align: center;
-    }
-    .cover-title {
-      font-size: clamp(34px, 11vw, 52px);
-    }
-    .copy {
-      padding-top: 40px;
-    }
+  /* Podcast and speaking: a quiet two-column strip */
+  .media {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(24px, 4vw, 64px);
+    margin-top: clamp(64px, 8vw, 110px);
+    padding-top: clamp(32px, 4vw, 48px);
+    border-top: 1px solid var(--line-strong);
+    scroll-margin-top: 90px;
   }
-  @media (max-width: 560px) {
-    .meta {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
+  .item {
+    display: grid;
+    grid-template-columns: clamp(96px, 10vw, 150px) 1fr;
+    gap: clamp(18px, 2vw, 28px);
+    align-items: start;
+  }
+  .kicker {
+    font: italic 400 19px/1.2 var(--font-display);
+    color: var(--gold);
+  }
+  h3 {
+    margin-top: 6px;
+    font: 400 clamp(26px, 2.4vw, 34px) / 1.1 var(--font-display);
+  }
+  .desc {
+    margin-top: 10px;
+    max-width: 44ch;
+    font-size: 15.5px;
+    color: var(--muted);
+  }
+  .eps {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .eps li {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    font: 400 18px/1.3 var(--font-display);
+  }
+  .eps span {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .eps em {
+    margin-left: auto;
+    font: 500 12px/1 var(--font-sans);
+    font-style: normal;
+    color: var(--faint);
+  }
+  .item .link-arrow {
+    margin-top: 16px;
+  }
+  @media (max-width: 900px) {
+    .top,
+    .media {
+      grid-template-columns: 1fr;
     }
-    .title {
-      font-size: clamp(60px, 20vw, 96px);
-    }
-    .scene {
-      height: auto;
-      aspect-ratio: 4 / 5;
+    .face {
+      width: min(78%, 320px);
     }
   }
 </style>

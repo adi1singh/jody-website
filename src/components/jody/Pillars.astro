@@ -1,363 +1,128 @@
 ---
-// The three ways to work with Jody (version 3), as photographic editorial
-// spreads rather than cards. A black, cinematic band opens with the section
-// headline and a small ruled index of the three, then clients' own words
-// stacked in large italic serif (what brings people to hypnosis), then the
-// hypnosis spread: a tall photo bleeding to the page edge, "01", a big serif
-// title, the line, a fine two-column ruled list of what it helps with, the
-// price and one button. Coaching and equestrian mindset follow on ivory as a
-// staggered, asymmetrical pair (different photo sizes, alternating sides);
-// the riders' photo is the larger, wider one, so it feels quietly cinematic.
-// After: choose the right way in, then see how a session works (#experience).
-// No script; reveals from the shared motion layer. Phones: each pillar is
-// photo first, then words, with comfortable spacing.
-//
-// <Pillars />   (id="work"; blocks #hypnosis, #coaching, #riders; words in
-//                PILLARS and PROBLEMS, photos via each pillar's `photo` key)
-import Photo from "./Photo.astro";
+// Chapter IV, "Ways to work together": the three ways in as tall photographic
+// panels side by side, not cards. Hypnosis is the widest (the established
+// service). Each panel is a link: the photo fills it, a soft shade rises from
+// the bottom, and the name, one line, what it helps with (hypnosis) and the
+// price sit over it. Hover or focus pushes the photo in slightly and draws a
+// gold line. Phones: the panels stack, each a tall crop.
+// Content: PILLARS, CHAPTERS.work, PHOTOS (src/data/jody.ts).
 import ChapterMark from "./ChapterMark.astro";
-import { CHAPTERS, PILLARS, PHOTOS } from "../../data/jody";
-const [hyp, coach, riders] = PILLARS;
+import Photo from "./Photo.astro";
+import { CHAPTERS, PHOTOS, PILLARS } from "../../data/jody";
 ---
-<section id="work" class="pillars" aria-labelledby="work-title">
-  <div class="band dark">
-    <div class="wrap top">
-      <div class="top-head">
-        <ChapterMark chapter={CHAPTERS.work} />
-        <h2 id="work-title" class="h2 turn reveal">Three ways in.<em>One new story.</em></h2>
-      </div>
-      <nav class="index reveal" aria-label="The three ways to work with Jody">
-        <ol>
-          {PILLARS.map((p) => (
-            <li>
-              <a href={`#${p.id}`}>
-                <span class="i-num" aria-hidden="true"></span>
-                <span class="i-title">{p.title}</span>
-                <span class="i-arrow" aria-hidden="true">↓</span>
-              </a>
-            </li>
-          ))}
-        </ol>
-      </nav>
-    </div>
-
-
-    <article id={hyp.id} class="spread" aria-labelledby={`${hyp.id}-title`}>
-      <div class="spread-photo">
-        <Photo photo={PHOTOS[hyp.photo]} ratio="4/5" reveal sizes="(max-width: 900px) 100vw, 50vw" />
-      </div>
-      <div class="spread-copy">
-        <p class="num reveal"><span></span>The core of my work</p>
-        <h3 id={`${hyp.id}-title`} class="spread-title reveal">{hyp.title}</h3>
-        <p class="lead reveal">{hyp.line}</p>
-        <p class="for-label reveal">Often for</p>
-        <ul class="for-list" data-reveal-group>
-          {hyp.for.map((f) => <li class="reveal">{f}</li>)}
-        </ul>
-        <div class="spread-foot reveal">
-          <p class="price">{hyp.price}</p>
-          <a class="btn btn-primary" href={hyp.cta.href}>{hyp.cta.label}</a>
-        </div>
-      </div>
-    </article>
+<section id="work" class="section pillars" aria-labelledby="work-title">
+  <div class="wrap head">
+    <ChapterMark chapter={CHAPTERS.work} />
+    <h2 id="work-title" class="h2 turn reveal">Three ways in.<em>One new story.</em></h2>
   </div>
 
-  <div class="pair section">
-    <div class="wrap pair-grid">
-      {[coach, riders].map((p, i) => (
-        <article id={p.id} class:list={["pillar", i === 0 ? "is-coaching" : "is-riders"]} aria-labelledby={`${p.id}-title`}>
-          <div class="pillar-photo">
-            <Photo photo={PHOTOS[p.photo]} ratio={i === 0 ? "3/4" : "4/5"} reveal sizes="(max-width: 900px) 100vw, 45vw" />
-          </div>
-          <div class="pillar-copy" data-reveal-group>
-            <p class="num reveal"><span></span>{p.price}</p>
-            <h3 id={`${p.id}-title`} class="h3 reveal">{p.title}</h3>
-            <p class="read reveal">{p.line}</p>
-            <p class="for-inline reveal">
-              <span class="visually-hidden">Often for: </span>
-              {p.for.map((f, j) => <><span>{f}</span>{j < p.for.length - 1 && <span class="sep" aria-hidden="true">/</span>}</>)}
-            </p>
-            <a class="link-arrow reveal" href={p.cta.href}>{p.cta.label} <span aria-hidden="true">→</span></a>
-          </div>
-        </article>
-      ))}
-    </div>
+  <div class="wrap panels" data-reveal-group>
+    {PILLARS.map((p, i) => (
+      <a id={p.id} class:list={["panel", "dark", "reveal", { main: i === 0 }]} href={p.cta.href} aria-labelledby={`${p.id}-title`}>
+        <Photo photo={PHOTOS[p.photo]} ratio="auto" sizes="(max-width: 900px) 100vw, 40vw" />
+        <div class="panel-copy">
+          <p class="price">{p.price}</p>
+          <h3 id={`${p.id}-title`}>{p.title}</h3>
+          <p class="line">{p.line}</p>
+          {i === 0 && <p class="for">{p.for.slice(0, 5).join(", ")}, and more.</p>}
+          <span class="go">{p.cta.label}</span>
+        </div>
+      </a>
+    ))}
   </div>
 </section>
 
 <style>
-  /* ---------- Black band ---------- */
-  .band {
-    padding-top: var(--section);
-    overflow: clip;
+  .head {
+    margin-bottom: clamp(32px, 4vw, 52px);
   }
-  .top {
+  .panels {
     display: grid;
-    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
-    gap: var(--gap) clamp(32px, 6vw, 120px);
-    align-items: end;
+    grid-template-columns: 1.35fr 1fr 1fr;
+    gap: clamp(10px, 1.2vw, 16px);
+    height: clamp(560px, 46vw, 720px);
   }
-  .top-head .h2 {
-    margin: 22px 0 0;
-    max-width: 12ch;
+  .panel {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    color: var(--ivory);
+    background: var(--black);
   }
-  .index ol {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    border-top: 1px solid var(--line-strong);
+  .panel :global(.photo) {
+    position: absolute;
+    inset: 0;
   }
-  .index a {
-    display: grid;
-    grid-template-columns: 44px 1fr auto;
-    align-items: baseline;
-    padding: 16px 0;
-    border-bottom: 1px solid var(--line);
-    color: var(--text);
-    transition: color 0.4s var(--ease);
+  .panel :global(.photo img) {
+    transition: transform 1.4s var(--ease);
   }
-  .i-num {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    border: 1px solid var(--gold);
-    align-self: center;
+  .panel:hover :global(.photo img),
+  .panel:focus-visible :global(.photo img) {
+    transform: scale(1.05);
   }
-  .i-title {
-    font: 400 24px/1.2 var(--font-display);
-  }
-  .i-arrow {
-    color: var(--muted);
-    transition: transform 0.4s var(--ease), color 0.4s var(--ease);
-  }
-  .index a:hover .i-arrow,
-  .index a:focus-visible .i-arrow {
-    color: var(--detail);
-    transform: translateY(3px);
-  }
-
-  /* Clients' words */
-  .words {
-    margin-block: clamp(80px, 10vw, 150px) clamp(72px, 9vw, 130px);
-    display: grid;
-    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-    gap: var(--gap);
-    padding-top: 28px;
-    border-top: 1px solid var(--line);
-  }
-  .words-label {
-    display: grid;
-    align-content: start;
-    gap: 12px;
-  }
-  .words-sub {
-    font-size: var(--small);
-    color: var(--muted);
-  }
-  .quotes {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .quotes li {
-    font: italic 300 clamp(30px, 3.6vw, 56px) / 1.14 var(--font-display);
-    letter-spacing: -0.01em;
-    color: var(--faint);
-    transition: color 0.6s var(--ease);
-  }
-  .quotes li:first-child,
-  .quotes li:hover {
-    color: var(--text);
-  }
-  .quotes q {
-    quotes: "“" "”";
-  }
-
-  /* Hypnosis spread: photo bleeds to the left edge */
-  .spread {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: center;
-    gap: clamp(40px, 6vw, 110px);
-    margin-top: clamp(64px, 8vw, 120px);
-    padding-bottom: var(--section);
-  }
-  .spread-copy {
-    padding-right: max(var(--gutter), calc((100vw - var(--wrap)) / 2));
-    max-width: 640px;
-  }
-  .num {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin: 0;
-    font: italic 400 21px / 1.3 var(--font-display);
-    color: var(--gold-text);
-  }
-  .num span {
-    display: inline-flex;
-    align-items: center;
-    gap: 14px;
-    font-size: 0;
-  }
-  .num span::after {
+  .panel::after {
     content: "";
-    width: 28px;
-    height: 1px;
-    background: var(--detail);
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(23, 21, 20, 0.92) 0%, rgba(23, 21, 20, 0.55) 38%, rgba(23, 21, 20, 0) 66%);
+    pointer-events: none;
   }
-  .spread-title {
-    margin: 22px 0 26px;
-    font-size: clamp(64px, 8vw, 136px);
-    font-weight: 300;
-    line-height: 0.9;
-    letter-spacing: -0.03em;
-  }
-  .spread .lead {
-    margin: 0;
-    max-width: 30ch;
-  }
-  .for-label {
-    margin: 44px 0 0;
-    font: italic 400 20px / 1.4 var(--font-display);
-    color: var(--gold-text);
-  }
-  .for-list {
-    list-style: none;
-    margin: 14px 0 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 32px;
-    border-top: 1px solid var(--line-strong);
-  }
-  .for-list li {
-    padding: 13px 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 15px;
-    line-height: 1.4;
-    color: var(--text);
-  }
-  .spread-foot {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px 32px;
-    margin-top: 40px;
+  .panel-copy {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    padding: clamp(22px, 2.4vw, 36px);
   }
   .price {
-    margin: 0;
-    font: 400 var(--step-3) / 1.2 var(--font-display);
+    font: 600 12.5px/1 var(--font-sans);
+    letter-spacing: 0.04em;
+    color: var(--gold);
   }
-
-  /* ---------- Ivory pair: staggered, alternating ---------- */
-  .pair-grid {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    column-gap: var(--gap);
+  h3 {
+    margin-top: 12px;
+    font: 300 clamp(34px, 3.2vw, 52px) / 1 var(--font-display);
+    letter-spacing: -0.015em;
   }
-  .is-coaching {
-    grid-column: 1 / span 5;
+  .main h3 {
+    font-size: clamp(42px, 4.4vw, 68px);
   }
-  .is-riders {
-    grid-column: 7 / span 6;
-    margin-top: clamp(140px, 18vw, 300px);
+  .line {
+    margin-top: 12px;
+    max-width: 36ch;
+    font-size: 15.5px;
+    line-height: 1.55;
+    color: color-mix(in srgb, var(--ivory) 82%, transparent);
   }
-  .is-coaching .pillar-photo {
-    width: 86%;
-  }
-  /* Riders: text sits beside the photo's lower edge, offset to the left */
-  .is-riders {
-    display: grid;
-  }
-  .pillar-copy {
-    display: grid;
-    justify-items: start;
-    gap: 18px;
-    margin-top: 36px;
-  }
-  .is-riders .pillar-copy {
-    margin-left: clamp(0px, 8%, 80px);
-  }
-  .pillar .h3 {
-    margin: 4px 0 0;
-    font-size: clamp(40px, 4.4vw, 68px);
-    font-weight: 300;
-    letter-spacing: -0.02em;
-  }
-  .pillar .read {
-    margin: 0;
-    max-width: 40ch;
-  }
-  .for-inline {
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px 12px;
-    font: italic 400 19px/1.4 var(--font-display);
-    color: var(--text);
-  }
-  .sep {
-    color: var(--detail);
-    font-style: normal;
-  }
-  .pillar .link-arrow {
+  .for {
     margin-top: 10px;
+    max-width: 44ch;
+    font: italic 400 17px/1.45 var(--font-display);
+    color: var(--gold);
   }
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
+  .go {
+    display: inline-block;
+    margin-top: 18px;
+    padding-bottom: 5px;
+    font: 600 14px/1 var(--font-sans);
+    background: linear-gradient(var(--gold), var(--gold)) left bottom / 28px 1px no-repeat;
+    transition: background-size 0.6s var(--ease);
   }
-
+  .panel:hover .go,
+  .panel:focus-visible .go {
+    background-size: 100% 1px;
+  }
   @media (max-width: 900px) {
-    .top,
-    .words {
-      grid-template-columns: minmax(0, 1fr);
+    .panels {
+      grid-template-columns: 1fr;
+      height: auto;
     }
-    .top {
-      gap: 48px;
+    .panel {
+      aspect-ratio: 4 / 5;
     }
-    .words {
-      gap: 28px;
-      margin-block: 88px 72px;
-    }
-    .quotes li {
-      font-size: clamp(28px, 8.4vw, 40px);
-    }
-    .spread {
-      grid-template-columns: minmax(0, 1fr);
-      gap: 44px;
-    }
-    .spread-copy {
-      padding-inline: var(--gutter);
-    }
-    .spread-title {
-      font-size: clamp(64px, 20vw, 104px);
-    }
-    .for-list {
-      grid-template-columns: minmax(0, 1fr);
-    }
-    .is-coaching,
-    .is-riders {
-      grid-column: 1 / -1;
-    }
-    .is-coaching .pillar-photo {
-      width: 88%;
-    }
-    .is-riders {
-      margin-top: 96px;
-    }
-    .is-riders .pillar-photo {
-      width: 92%;
-      margin-left: auto;
-    }
-    .is-riders .pillar-copy {
-      margin-left: 0;
+    .main {
+      aspect-ratio: 4 / 5;
     }
   }
 </style>

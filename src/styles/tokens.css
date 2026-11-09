@@ -97,7 +97,7 @@
   --wrap: 1320px;
   --narrow: 760px;
   --gutter: clamp(20px, 4vw, 56px);
-  --section: clamp(96px, 12vw, 176px);
+  --section: clamp(72px, 8.5vw, 128px);
   --gap: clamp(24px, 3vw, 40px);
   /* x of the gold thread: centred in the left margin beside the content */
   --thread-x: max(10px, calc(max(var(--gutter), (100vw - var(--wrap)) / 2) / 2));
