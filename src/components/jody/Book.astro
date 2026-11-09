@@ -9,25 +9,20 @@
 //   Set BOOK.cover = { src, alt } in src/data/jody.ts and the real one shows.
 // - The line, a few sentences and the waitlist sign-up (Signup, list
 //   "book-waitlist"), which shows honestly as not yet connected.
-// Luxury comes from type, image and space: no gradients, foil or shadows.
+// Luxury comes from type, image and space. The only metallic touch on the
+// site is the foil-stamped lettering on the cover.
 //
 // <Book />
-import { BOOK, PHOTOS } from "../../data/jody";
+import { BOOK, CHAPTERS, PHOTOS } from "../../data/jody";
+import ChapterMark from "./ChapterMark.astro";
 import Photo from "./Photo.astro";
 import Signup from "../convert/Signup.astro";
-const [kickerA, kickerB] = BOOK.kicker.split("·").map((s) => s.trim());
-const words = BOOK.title.split(" ");
-const lastWord = words.pop();
 ---
 <section id="book" class="burgundy book" aria-labelledby="book-title">
   <div class="wrap top">
-    <div class="meta reveal">
-      <p class="eyebrow">{kickerA}{kickerB && <span class="soon">· {kickerB}</span>}</p>
-      <p class="mono by">Jody Pockran</p>
-    </div>
-    <h2 id="book-title" class="title reveal">
-      {words.join(" ")} <em>{lastWord}</em>
-    </h2>
+    <ChapterMark chapter={CHAPTERS.next} />
+    <h2 id="book-title" class="title reveal">{BOOK.title}</h2>
+    <p class="subtitle reveal">A book by Jody Pockran, coming soon</p>
   </div>
 
   <div class="scene">
@@ -51,7 +46,7 @@ const lastWord = words.pop();
               {BOOK.title.split(" ").map((w) => <span>{w}</span>)}
             </p>
           </div>
-          <figcaption class="preview-note">Temporary cover · final design to come</figcaption>
+          <figcaption class="preview-note">Temporary cover, final design to come</figcaption>
         </figure>
       )}
     </div>
@@ -100,8 +95,13 @@ const lastWord = words.pop();
     letter-spacing: -0.035em;
     text-wrap: balance;
   }
-  .title em {
-    color: var(--detail);
+  .title {
+    color: var(--ivory);
+  }
+  .subtitle {
+    margin: calc(-1 * clamp(24px, 3vw, 48px)) 0 clamp(40px, 5vw, 72px);
+    font: italic 300 clamp(24px, 2.6vw, 38px) / 1.2 var(--font-display);
+    color: var(--gold);
   }
 
   /* The cover shoot, edge to edge */
@@ -169,14 +169,20 @@ const lastWord = words.pop();
     font: 500 clamp(40px, 4.6vw, 70px) / 0.84 var(--font-display);
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--ivory);
+    /* Foil-stamped gold: the one metallic touch on the site, as on a real cover */
+    background: linear-gradient(115deg, #a8844a 0%, #e8d3a2 28%, #c4a46b 46%, #f3e4bf 62%, #b08c52 82%, #d9bf8a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .cover-title span:last-child {
     font-style: italic;
     font-weight: 400;
     text-transform: none;
     letter-spacing: 0;
-    color: var(--gold);
+  }
+  .cover-author {
+    color: var(--gold) !important;
   }
   .cover.is-real img {
     width: 100%;

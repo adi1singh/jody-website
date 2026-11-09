@@ -8,7 +8,8 @@
 //   reduced motion.
 // - Without JavaScript: every quote is listed, one under the other.
 // - TESTIMONIALS (src/data/jody.ts) is empty until Jody has real client words
-//   with permission. Until then three clearly labelled placeholders show. Never
+//   with permission. Until then the section is not shown at all (version 4:
+//   the preview should feel finished). Never
 //   write a testimonial for a client.
 //
 // <Testimonials />                      (reads TESTIMONIALS)
@@ -34,6 +35,7 @@ const items: Item[] = placeholder
 const pad = (n: number) => String(n).padStart(2, "0");
 const total = pad(items.length);
 ---
+{!placeholder && (
 <section id="testimonials" class="section white testimonials" aria-labelledby="testimonials-title">
   <div class="wrap grid">
     <header class="side reveal">
@@ -72,6 +74,7 @@ const total = pad(items.length);
     </div>
   </div>
 </section>
+)}
 
 <script>
   document.querySelectorAll<HTMLElement>("#testimonials").forEach((root) => {

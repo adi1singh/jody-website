@@ -13,27 +13,33 @@
 //
 // <Experience />   (id="experience"; words in EXPERIENCE, PRICES, TERMS)
 import Photo from "./Photo.astro";
-import { EXPERIENCE, PRICES, TERMS, PHOTOS, BOOK_HREF } from "../../data/jody";
+import ChapterMark from "./ChapterMark.astro";
+import { CHAPTERS, EXPERIENCE, PRICES, TERMS, PHOTOS, BOOK_HREF } from "../../data/jody";
 import { SITE } from "../../data/site";
 const bookHref = SITE.booking || BOOK_HREF;
 ---
 <section id="experience" class="experience white" aria-labelledby="experience-title">
   <div class="wrap head">
-    <p class="eyebrow reveal">{EXPERIENCE.eyebrow}</p>
-    <h2 id="experience-title" class="h2 reveal">{EXPERIENCE.title[0]} <em>{EXPERIENCE.title[1]}</em></h2>
+    <ChapterMark chapter={CHAPTERS.change} />
+    <h2 id="experience-title" class="h2 turn reveal">{EXPERIENCE.title[0]}<em>{EXPERIENCE.title[1]}</em></h2>
     <p class="lead reveal">{EXPERIENCE.intro}</p>
   </div>
 
   <div class="wrap timeline">
     <span class="rail" aria-hidden="true"><span class="rail-line"></span></span>
     <ol class="steps" data-reveal-group>
-      {EXPERIENCE.steps.map((s) => (
+      {EXPERIENCE.steps.map((s, i) => (
         <li class="step reveal">
           <span class="dot" aria-hidden="true"></span>
           <span class="step-num" aria-hidden="true">{s.number}</span>
           <p class="step-time">{s.time}</p>
           <h3 class="step-title">{s.title}</h3>
           <p class="step-text">{s.text}</p>
+          {i === 2 && (
+            <p class="nights" role="img" aria-label="Twenty-one nights">
+              {Array.from({ length: 21 }, (_, n) => <span style={`--n:${n}`}></span>)}
+            </p>
+          )}
         </li>
       ))}
     </ol>
@@ -70,6 +76,30 @@ const bookHref = SITE.booking || BOOK_HREF;
 </section>
 
 <style>
+  /* Twenty-one nights: a row of small gold rings, one per night, that fill
+     one after another when the step comes into view (still with reduced motion) */
+  .nights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 22px;
+    max-width: 260px;
+  }
+  .nights span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    background: var(--gold);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .step:not(.in) .nights span {
+      background: transparent;
+    }
+    .nights span {
+      transition: background 0.3s calc(var(--n) * 70ms + 400ms);
+    }
+  }
   .experience {
     padding-block: var(--section);
     overflow: clip;

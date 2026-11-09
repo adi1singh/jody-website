@@ -56,6 +56,7 @@
   --accent: var(--gold-ink); /* accent text on light */
   --accent-ink: var(--white);
   --detail: var(--gold); /* hairlines, numerals, small marks */
+  --gold-text: #8a6d3b; /* gold for words on light backgrounds (readable) */
 
   /* Kit category colours, quietened to the palette */
   --c1: var(--gold);
@@ -98,6 +99,8 @@
   --gutter: clamp(20px, 4vw, 56px);
   --section: clamp(96px, 12vw, 176px);
   --gap: clamp(24px, 3vw, 40px);
+  /* x of the gold thread: centred in the left margin beside the content */
+  --thread-x: max(10px, calc(max(var(--gutter), (100vw - var(--wrap)) / 2) / 2));
 
   /* Motion: slow and smooth */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -115,6 +118,7 @@
 }
 
 .dark {
+  --gold-text: var(--gold);
   --bg: var(--black);
   --surface: #211e1c;
   --surface-2: #2b2724;
@@ -131,6 +135,7 @@
 }
 
 .burgundy {
+  --gold-text: var(--gold);
   --bg: var(--burgundy);
   --surface: #5a1f31;
   --surface-2: #7a3047;

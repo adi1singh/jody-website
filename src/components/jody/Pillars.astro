@@ -15,22 +15,23 @@
 // <Pillars />   (id="work"; blocks #hypnosis, #coaching, #riders; words in
 //                PILLARS and PROBLEMS, photos via each pillar's `photo` key)
 import Photo from "./Photo.astro";
-import { PILLARS, PROBLEMS, PHOTOS } from "../../data/jody";
+import ChapterMark from "./ChapterMark.astro";
+import { CHAPTERS, PILLARS, PHOTOS } from "../../data/jody";
 const [hyp, coach, riders] = PILLARS;
 ---
 <section id="work" class="pillars" aria-labelledby="work-title">
   <div class="band dark">
     <div class="wrap top">
       <div class="top-head">
-        <p class="eyebrow reveal">Work with me</p>
-        <h2 id="work-title" class="h2 reveal">Three ways to <em>change the story.</em></h2>
+        <ChapterMark chapter={CHAPTERS.work} />
+        <h2 id="work-title" class="h2 turn reveal">Three ways in.<em>One new story.</em></h2>
       </div>
       <nav class="index reveal" aria-label="The three ways to work with Jody">
         <ol>
           {PILLARS.map((p) => (
             <li>
               <a href={`#${p.id}`}>
-                <span class="i-num">{p.number}</span>
+                <span class="i-num" aria-hidden="true"></span>
                 <span class="i-title">{p.title}</span>
                 <span class="i-arrow" aria-hidden="true">↓</span>
               </a>
@@ -40,22 +41,13 @@ const [hyp, coach, riders] = PILLARS;
       </nav>
     </div>
 
-    <figure class="wrap words">
-      <figcaption class="words-label reveal">
-        <span class="eyebrow">In their words</span>
-        <span class="words-sub">What brings people to a session</span>
-      </figcaption>
-      <ul class="quotes" data-reveal-group>
-        {PROBLEMS.map((q) => <li class="reveal"><q>{q.replace(/[.]$/, "")}</q></li>)}
-      </ul>
-    </figure>
 
     <article id={hyp.id} class="spread" aria-labelledby={`${hyp.id}-title`}>
       <div class="spread-photo">
         <Photo photo={PHOTOS[hyp.photo]} ratio="4/5" reveal sizes="(max-width: 900px) 100vw, 50vw" />
       </div>
       <div class="spread-copy">
-        <p class="num reveal"><span>{hyp.number}</span> The core of my work</p>
+        <p class="num reveal"><span></span>The core of my work</p>
         <h3 id={`${hyp.id}-title`} class="spread-title reveal">{hyp.title}</h3>
         <p class="lead reveal">{hyp.line}</p>
         <p class="for-label reveal">Often for</p>
@@ -78,7 +70,7 @@ const [hyp, coach, riders] = PILLARS;
             <Photo photo={PHOTOS[p.photo]} ratio={i === 0 ? "3/4" : "4/5"} reveal sizes="(max-width: 900px) 100vw, 45vw" />
           </div>
           <div class="pillar-copy" data-reveal-group>
-            <p class="num reveal"><span>{p.number}</span>{p.price}</p>
+            <p class="num reveal"><span></span>{p.price}</p>
             <h3 id={`${p.id}-title`} class="h3 reveal">{p.title}</h3>
             <p class="read reveal">{p.line}</p>
             <p class="for-inline reveal">
@@ -125,9 +117,11 @@ const [hyp, coach, riders] = PILLARS;
     transition: color 0.4s var(--ease);
   }
   .i-num {
-    font: 600 var(--label) / 1 var(--font-sans);
-    letter-spacing: 0.18em;
-    color: var(--detail);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1px solid var(--gold);
+    align-self: center;
   }
   .i-title {
     font: 400 24px/1.2 var(--font-display);
@@ -185,6 +179,7 @@ const [hyp, coach, riders] = PILLARS;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: center;
     gap: clamp(40px, 6vw, 110px);
+    margin-top: clamp(64px, 8vw, 120px);
     padding-bottom: var(--section);
   }
   .spread-copy {
@@ -196,18 +191,14 @@ const [hyp, coach, riders] = PILLARS;
     align-items: center;
     gap: 14px;
     margin: 0;
-    font: 600 var(--label) / 1.4 var(--font-sans);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
+    font: italic 400 21px / 1.3 var(--font-display);
+    color: var(--gold-text);
   }
   .num span {
     display: inline-flex;
     align-items: center;
     gap: 14px;
-    font: italic 400 26px/1 var(--font-display);
-    letter-spacing: 0;
-    color: var(--detail);
+    font-size: 0;
   }
   .num span::after {
     content: "";
@@ -228,10 +219,8 @@ const [hyp, coach, riders] = PILLARS;
   }
   .for-label {
     margin: 44px 0 0;
-    font: 600 var(--label) / 1.4 var(--font-sans);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--muted);
+    font: italic 400 20px / 1.4 var(--font-display);
+    color: var(--gold-text);
   }
   .for-list {
     list-style: none;

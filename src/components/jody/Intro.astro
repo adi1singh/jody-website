@@ -11,14 +11,15 @@
 //
 // <Intro />   (id="about"; words in INTRO, photos PHOTOS.intro / introDetail)
 import Photo from "./Photo.astro";
-import { INTRO, PHOTOS } from "../../data/jody";
+import ChapterMark from "./ChapterMark.astro";
+import { CHAPTERS, INTRO, PHOTOS } from "../../data/jody";
 const roman = ["i", "ii", "iii"];
 ---
 <section id="about" class="intro white section" aria-labelledby="intro-title">
   <div class="wrap grid">
     <header class="head">
-      <p class="eyebrow reveal">{INTRO.eyebrow}</p>
-      <h2 id="intro-title" class="title reveal">{INTRO.title.split(", ")[0]},<br /><em>{INTRO.title.split(", ").slice(1).join(", ")}</em></h2>
+      <ChapterMark chapter={CHAPTERS.meet} />
+      <h2 id="intro-title" class="title turn reveal">{INTRO.title.split(", ")[0]},<em>{INTRO.title.split(", ").slice(1).join(", ")}</em></h2>
     </header>
 
     <div class="photos">
@@ -45,7 +46,7 @@ const roman = ["i", "ii", "iii"];
       </ol>
 
       <p class="creds reveal">
-        <span class="visually-hidden">Credentials: </span>{INTRO.credentials.join("  ·  ")}
+        <span class="visually-hidden">Credentials: </span>{INTRO.credentials.join(", ")}
       </p>
 
       <a class="link-arrow reveal" href="#work">How I can help <span aria-hidden="true">→</span></a>
@@ -68,11 +69,22 @@ const roman = ["i", "ii", "iii"];
     padding-top: clamp(8px, 2vw, 24px);
   }
   .title {
-    margin: 28px 0 0;
+    margin: 0;
     font-size: clamp(56px, 7.6vw, 124px);
     font-weight: 300;
     line-height: 0.92;
     letter-spacing: -0.025em;
+  }
+  /* A fine gold frame, offset behind the portrait */
+  .photos::before {
+    content: "";
+    position: absolute;
+    top: clamp(-22px, -1.6vw, -12px);
+    left: clamp(-22px, -1.6vw, -12px);
+    width: 80%;
+    aspect-ratio: 3 / 4;
+    border: 1px solid var(--gold);
+    pointer-events: none;
   }
   .photos {
     grid-area: p;
@@ -138,11 +150,8 @@ const roman = ["i", "ii", "iii"];
   }
   .creds {
     margin: 0;
-    font: 600 var(--label) / 1.9 var(--font-sans);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    white-space: pre-wrap;
+    font: italic 400 19px / 1.5 var(--font-display);
+    color: var(--gold-text);
   }
   .visually-hidden {
     position: absolute;
@@ -171,6 +180,11 @@ const roman = ["i", "ii", "iii"];
     }
     .photos :global(.portrait) {
       width: 84%;
+    }
+    .photos::before {
+      width: 84%;
+      top: -10px;
+      left: -10px;
     }
     .detail {
       width: 46%;

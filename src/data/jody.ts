@@ -8,6 +8,10 @@ export const BOOK_HREF = "#contact";
 
 // ---------------------------------------------------------------------------
 // Photography. One entry per photo slot on the page = the shot list for Jody's
+// photographer. TEMPORARY: the /photos/ images are free stock photos (CC0,
+// sources in public/photos/CREDITS.md), graded black and gold, used until
+// Jody's own shoot replaces them slot by slot. Only /jody-*.{jpg,webp} are Jody.
+//
 // photographer. Empty `src` shows a labelled placeholder of the right shape
 // (see components/jody/Photo.astro). To use a real photo: put the file in
 // public/photos/ and set `src` (and `focus` to keep the face in frame).
@@ -37,16 +41,20 @@ export const PHOTOS = {
     brief: "Jody, cut out from the branding shoot",
     ratio: "690/770",
   },
-  intro: { alt: "Jody Pockran", brief: "Jody, warm close portrait in natural light, ivory or white styling", ratio: "3/4" },
-  introDetail: { alt: "Jody's hands resting on a horse's neck", brief: "Detail: Jody's hand on a horse's neck, gold jewellery", ratio: "1/1" },
-  hypnosis: { alt: "Jody in a calm session room", brief: "Jody in session: soft window light, client's view, calm and close", ratio: "4/5" },
-  coaching: { alt: "Jody in conversation", brief: "Jody mid-conversation, laughing, editorial black and gold", ratio: "3/4" },
-  riders: { alt: "Jody with her horse", brief: "Jody with her horse in the arena or paddock, golden hour", ratio: "3/4" },
-  experience: { alt: "Countryside at dusk", brief: "Cinematic: the acreage at dusk, horses grazing in the distance", ratio: "21/9" },
-  book: { alt: "Jody beside a horse in a landscape", brief: "Book cover shoot: Jody beside a horse, wide landscape, low sun", ratio: "16/9" },
-  podcast: { alt: "Jody at the podcast microphone", brief: "Jody in the studio at the microphone, black and gold", ratio: "4/5" },
-  speaking: { alt: "Jody speaking on stage", brief: "Jody speaking on stage, warm light", ratio: "3/2" },
-  closing: { alt: "Jody looking out over the paddocks", brief: "Jody looking out over the paddocks at sunset, from behind or side-on", ratio: "16/9" },
+  intro: { src: "/jody-portrait.jpg", alt: "Jody Pockran smiling, in white silk with gold chains", brief: "Jody, warm close portrait in natural light, ivory or white styling", ratio: "3/4", focus: "20% 22%" },
+  introDetail: { src: "/photos/hands-on-horse.jpg", alt: "A rider's hands making a heart shape on a horse's neck", brief: "Detail: Jody's hand on a horse's neck, gold jewellery", ratio: "1/1", focus: "48% 60%" },
+  hypnosis: { src: "/photos/window-chair.jpg", alt: "A quiet room with a leather chair in soft window light", brief: "Jody in session: soft window light, client's view, calm and close", ratio: "4/5", focus: "55% 70%" },
+  coaching: { src: "/photos/hand-wheat.jpg", alt: "A hand brushing through golden wheat", brief: "Jody mid-conversation, laughing, editorial black and gold", ratio: "3/4", focus: "35% 50%" },
+  riders: { src: "/photos/rider-sunset.jpg", alt: "A rider on horseback against a golden sunset", brief: "Jody with her horse in the arena or paddock, golden hour", ratio: "3/4", focus: "62% 60%" },
+  experience: { src: "/photos/horses-golden-dust.jpg", alt: "Horses and riders in golden dust under gum trees at sunrise", brief: "Cinematic: the acreage at dusk, horses grazing in the distance", ratio: "21/9", focus: "50% 55%" },
+  book: { src: "/photos/horse-sunset.jpg", alt: "A horse in silhouette against a gold and amber sunset", brief: "Book cover shoot: Jody beside a horse, wide landscape, low sun", ratio: "16/9", focus: "60% 45%" },
+  podcast: { src: "/photos/gold-microphone.jpg", alt: "A gold microphone against a dark background", brief: "Jody in the studio at the microphone, black and gold", ratio: "4/5", focus: "45% 40%" },
+  speaking: { src: "/photos/microphone-lights.jpg", alt: "A microphone on a stand in front of warm stage lights", brief: "Jody speaking on stage, warm light", ratio: "3/2", focus: "50% 50%" },
+  closing: { src: "/photos/woman-golden-field.jpg", alt: "A woman in a hat walking into a golden field at sunset", brief: "Jody looking out over the paddocks at sunset, from behind or side-on", ratio: "16/9", focus: "45% 6%" },
+  story: { src: "/photos/horses-running-dust.jpg", alt: "Two horses running through dust and haze", brief: "Horses running free through dust: the old story letting go", ratio: "16/9", focus: "60% 55%" },
+  blackHorse: { src: "/photos/black-horse.jpg", alt: "A black horse in shadow, its eye and bridle catching the light", brief: "A black horse in low light, close", ratio: "4/5", focus: "40% 40%" },
+  night: { src: "/photos/horse-grazing-gold.jpg", alt: "A horse grazing in silhouette against a gold dusk sky", brief: "A horse grazing at dusk", ratio: "3/4", focus: "50% 60%" },
+  horseEye: { src: "/photos/horse-eye.jpg", alt: "Close-up of a grey horse's eye", brief: "A horse's eye, close", ratio: "1/1", focus: "35% 50%" },
 } satisfies Record<string, PhotoSlot>;
 
 // ---------------------------------------------------------------------------
@@ -207,3 +215,23 @@ export const ASSISTANT = [
   { keys: ["live sexy now", "podcast", "the book", "your book", "author"], chip: "The book", text: "Live Sexy Now is Jody’s book about confidence and reinvention, with a podcast to match. Join the list to hear first.", link: { label: "About the book", href: "#book" } },
   { keys: ["speak", "event", "talk", "keynote"], text: "Jody speaks on confidence, mindset and reinvention. Send an enquiry with your event details.", link: { label: "Enquire", href: "#contact" } },
 ];
+
+// ---------------------------------------------------------------------------
+// Version 4: the page is a book in six chapters, joined by a gold thread.
+// Each chapter headline turns from the old story to the new (gold italic).
+// TO CONFIRM: chapter wording.
+// ---------------------------------------------------------------------------
+export const CHAPTERS = {
+  story: { n: "I", name: "The story you’ve been telling" },
+  meet: { n: "II", name: "Meet Jody" },
+  change: { n: "III", name: "How the story changes" },
+  work: { n: "IV", name: "Ways to work together" },
+  next: { n: "V", name: "The next chapter" },
+  yours: { n: "VI", name: "Your chapter" },
+};
+
+export const STORY = {
+  title: ["You know the story by heart.", "It doesn’t have to end this way."],
+  lead: "Most people come to me after years of the same few sentences running in the background.",
+  turn: "Those sentences were learned. Which means they can be unlearned.",
+};

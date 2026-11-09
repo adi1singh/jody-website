@@ -1,0 +1,64 @@
+---
+// Chapter mark: a small gold seal with the chapter's Roman numeral, sitting on
+// the gold thread that runs down the page (see .story in index.astro), and the
+// chapter's name beside it. Put it first inside a section's .wrap.
+// <ChapterMark chapter={CHAPTERS.meet} />
+interface Props {
+  chapter: { n: string; name: string };
+}
+const { chapter } = Astro.props;
+---
+<p class="chapter">
+  <span class="seal" aria-hidden="true">{chapter.n}</span>
+  <span class="num">Chapter {chapter.n}</span>
+  <span class="name">{chapter.name}</span>
+</p>
+
+<style>
+  .chapter {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    margin: 0 0 clamp(28px, 3.4vw, 44px);
+  }
+  .num {
+    font: 600 12px/1 var(--font-sans);
+    letter-spacing: 0.08em;
+    color: var(--gold-text);
+  }
+  .name {
+    font: italic 400 clamp(19px, 1.6vw, 23px) / 1.2 var(--font-display);
+    color: var(--text);
+  }
+  /* The seal sits on the thread in the left margin (absolute, keeps its line) */
+  .seal {
+    position: absolute;
+    left: calc(var(--thread-x) - 20px);
+    z-index: 6;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin-top: -12px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    background: var(--bg);
+    font: 500 15px/1 var(--font-display);
+    letter-spacing: 0.04em;
+    color: var(--gold-text);
+  }
+  /* Phones: the margin is too narrow for the seal, so it sits inline */
+  @media (max-width: 760px) {
+    .chapter {
+      align-items: center;
+    }
+    .seal {
+      position: static;
+      width: 30px;
+      height: 30px;
+      margin: 0;
+      font-size: 12px;
+    }
+  }
+</style>

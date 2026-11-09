@@ -1,8 +1,10 @@
 ---
-// Jody Pockran's home page (version 3: editorial). One connected story:
-// 1 cinematic hero → 2 introducing Jody → 3 the three pillars → 4 the
-// transformation experience (with prices) → 5 testimonials → 6 Live Sexy Now
-// → 7 podcast and speaking → 8 free audio → questions → 9 closing and contact.
+// Jody Pockran's home page (version 4: the story in chapters). After the
+// cinematic hero, a gold thread runs down the page through six chapters:
+// I the story you've been telling → II meet Jody → III how the story changes
+// (the session, prices) → IV ways to work together → V the next chapter (Live
+// Sexy Now, podcast, speaking, free audio, questions) → VI your chapter
+// (booking). Testimonials appear between IV and V once real ones exist.
 // Each section is one file in src/components/jody/; words and the photo shot
 // list are in src/data/jody.ts; the design system is src/styles/tokens.css +
 // base.css (see README, "Design system").
@@ -10,6 +12,8 @@
 // form service is chosen; nothing here talks to a backend.
 import Base from "../layouts/Base.astro";
 import Hero from "../components/jody/Hero.astro";
+import Story from "../components/jody/Story.astro";
+import Thread from "../components/jody/Thread.astro";
 import Intro from "../components/jody/Intro.astro";
 import Pillars from "../components/jody/Pillars.astro";
 import Experience from "../components/jody/Experience.astro";
@@ -27,15 +31,18 @@ const book = { label: "Book a session", href: SITE.booking || BOOK_HREF };
 ---
 <Base title="Jody Pockran · Hypnotherapy, life coaching and equestrian mindset" cta={book} intro={false} grain={false}>
   <Hero />
-  <Intro />
-  <Pillars />
-  <Experience />
-  <Testimonials />
-  <Book />
-  <Podcast />
-  <FreeAudio />
-  <Faq />
-  <Closing />
+  <Thread>
+    <Story />
+    <Intro />
+    <Experience />
+    <Pillars />
+    <Testimonials />
+    <Book />
+    <Podcast />
+    <FreeAudio />
+    <Faq />
+    <Closing />
+  </Thread>
 
   <EmailPopup slot="end" />
   <ChatAssistant slot="end" name="Jody’s helper" greeting="Hi! I can answer quick questions about sessions, prices and the free audio. What would you like to know?" answers={ASSISTANT} />

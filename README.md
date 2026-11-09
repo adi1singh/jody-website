@@ -13,7 +13,7 @@ Jody's personal-brand site: hypnotherapy, life coaching and mindset coaching, an
 - **References Jody loves:** Regan Hillyer (gold and black, flow, imagery, email pop-up, video up front, trust logos), Marie Forleo (marieforleo.com), Mel Robbins (friendly, podcast; Jody wants hers more luxe), Marisa Peer (free downloads, app), and the site built for the career-counsellor friend with a book and podcast.
 - **Languages:** English only.
 - **Live preview:** https://jody-website.vercel.app (Vercel project linked to this repo: every push to `main` redeploys)
-- **Status:** version 3, editorial redesign from the owner's brief (7 Nov 2026). A frontend-only visual prototype for Jody's approval: no backend is connected. Waiting on Jody's material.
+- **Status:** version 4 (9 Nov 2026): the story in chapters, black and gold, complete with temporary stock photography (CC0, graded to one look; sources in `public/photos/CREDITS.md`) so Jody sees the finished feel before her own shoot. Built on version 3, the editorial redesign from the owner's brief (7 Nov 2026). A frontend-only visual prototype for Jody's approval: no backend is connected. Waiting on Jody's material.
 
 ## Prices and terms (from the meeting)
 
@@ -36,6 +36,14 @@ Jody's personal-brand site: hypnotherapy, life coaching and mindset coaching, an
 - [ ] Recordings of the 4 free audios (sleep, anxiety, depression, money rewiring)
 - [ ] Choose: booking calendar (Calendly, Cal.com, Acuity…), CRM, form endpoint; then set `form.endpoint` in `src/data/site.ts` (the free-audio and book sign-ups send a `list` field so the CRM can tell them apart)
 - [ ] Jody to read every line in `src/data/jody.ts` marked TO CONFIRM (FAQ answers especially)
+
+## Version 4: the story in chapters
+
+- **Concept:** "Change the story" made literal. After the hero, the page is a book in six chapters: I The story you've been telling, II Meet Jody, III How the story changes, IV Ways to work together, V The next chapter (Live Sexy Now, podcast, speaking, free audio, questions), VI Your chapter (booking).
+- **The gold thread** (`Thread.astro`): one champagne line down the left margin that draws itself as you scroll, with a bead at its tip, passing through each chapter's seal (`ChapterMark.astro`). It is the site's one signature element.
+- **Gold with meaning:** every chapter headline turns from the old story (first line) to the new one (second line, gold italic: `<h2 class="turn">…<em>…</em></h2>`); gold buttons on dark sections; gold chapter seals and labels; 21 gold marks for the 21 nights; foil-stamped lettering only on the book cover.
+- **Photography:** 13 free CC0 photos (horses at golden hour, a black horse, a rider at sunset, golden wheat, a quiet room, a gold microphone), all graded the same way (warm blacks, champagne highlights, fine grain) so they read as one shoot. Each slot in `PHOTOS` keeps its brief for Jody's own photographer; swap them one by one.
+- **Testimonials** are hidden until real ones exist (no placeholders on the page).
 
 ## Version 3: design system
 

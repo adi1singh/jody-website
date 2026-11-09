@@ -1,0 +1,123 @@
+---
+// Chapter I, "The story you've been telling". Dark. The sentences people carry
+// around for years, in clients' own words, set large in italic serif; then a
+// full-bleed image of horses running free through golden dust carries the
+// turn: those sentences were learned, so they can be unlearned.
+// Content: STORY, PROBLEMS, CHAPTERS.story, PHOTOS.story (src/data/jody.ts).
+import ChapterMark from "./ChapterMark.astro";
+import Photo from "./Photo.astro";
+import { CHAPTERS, PHOTOS, PROBLEMS, STORY } from "../../data/jody";
+---
+<section class="section dark story-ch" id="story" aria-labelledby="story-title">
+  <div class="wrap grid">
+    <div class="head">
+      <ChapterMark chapter={CHAPTERS.story} />
+      <h2 id="story-title" class="h2 turn reveal">{STORY.title[0]}<em>{STORY.title[1]}</em></h2>
+      <p class="read reveal">{STORY.lead}</p>
+    </div>
+    <ul class="said" aria-label="What clients often say" data-reveal-group>
+      {PROBLEMS.map((p) => <li class="reveal">“{p}”</li>)}
+    </ul>
+  </div>
+
+  <figure class="band">
+    <Photo photo={PHOTOS.story} ratio="auto" sizes="100vw" />
+    <figcaption class="wrap">
+      <p class="turn-line reveal">{STORY.turn}</p>
+    </figcaption>
+  </figure>
+</section>
+
+<style>
+  .story-ch {
+    padding-bottom: 0;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: clamp(40px, 7vw, 120px);
+    align-items: start;
+  }
+  .head .read {
+    margin-top: 28px;
+    max-width: 40ch;
+  }
+  .said {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: clamp(10px, 1.4vw, 18px);
+    padding-top: clamp(8px, 5vw, 72px);
+  }
+  .said li {
+    font: italic 300 clamp(28px, 3.3vw, 50px) / 1.12 var(--font-display);
+    letter-spacing: -0.01em;
+    color: color-mix(in srgb, var(--ivory) 52%, transparent);
+    transition: color 0.6s var(--ease);
+  }
+  .said li:first-child,
+  .said li:hover {
+    color: var(--ivory);
+  }
+
+  .band {
+    position: relative;
+    margin: clamp(80px, 10vw, 150px) 0 0;
+    height: clamp(420px, 62vw, 760px);
+  }
+  .band :global(.photo) {
+    position: absolute;
+    inset: 0;
+  }
+  /* Dark at the top so the black section flows into the image */
+  .band::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to bottom, var(--black) 0%, rgba(23, 21, 20, 0) 34%);
+    pointer-events: none;
+  }
+  figcaption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: clamp(40px, 7vw, 96px);
+    z-index: 2;
+  }
+  .turn-line {
+    max-width: 18ch;
+    margin-left: auto;
+    font: 300 clamp(34px, 4.6vw, 72px) / 1.04 var(--font-display);
+    letter-spacing: -0.015em;
+    color: var(--black);
+    text-wrap: balance;
+  }
+  @media (max-width: 900px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    .said {
+      padding-top: 0;
+    }
+    .band {
+      height: auto;
+    }
+    .band :global(.photo) {
+      position: relative;
+      aspect-ratio: 4 / 5;
+    }
+    /* Phones: the line sits under the image, on black */
+    figcaption {
+      position: static;
+      padding-top: 32px;
+      padding-bottom: 72px;
+    }
+    .turn-line {
+      margin-left: 0;
+      max-width: 16ch;
+      color: var(--ivory);
+    }
+  }
+</style>

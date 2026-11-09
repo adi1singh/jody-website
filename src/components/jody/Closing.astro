@@ -21,7 +21,8 @@
 //
 // <Closing />
 import Photo from "./Photo.astro";
-import { CLOSING, PHOTOS, TERMS } from "../../data/jody";
+import ChapterMark from "./ChapterMark.astro";
+import { CHAPTERS, CLOSING, PHOTOS, TERMS } from "../../data/jody";
 import { SITE } from "../../data/site";
 const endpoint = SITE.form.endpoint;
 const live = Boolean(endpoint);
@@ -38,6 +39,9 @@ const topics = [
 const config = { endpoint, extraFields: SITE.form.extraFields ?? {}, email: SITE.email, phone: SITE.phone };
 ---
 <section class="closing dark" id="contact" aria-labelledby="closing-title">
+  <div class="field" aria-hidden="true">
+    <Photo photo={PHOTOS.closing} ratio="auto" reveal sizes="100vw" />
+  </div>
   <div class="wrap grid">
     <div class="portrait reveal">
       <div class="arch">
@@ -48,8 +52,8 @@ const config = { endpoint, extraFields: SITE.form.extraFields ?? {}, email: SITE
     </div>
 
     <div class="copy">
-      <p class="eyebrow reveal">Work with Jody</p>
-      <h2 id="closing-title" class="title reveal">
+      <ChapterMark chapter={CHAPTERS.yours} />
+      <h2 id="closing-title" class="title turn reveal">
         <span>{CLOSING.title[0]}</span>
         <em>{CLOSING.title[1]}</em>
       </h2>
@@ -218,9 +222,26 @@ const config = { endpoint, extraFields: SITE.form.extraFields ?? {}, email: SITE
 </script>
 
 <style>
+  /* Opening band: walking into the light, the reader's next chapter */
+  .field {
+    position: relative;
+    height: clamp(300px, 40vw, 560px);
+    margin: 0 0 clamp(56px, 7vw, 96px);
+  }
+  .field :global(.photo) {
+    position: absolute;
+    inset: 0;
+  }
+  .field::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(23, 21, 20, 0) 55%, var(--black) 100%);
+    pointer-events: none;
+  }
   .closing {
     position: relative;
-    padding-top: clamp(96px, 11vw, 168px);
+    padding-top: 0;
     overflow: clip;
   }
   .grid {
@@ -570,7 +591,7 @@ const config = { endpoint, extraFields: SITE.form.extraFields ?? {}, email: SITE
   /* Phones and tablets: portrait first, rising from the words below */
   @media (max-width: 900px) {
     .closing {
-      padding-top: 72px;
+      padding-top: 0;
     }
     .grid {
       grid-template-columns: 1fr;
