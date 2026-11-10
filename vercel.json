@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "echo 'Static design preview: no install needed'",
+  "buildCommand": "echo 'Static design preview: prebuilt in vercel-preview/'",
+  "outputDirectory": "vercel-preview",
+  "cleanUrls": true
+}
