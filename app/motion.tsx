@@ -380,8 +380,8 @@ export default function StoryMotion() {
               const drawEdge = (progress: number) => {
                 const position = Math.max(0, Math.min(1, progress));
                 const from = window.innerWidth + 120;
-                edgeX(from + (-150 - from) * position);
-                edgeOpacity(Math.sin(position * Math.PI) * 0.7);
+                edgeX(from + (-260 - from) * position);
+                edgeOpacity(Math.sin(position * Math.PI) * 0.9);
               };
               const hideEdge = (chapter: HTMLElement) => {
                 if (owner !== chapter) return;
@@ -389,40 +389,101 @@ export default function StoryMotion() {
                 edgeOpacity(0);
                 edgeX(-150);
               };
-              select("#story, #work, #beyond, #contact").forEach((chapter) => {
+              // A page edge sweeps right across once as each chapter arrives
+              // (time-based, so it always completes instead of freezing
+              // mid-screen when the visitor stops scrolling).
+              let sweep: ReturnType<typeof gsap.to> | undefined;
+              const turn = (chapter: HTMLElement) => {
+                owner = chapter;
                 const state = { progress: 0 };
-                const sweep = gsap.to(state, {
+                sweep?.kill();
+                sweep = gsap.to(state, {
                   progress: 1,
-                  duration: 1,
-                  ease: "none",
-                  paused: true,
-                  onUpdate: () => {
-                    if (owner === chapter) drawEdge(state.progress);
-                  },
+                  duration: 0.95,
+                  ease: "power2.inOut",
+                  onUpdate: () => drawEdge(state.progress),
+                  onComplete: () => hideEdge(chapter),
                 });
+              };
+              select("#story, #work, #equestrian, #book, #beyond, #contact, .interlude").forEach((chapter) => {
                 ScrollTrigger.create({
                   trigger: chapter,
-                  start: "top 90%",
-                  end: "top 20%",
-                  animation: sweep,
-                  scrub: 0.2,
-                  invalidateOnRefresh: true,
-                  onToggle: (self) => {
-                    if (self.isActive) {
-                      owner = chapter;
-                      drawEdge(state.progress);
-                    } else hideEdge(chapter);
-                  },
-                  onRefresh: (self) => {
-                    if (self.isActive) {
-                      owner = chapter;
-                      drawEdge(self.progress);
-                    } else hideEdge(chapter);
-                  },
+                  start: "top 70%",
+                  onEnter: () => turn(chapter),
+                  onEnterBack: () => turn(chapter),
                 });
               });
               releasePageEdge = () => { owner = null; };
             }
+
+            // Chapter moments. "Chapter II" rises in the centre as a chapter
+            // arrives, then fades, and the page folds: the previous page tips
+            // back and dims while the next one comes alive. Pinned scenes
+            // (#equestrian, #book) and their ancestors are never transformed.
+            let toast = document.querySelector<HTMLElement>(".chapter-toast");
+            if (!toast) {
+              toast = document.createElement("div");
+              toast.className = "chapter-toast";
+              toast.setAttribute("aria-hidden", "true");
+              toast.innerHTML = "<b></b><span></span>";
+              document.body.appendChild(toast);
+            }
+            const toastEl = toast;
+            let toastTl: ReturnType<typeof gsap.timeline> | undefined;
+            const showToast = (numeral: string, name: string) => {
+              toastEl.querySelector("b")!.textContent = numeral;
+              toastEl.querySelector("span")!.textContent = `Chapter ${numeral} · ${name}`;
+              toastTl?.kill();
+              toastTl = gsap.timeline()
+                .fromTo(toastEl, { opacity: 0, y: 24, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out" })
+                .to(toastEl, { opacity: 0, y: -16, duration: 0.7, ease: "power2.in" }, "+=0.75");
+            };
+            select("main > section.chapter").forEach((chapter) => {
+              const folio = chapter.querySelector(".chapter-label .folio")?.textContent?.trim();
+              const name = chapter.querySelector(".chapter-label .chapter-name")?.lastChild?.textContent?.trim() ?? "";
+              if (!folio) return;
+              ScrollTrigger.create({
+                trigger: chapter,
+                start: "top 55%",
+                onEnter: () => showToast(folio, name),
+              });
+            });
+
+            const pages = select("main > section").filter((section) => section.id !== "cover");
+            const flat = (section: HTMLElement) =>
+              section.matches("#equestrian, #book") ? null
+                : section.matches(".interlude") ? section
+                  : section.querySelector<HTMLElement>(":scope > .section-shell");
+            pages.forEach((next, index) => {
+              const previous = index > 0 ? pages[index - 1] : first("#cover");
+              const outgoing = previous ? (previous.id === "cover" ? previous.querySelector<HTMLElement>(".cover-inner") : flat(previous)) : null;
+              const incoming = flat(next);
+              if (outgoing) {
+                gsap.fromTo(outgoing, { opacity: 1, scale: 1, rotationX: 0, filter: "blur(0px)" }, {
+                  opacity: 0.25,
+                  scale: desktop ? 0.94 : 0.97,
+                  rotationX: desktop ? 7 : 0,
+                  filter: desktop ? "blur(2px)" : "blur(0px)",
+                  transformOrigin: "50% 100%",
+                  transformPerspective: 1400,
+                  ease: "none",
+                  immediateRender: false,
+                  scrollTrigger: { trigger: next, start: "top 85%", end: "top 5%", scrub: 0.3, invalidateOnRefresh: true },
+                });
+              }
+              if (incoming) {
+                gsap.fromTo(incoming, { opacity: 0.2, scale: desktop ? 1.04 : 1.02, rotationX: desktop ? -5 : 0 }, {
+                  opacity: 1,
+                  scale: 1,
+                  rotationX: 0,
+                  transformOrigin: "50% 0%",
+                  transformPerspective: 1400,
+                  ease: "none",
+                  immediateRender: false,
+                  scrollTrigger: { trigger: next, start: "top 100%", end: "top 30%", scrub: 0.3, invalidateOnRefresh: true },
+                });
+              }
+            });
 
             const waveform = first("#beyond .waveform");
             const bars = select("#beyond .waveform span");

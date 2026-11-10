@@ -25,9 +25,18 @@ Visual-only changes on branch `storybook` (`app/premium.css`, loaded last, plus 
 - Two full-width photo interludes (horses under sunbeams before chapter II; a rider at sunset before chapter VI).
 - "Meet Jody" no longer repeats the cover portrait: it shows an illustrative image (a rider's hands on a horse), labelled as illustrative in its alt text, until Jody's own photos arrive.
 
+## Chapters v2 (10 November 2026)
+
+- Book-opening intro (`app/book-intro.tsx`, `app/intro-script.ts`): once per visit on the home page, skipped for reduced motion and without JavaScript; any click, key or scroll skips it.
+- Hero reduced to one line, Jody's photograph and one action, sized to the viewport (see the hero rule in AGENTS.md); larger wordmark.
+- Chapter moments and page folds in `app/motion.tsx`: "Chapter II" appears and fades; the previous page tips back and dims while the next comes alive; a page edge sweeps across at every chapter change. Pinned scenes are never transformed.
+- Session steps and specialist sessions moved to `/sessions` (`app/sessions/page.tsx`); the home page links there.
+- Contents is a dark drawer over the page; shared footer with "Powered by JobGen" (`app/site-footer.tsx`).
+- Styles in `app/chapters.css` (loaded last).
+
 ## Vercel design preview (static snapshot)
 
-`vercel.json` and `vercel-preview/` exist only so the design can be viewed on Vercel. `vercel-preview/` is the rendered home and privacy pages saved from the local Worker build, plus `dist/client` assets. It has no server: a small script in its HTML answers `/api/leads` with a clear "design preview, forms aren't connected" message, and a "Design preview" label is shown. Regenerate it after visual changes (build, `npm run start`, save `/` and `/privacy`, copy `dist/client`). Delete both before deploying the real site (Cloudflare Workers + D1, or a proper Vercel port).
+`vercel.json` and `vercel-preview/` exist only so the design can be viewed on Vercel. `vercel-preview/` is the rendered home and privacy pages saved from the local Worker build, plus `dist/client` assets. It has no server: a small script in its HTML answers `/api/leads` with a clear "design preview, forms aren't connected" message, and a "Design preview" label is shown. Regenerate it after visual changes: `npm run build`, `npm run start`, then `node scripts/make-vercel-preview.mjs`. Delete both before deploying the real site (Cloudflare Workers + D1, or a proper Vercel port).
 
 ## Product and design direction
 

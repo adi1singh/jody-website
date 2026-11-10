@@ -4,6 +4,10 @@ Read `AI_HANDOFF.md`, `README.md` and `docs/client-brief-2026-11-05.md` before m
 
 ## Design and content
 
+- **The hero must always fit fully on screen. Nothing in it may be cut off at the bottom, on any device.** It is sized to the viewport (`#cover` in `app/chapters.css`). After any hero change, check it at 1440×900, 1366×768, 1280×720, 1024×768, 768×1024, 390×844 and 360×640 before calling it done. The owner has asked for this repeatedly.
+- Keep the hero minimal: one line, Jody's photograph, one action. Put detail in later chapters or on subpages (`/sessions`).
+- Body text is never smaller than 15px; labels never smaller than 11px.
+
 - Preserve the modern black-and-gold direction, bright reading sections, chapter flow and prominent Jody portraits.
 - Keep hypnosis as the main offer. Life coaching is monthly mentoring; equestrian mindset is a new offering for riders and competitors.
 - The 90 minutes refers to the whole-life analysis. Hypnosis and the personal recording follow; do not call it the total appointment duration.

@@ -1,0 +1,612 @@
+/* ==========================================================================
+   Chapters v2 (November 2026), loaded last.
+   - Hero: one line, Jody, one action. ALWAYS fits the viewport: never cut
+     off at the bottom on any screen (see AGENTS.md).
+   - Book-opening intro, larger wordmark, contents drawer, footer,
+     chapter toast and page-fold transitions, sessions subpage.
+   ========================================================================== */
+
+/* ---------- Larger wordmark ---------- */
+body .site-header .wordmark {
+  font-size: 30px;
+  line-height: 1;
+  gap: 2px;
+}
+body .site-header .wordmark span {
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  margin-top: 7px;
+}
+
+/* ---------- Hero: fits the screen, always ---------- */
+body #cover {
+  min-height: 0;
+  height: 100svh;
+  max-height: 1100px;
+  padding: 104px var(--gutter) clamp(24px, 4vh, 48px);
+  display: flex;
+  overflow: hidden;
+}
+body #cover .cover-inner {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  max-width: 1420px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: clamp(32px, 6vw, 110px);
+  align-items: center;
+}
+body #cover .cover-copy {
+  padding: 0;
+  display: grid;
+  justify-items: start;
+  gap: clamp(28px, 4.5vh, 48px);
+}
+body #cover .cover-title {
+  font-size: clamp(56px, 6.6vw, 112px);
+  line-height: 0.95;
+  margin: 0;
+}
+body #cover .cover-title span {
+  display: block;
+  font-style: italic;
+  color: var(--gold);
+}
+body #cover .cover-portrait {
+  margin: 0;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+}
+body #cover .portrait-frame {
+  width: 100%;
+  height: 100%;
+  max-height: 820px;
+}
+body #cover .portrait-frame img {
+  object-position: 30% 35%;
+}
+/* Phones and narrow tablets: line and button on top, Jody fills the rest */
+@media (max-width: 900px) {
+  body #cover {
+    padding-top: 96px;
+    padding-bottom: 20px;
+    max-height: none;
+  }
+  body #cover .cover-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 24px;
+    align-items: stretch;
+  }
+  body #cover .cover-copy {
+    gap: 20px;
+  }
+  body #cover .cover-title {
+    font-size: clamp(42px, 11.5vw, 72px);
+  }
+  body #cover .portrait-frame {
+    aspect-ratio: auto;
+    height: 100%;
+    max-height: none;
+  }
+}
+/* Very short screens (landscape phones, small laptops) */
+@media (max-height: 560px) {
+  body #cover {
+    height: auto;
+    min-height: 100svh;
+  }
+}
+
+/* ---------- Book-opening intro ---------- */
+.book-intro {
+  display: none;
+}
+html[data-intro="play"] .book-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: grid;
+  place-items: center;
+  background: #11110f;
+  perspective: 1800px;
+  cursor: pointer;
+}
+html[data-intro="play"] body {
+  overflow: hidden;
+}
+html[data-intro="play"] [data-wordmark] {
+  opacity: 0;
+}
+[data-wordmark] {
+  transition: opacity 0.4s ease;
+}
+.intro-book {
+  position: relative;
+  width: min(340px, 64vw);
+  aspect-ratio: 2 / 3;
+  transform-style: preserve-3d;
+}
+.intro-page,
+.intro-cover {
+  position: absolute;
+  inset: 0;
+}
+.intro-page {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  padding: 24px;
+  background: #f4efe5;
+  color: #22221d;
+  opacity: 0;
+  box-shadow: 0 30px 80px -30px #000;
+}
+.intro-page span {
+  font: 600 10px/1 var(--sans);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #8f6f36;
+}
+.intro-page em {
+  font: italic 300 30px/1.1 var(--serif);
+}
+.intro-cover {
+  transform-origin: left center;
+  transform-style: preserve-3d;
+}
+.intro-cover-front,
+.intro-cover-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+}
+.intro-cover-front {
+  display: grid;
+  place-content: end center;
+  justify-items: center;
+  gap: 10px;
+  padding-bottom: 34px;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 7%),
+    radial-gradient(ellipse at 50% 30%, #2a2721, #151512 70%);
+  border: 1px solid rgba(201, 169, 110, 0.45);
+  outline: 1px solid rgba(201, 169, 110, 0.25);
+  outline-offset: -12px;
+  box-shadow: 0 40px 90px -30px #000;
+}
+.intro-cover-back {
+  transform: rotateY(180deg);
+  background: #e8dfd1;
+}
+.intro-rule {
+  width: 60px;
+  height: 1px;
+  background: var(--gold);
+}
+.intro-flourish {
+  color: var(--gold);
+  font-size: 18px;
+}
+.intro-title {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  translate: -50% -85%;
+  margin: 0;
+  z-index: 1;
+  display: grid;
+  justify-items: start; /* matches the left-aligned header wordmark it flies to */
+  gap: 12px;
+  font: 400 clamp(38px, 4.6vw, 58px) / 1 var(--serif);
+  color: #f8f5ee;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.intro-title span {
+  font: 600 12px/1 var(--sans);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* ---------- Chapter I: tighter spread ---------- */
+body #story .story-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+  gap: clamp(40px, 5vw, 80px);
+  align-items: center;
+}
+body #story h2 {
+  font-size: clamp(54px, 5.6vw, 92px);
+}
+body #story .story-photo {
+  height: min(620px, 72vh);
+}
+body #story .story-photo img {
+  object-position: 30% 35%;
+}
+@media (max-width: 900px) {
+  body #story .story-grid {
+    grid-template-columns: 1fr;
+  }
+  body #story .story-photo {
+    height: auto;
+    aspect-ratio: 4 / 5;
+  }
+}
+
+/* ---------- Hypnosis: bigger, calmer ---------- */
+body #work .section-heading > p {
+  font-size: clamp(19px, 1.6vw, 23px);
+  line-height: 1.5;
+  max-width: 380px;
+  color: #ddd6c8;
+}
+body #work .hypnosis-feature h3 {
+  font-size: clamp(34px, 3vw, 46px);
+}
+body #work .hypnosis-feature > div > p {
+  font-size: 18px;
+  line-height: 1.65;
+  color: #ddd6c8;
+}
+body #work .suitability-lead {
+  margin-bottom: 14px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 23px !important;
+  line-height: 1.35 !important;
+  color: var(--gold) !important;
+}
+body #work .concern-list li {
+  font-size: 15px;
+  padding: 8px 14px;
+}
+.more-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 48px;
+  margin: 56px 0 24px;
+}
+.more-links a {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 4px 20px;
+  padding: 26px 0;
+  border-top: 1px solid #b6a27e55;
+  border-bottom: 1px solid #b6a27e55;
+  transition: padding 0.35s ease, color 0.35s ease;
+}
+.more-links a:hover {
+  padding-left: 10px;
+  color: var(--gold);
+}
+.more-links span {
+  font: 400 clamp(28px, 2.4vw, 36px) / 1.1 var(--serif);
+}
+.more-links small {
+  grid-column: 1;
+  font-size: 15px;
+  color: #bdb6a8;
+}
+.more-links .arrow {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  color: var(--gold);
+}
+@media (max-width: 760px) {
+  .more-links {
+    grid-template-columns: 1fr;
+  }
+  .more-links a + a {
+    border-top: 0;
+  }
+}
+
+/* ---------- Contents: a dark drawer that opens over the page ---------- */
+body .contents-dialog {
+  inset: 0 0 0 auto;
+  width: min(560px, 100vw);
+  height: 100dvh;
+  max-height: 100dvh;
+  background: #141412;
+  color: #f4efe5;
+  border-left: 1px solid rgba(201, 169, 110, 0.35);
+  box-shadow: -40px 0 80px -30px rgba(0, 0, 0, 0.7);
+}
+body .contents-dialog::backdrop {
+  background: rgba(10, 10, 9, 0.55);
+  backdrop-filter: blur(3px);
+}
+body .contents-dialog[open] {
+  animation: drawer-in 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+body .contents-dialog[open]::backdrop {
+  animation: fade-in 0.45s ease;
+}
+@keyframes drawer-in {
+  from {
+    transform: translateX(60px);
+    opacity: 0;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body .contents-dialog[open],
+  body .contents-dialog[open]::backdrop {
+    animation: none;
+  }
+}
+body .contents-top {
+  height: 88px;
+  padding: 0 32px;
+  border-color: rgba(201, 169, 110, 0.25);
+}
+body .contents-top .wordmark {
+  color: #f4efe5;
+  font-size: 24px;
+}
+body .close-menu {
+  color: #f4efe5;
+  font-size: 15px;
+}
+body .contents-body {
+  display: block;
+  padding: 36px 32px 28px;
+}
+body .contents-intro h2 {
+  font-size: 44px;
+  margin: 12px 0 8px;
+}
+body .contents-intro > p:not(.eyebrow),
+body .contents-flower {
+  display: none;
+}
+body .contents-intro .eyebrow {
+  color: var(--gold);
+}
+body .contents-body nav {
+  margin-top: 28px;
+  border-color: rgba(201, 169, 110, 0.25);
+}
+body .contents-body nav a {
+  grid-template-columns: 48px 1fr 22px;
+  padding: 16px 0;
+  border-color: rgba(201, 169, 110, 0.18);
+}
+body .contents-body nav a:hover {
+  color: var(--gold);
+}
+body .contents-number {
+  font: italic 300 26px/1 var(--serif);
+  color: var(--gold);
+}
+body .contents-name {
+  font-size: 28px;
+  color: #f4efe5;
+}
+body .contents-name small {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: #bdb6a8;
+}
+body .contents-bottom {
+  margin: 0 32px;
+  font-size: 11px;
+  color: var(--gold);
+  border-color: rgba(201, 169, 110, 0.25);
+}
+
+/* ---------- Chapter toast: "Chapter II" appears, then fades ---------- */
+.chapter-toast {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 70;
+  translate: -50% -50%;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 26px 44px;
+  pointer-events: none;
+  opacity: 0;
+  text-align: center;
+}
+.chapter-toast b {
+  font: italic 300 clamp(80px, 9vw, 140px) / 0.8 var(--serif);
+  color: var(--gold);
+}
+.chapter-toast span {
+  font: 600 13px/1 var(--sans);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #b08f55; /* a gold that reads on both ivory and black */
+}
+
+/* ---------- Page turn: a curved page edge sweeps across ---------- */
+body .page-turn-edge {
+  width: 220px;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.28) 46%, rgba(246, 231, 199, 0.55) 60%, rgba(211, 174, 108, 0.6) 64%, rgba(140, 105, 46, 0.35) 68%, rgba(0, 0, 0, 0) 100%);
+  border-radius: 0 50% 50% 0 / 0 6% 6% 0;
+  filter: blur(0.4px);
+}
+
+/* ---------- Footer ---------- */
+.book-footer {
+  background: #0d0d0c;
+  color: #f4efe5;
+  border-top: 1px solid rgba(201, 169, 110, 0.3);
+  padding: clamp(64px, 8vw, 110px) 0 32px;
+}
+.book-footer-top {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 48px;
+}
+.book-footer-brand {
+  display: grid;
+  justify-items: start;
+  gap: 22px;
+}
+.book-footer-mark {
+  display: grid;
+  gap: 8px;
+  font: 400 40px/1 var(--serif);
+}
+.book-footer-mark span {
+  font: 600 11px/1 var(--sans);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.book-footer-brand p {
+  font: 300 30px/1.15 var(--serif);
+}
+.book-footer-brand em {
+  color: var(--gold);
+}
+.book-footer nav,
+.book-footer-top > div:last-child {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+.book-footer-head {
+  margin-bottom: 6px;
+  font: 600 12px/1 var(--sans);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.book-footer-gap {
+  margin-top: 18px;
+}
+.book-footer-top a:not(.gold-button):not(.book-footer-mark) {
+  font-size: 16px;
+  color: #ddd6c8;
+  width: fit-content;
+  transition: color 0.3s ease;
+}
+.book-footer-top a:not(.gold-button):not(.book-footer-mark):hover {
+  color: var(--gold);
+}
+.book-footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(201, 169, 110, 0.2);
+  font-size: 14px;
+  color: #a8a194;
+}
+.book-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.book-footer-links a:hover {
+  color: #f4efe5;
+}
+.powered strong {
+  color: var(--gold);
+  font-weight: 600;
+}
+@media (max-width: 860px) {
+  .book-footer-top {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Sessions subpage ---------- */
+.subpage {
+  padding-top: 130px;
+  padding-bottom: 110px;
+  min-height: 100svh;
+}
+.subpage-title {
+  font-size: clamp(54px, 6vw, 96px) !important;
+  font-weight: 300 !important;
+}
+.subpage-title .gold-text {
+  font-style: italic;
+}
+.back-link {
+  display: inline-block;
+  margin-bottom: 40px;
+  font-size: 15px;
+  color: var(--gold);
+}
+.subpage .process-heading {
+  margin-top: 40px;
+}
+.subpage-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 80px;
+  padding-top: 40px;
+  border-top: 1px solid #b6a27e55;
+}
+.subpage-cta p {
+  font: 300 clamp(26px, 2.6vw, 38px) / 1.2 var(--serif);
+}
+
+/* ---------- Text that was still too small ---------- */
+body .contact-person a,
+body .booking-terms p,
+body .faq-list p,
+body .care-note,
+body .lead-field-note,
+body .form-note {
+  font-size: 15px;
+}
+body .lead-field span,
+body .lead-form label {
+  font-size: 15px;
+}
+body .lead-form input,
+body .lead-form select,
+body .lead-form textarea {
+  font-size: 17px;
+}
+
+/* Phone header: larger than before, but always on one line */
+@media (max-width: 760px) {
+  body .site-header .wordmark {
+    font-size: 22px;
+    white-space: nowrap;
+  }
+  body .site-header .wordmark span {
+    font-size: 8.5px;
+    letter-spacing: 0.16em;
+    margin-top: 5px;
+  }
+}
+@media (max-width: 400px) {
+  body .site-header .header-contact {
+    display: none;
+  }
+}
+
+.book-footer-brand .gold-button {
+  height: auto;
+  min-height: 54px;
+  padding: 14px 26px;
+}
