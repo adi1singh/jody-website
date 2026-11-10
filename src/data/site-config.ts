@@ -1,0 +1,19 @@
+/** Only add approved Jody assets, destinations and testimonials here. */
+export const siteConfig = {
+  bookingUrl: "",
+  introVideoUrl: "",
+  bookCoverUrl: "",
+  portrait: "jody-portrait",
+  socials: [
+    { name: "Instagram", url: "" },
+    { name: "Facebook", url: "" },
+    { name: "TikTok", url: "" },
+    { name: "YouTube", url: "" },
+    { name: "LinkedIn", url: "" },
+  ],
+  // Approved public reel links can be displayed here. A continuously refreshed
+  // Instagram feed needs Jody's account/provider connection before launch.
+  reels: [] as { title: string; url: string; thumbnail: string }[],
+  testimonials: [] as { quote: string; name: string; context?: string }[],
+  trustLogos: [] as { name: string; image: string; url?: string }[],
+};

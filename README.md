@@ -1,120 +1,211 @@
-# Jody
+# Jody Pockran — A Life in Chapters
 
-Jody's personal-brand site: hypnotherapy, life coaching and mindset coaching, and the home of the book and podcast **Live Sexy Now**. From the "Avatar x Jody" meeting on 5 Nov 2026 (notes in the shared Google Doc). First version due within a week of that meeting, ideally live before New Year for a promotion.
+Website setup, features and launch handoff. Reissued 10 November 2026.
 
-- **What it is:** Jody (Australia; lives on acreage with horses) is a master hypnotherapist, master life coach, NLP practitioner, equestrian mindset coach, speaker and soon podcast host. Pillars: 1. hypnosis, 2. life coaching, 3. equestrian mindset coaching (new), 4. speaking, the book and the podcast.
-- **Who it's for:** mainly women in overwhelm; also anyone with anxiety, depression, everyday struggles, phobias, childhood trauma, money and abundance blocks (business owners), quitting smoking or vaping, weight loss ("mental gastric bypass"); riders and competitors for the equestrian work. Often people for whom a psychologist "isn't working".
-- **Their problem, in their words:** overwhelm, "my mind won't switch off", "I've tried everything to quit", money blocks holding the business back.
-- **What we promise:** feel confident and calm again, from the inside out. One deep session (1.5-hour whole-life analysis, a tailored session, the transformation recorded on the client's own phone) plus 21 nights of listening.
-- **Proof we have:** Jody's credentials; the branding photo (black and gold shoot) and horse photos are coming. Jody has client feedback to send. **No testimonials on the site until real ones arrive.**
-- **What visitors should do:** 1. book a session (calendar booking, nothing upfront, half the fee if cancelled within 24 hours); 2. leave their email for the free audios (sleep, anxiety, depression, money rewiring) so they go into the CRM; 3. join the book and podcast list. A chat helper answers common questions.
-- **How we'll measure it:** sessions booked a month, free-audio sign-ups, book-list sign-ups; ads (4 or 5, $10 to $20 each for a week, for quit smoking, weight loss, hypnosis, coaching) point at the site.
-- **Look:** gold and black, clean, luxurious, less text, more modern and a bit brighter than the reference. Burgundy and gold for the book. People buy from people: Jody's face throughout.
-- **References Jody loves:** Regan Hillyer (gold and black, flow, imagery, email pop-up, video up front, trust logos), Marie Forleo (marieforleo.com), Mel Robbins (friendly, podcast; Jody wants hers more luxe), Marisa Peer (free downloads, app), and the site built for the career-counsellor friend with a book and podcast.
-- **Languages:** English only.
-- **Live preview:** https://jody-website.vercel.app (Vercel project linked to this repo: every push to `main` redeploys)
-- **Status:** version 5 (9 Nov 2026): the book concept kept but tightened (about 40% shorter), every chapter built around one large photograph, three high-resolution landscape photos (2600px, Wikimedia Commons, credited in the footer). Before that, version 4 (9 Nov 2026): the story in chapters, black and gold, complete with temporary stock photography (CC0, graded to one look; sources in `public/photos/CREDITS.md`) so Jody sees the finished feel before her own shoot. Built on version 3, the editorial redesign from the owner's brief (7 Nov 2026). A frontend-only visual prototype for Jody's approval: no backend is connected. Waiting on Jody's material.
+- Private review website: https://jody-a-life-in-chapters.jobgen-ai.chatgpt.site/
+- Owner enquiry inbox: https://jody-a-life-in-chapters.jobgen-ai.chatgpt.site/admin
+- Original website: https://jody-website.vercel.app/
 
-## Prices and terms (from the meeting)
+The review website requires the authorised owner’s ChatGPT sign-in. It is a separate deployment from the original Vercel website. This README describes the implemented review build and identifies the remaining launch connections.
 
-- Hypnosis session: $250 (AUD). Includes the whole-life analysis and the personal recording.
-- Quit smoking or vaping: one-off session, priced higher. **Price to confirm.**
-- Life coaching: to move to monthly packages. **Price to confirm.**
-- Nothing upfront; cancel within 24 hours and half the fee applies.
-- Planned: free audios, then a membership of about $9 a month (freemium). Not on the site yet.
+A complete responsive, editorial website with six chapters, an accessible contents menu, scroll-linked GSAP scenes, a CSS 3D book, direct enquiry and signup forms, and a protected owner inbox backed by Cloudflare D1.
 
-## Waiting on
+## Repository handoff
 
-- [ ] Jody: the **original, full-size** branding photo. The site uses a screenshot of the Facebook post (only 923px wide), so the About and booking photos are a little soft. Then redo the hero cut-out (see "Photos" below)
-- [ ] Jody: horse photos and more branding photos (one photo is used three times for now)
-- [ ] Jody: the "pillars" brief email (full list of services and wording)
-- [ ] Jody: client feedback, to add a testimonial section (`TestimonialWall` or `CurvedRail`)
-- [ ] Jody: domain for Live Sexy Now (and whether the site lives on a Jody domain or the book's), business email, phone
-- [ ] Jody: the 5 social accounts (Instagram, Facebook, TikTok, YouTube, LinkedIn), to link in the footer
-- [ ] Jody: book cover (burgundy and gold, bold lettering, horse and landscape). The site shows a drawn draft labelled as a draft
-- [ ] Prices for quit smoking and life coaching packages; whether sessions are in person, online or both, and where
-- [ ] Recordings of the 4 free audios (sleep, anxiety, depression, money rewiring)
-- [ ] Choose: booking calendar (Calendly, Cal.com, Acuity…), CRM, form endpoint; then set `form.endpoint` in `src/data/site.ts` (the free-audio and book sign-ups send a `list` field so the CRM can tell them apart)
-- [ ] Jody to read every line in `src/data/jody.ts` marked TO CONFIRM (FAQ answers especially)
+This export includes the complete application source and Git history. Start with `AI_HANDOFF.md` for the project state, important files and remaining work. `AGENTS.md` gives coding agents the project-specific instructions. The exported repository has no remote configured; add your own GitHub remote when you want to push it.
 
-## Version 4: the story in chapters
+## Run locally
 
-- **Concept:** "Change the story" made literal. After the hero, the page is a book in six chapters: I The story you've been telling, II Meet Jody, III How the story changes, IV Ways to work together, V The next chapter (Live Sexy Now, podcast, speaking, free audio, questions), VI Your chapter (booking).
-- **The gold thread** (`Thread.astro`): one champagne line down the left margin that draws itself as you scroll, with a bead at its tip, passing through each chapter's seal (`ChapterMark.astro`). It is the site's one signature element.
-- **Gold with meaning:** every chapter headline turns from the old story (first line) to the new one (second line, gold italic: `<h2 class="turn">…<em>…</em></h2>`); gold buttons on dark sections; gold chapter seals and labels; 21 gold marks for the 21 nights; foil-stamped lettering only on the book cover.
-- **Photography:** 13 free CC0 photos (horses at golden hour, a black horse, a rider at sunset, golden wheat, a quiet room, a gold microphone), all graded the same way (warm blacks, champagne highlights, fine grain) so they read as one shoot. Each slot in `PHOTOS` keeps its brief for Jody's own photographer; swap them one by one.
-- **Testimonials** are hidden until real ones exist (no placeholders on the page).
+These commands require the complete project source. Open a terminal in the extracted or cloned project folder containing `package.json`. Requirements: Node.js 22.13 or newer and npm. Run commands from that project root. The project uses React, TypeScript, Vinext/Vite and GSAP. Its Sites integration builds a Cloudflare Worker and static assets.
 
-## Version 3: design system
+### Install and build
 
-The redesign brief asks for "luxury editorial fashion photography meets a powerful personal development brand, with subtle cinematic equestrian influences": brighter, less text, photography-led, restrained. References: Regan Hillyer, Marie Forleo, Mel Robbins, Marisa Peer (studied, not copied).
-
-- **Colour** (`src/styles/tokens.css`): black `#171514`, champagne gold `#C4A46B` (details only: labels, hairlines, numerals, hover), warm ivory `#F7F3EC` (the default), white, burgundy `#6A273B` (only for Live Sexy Now). Sections switch tone with `.dark`, `.white` or `.burgundy`; every part adapts through the same variables. No metallic gradients, glows or gold borders.
-- **Type:** Cormorant Garamond for headlines (light, large, italic for the second half of a line), Manrope for body, navigation, buttons and small-caps labels. Fluid scale `--step-hero`, `--step-1`, `--step-2`, `--step-3`. Classes in `src/styles/base.css`: `.display`, `.h2`, `.h3`, `.lead`, `.read`, `.eyebrow`, `.btn-primary`, `.btn-line`, `.link-arrow`, `.preview-note`.
-- **Photography:** every image goes through `src/components/jody/Photo.astro`. Each slot is listed in `PHOTOS` in `src/data/jody.ts` with a description of the shot and its aspect ratio: that list is the shot list for Jody's photographer. Empty slots show a labelled "Photo to come" placeholder of the right shape; to use a real photo, put it in `public/photos/`, set `src` (and `focus` to keep the face in frame). No layout changes needed.
-- **Motion:** slow image wipes (`.reveal-image`), lines that rise in the hero, fades on scroll (`.reveal`), quiet hover states. Everything settles still with reduced motion.
-- **Preview honesty:** forms and sign-ups show "Preview" notes and stay switched off until `form.endpoint` is set; podcast episodes are shown as planned, not published; testimonials are labelled placeholders until Jody sends real ones.
-
-## What's on the page (version 3)
-
-1. Cinematic hero: "Change the story. Change your life.", one action (`Hero.astro`)
-2. Introducing Jody (`Intro.astro`, `#about`)
-3. The three pillars: hypnosis (strongest), life coaching, equestrian mindset (`Pillars.astro`, `#work`, `#hypnosis`, `#coaching`, `#riders`)
-4. The transformation experience: 90-minute whole-life analysis, personal recording, 21 nights; prices and terms (`Experience.astro`, `#experience`)
-5. Testimonials, labelled placeholders until real ones arrive (`Testimonials.astro`)
-6. Live Sexy Now: book launch with a temporary cover and waitlist (`Book.astro`, `#book`)
-7. Podcast (planned episodes) and speaking (`Podcast.astro`, `#podcast`)
-8. Free audio (`FreeAudio.astro`, `#free`), questions (`Faq.astro`, `#faq`)
-9. Closing with Jody and the booking request (`Closing.astro`, `#contact`)
-
-Navigation: Home, About, Work with me, Live Sexy Now, Podcast, Contact, and Book a session.
-
-<!-- version 2 notes below -->
-## What's on the page (version 2)
-
-Look after [dawnsaunders.com](https://www.dawnsaunders.com/), which the owner chose: giant lowercase words with a coloured full stop, big circles, thin Figtree headings over Forum text, rounded cards almost edge to edge. Jody's colours: metallic gold, black, ivory, and burgundy for the book.
-
-1. Hero: "jody." in ivory on gold, Jody on a black disc, the promise and two buttons (book, free audio); a gold disc with Jody's statement spills into the next section (`Hero.astro`)
-2. Ways to work with me: big-word cards "hypnosis." (with what it helps with), "coaching.", "riders.", and "Sound familiar?" in clients' words (`Services.astro`)
-3. How a session works, "One session. Twenty-one nights.", prices and terms (`Session.astro`)
-4. Free audio, "Start tonight.": four audios marked "recording now", sign-up for the CRM, the $9 membership as coming soon (`FreeAudio.astro`)
-5. "live sexy now.": the book with a drawn draft cover, the podcast and a waitlist (`Book.astro`)
-6. About: the branding photo with "Hypnotherapist. Life coach. Horse lover. And now, the next chapter." and credentials (`About.astro`)
-7. What clients are saying: built, but hidden until real quotes are added to `TESTIMONIALS` in `src/data/jody.ts` (`Testimonials.astro`)
-8. FAQ and the Lifeline note (`Faq.astro`); book a session: gold card with terms and the request form (`BookSession.astro`, `#contact`)
-9. Footer with a giant "live sexy now." over a gold sun; email pop-up offering the free audio (once per visitor, after scrolling or 25s); chat helper
-
-Sections live in `src/components/jody/`, content in `src/data/jody.ts`, colours and fonts in `src/styles/tokens.css`. When ready, set in `src/data/site.ts`: `form.endpoint` (all forms and sign-ups go live), `booking` (calendar link for every "Book" button), `socials` (shown in the footer), `email` and `phone`.
-
-## Photos
-
-- `public/jody-hero.webp`: Jody cut out of the branding photo with the circle crop baked in (centre 345,460, radius 345 in a 690×770 image; `Hero.astro` matches it). Made with `rembg` (isnet-general-use and u2net_human_seg masks combined), then the desk removed. Redo from the full-size original when it arrives.
-- `public/jody-portrait.jpg`: the full branding photo. `public/og.jpg`: the share image for links.
-
-<!-- version 1 notes below -->
-## What's on the page
-
-Hero (gold aurora, rotating word) → statement → four pillars (ColourPanels) → "Sound familiar?" problem cards → how a session works (Steps) → prices and terms → free audio sign-up → Live Sexy Now book and podcast with waitlist → photo band (horses) → Meet Jody → FAQ → booking request form → care note (Lifeline 13 11 14) → chat helper. Content is in `src/data/jody.ts`; colours in `src/styles/tokens.css`; the sign-up form is `src/components/convert/Signup.astro` (made for this site).
-
-When the photos arrive, consider `PhotoHero` instead of the aurora hero so Jody's face is the first thing visitors see.
-
-## Run it
-
-```sh
-npm install
-npm run dev      # http://localhost:4321
-npm run build    # static site in dist/
+```bash
+npm ci
+npm run build
 ```
 
-## Before launch
+The build generates `dist/server/wrangler.json`, including the `DB` binding declared in `.openai/hosting.json`.
 
-- [ ] `src/data/site.ts`: name, contact details, navigation, footer, intro words
-- [ ] `src/data/site.ts`: `form.endpoint` so the contact form can send (until then it shows switched off)
-- [ ] `src/styles/tokens.css`: colours and fonts (or try `theme="bridge"`, `"earth"` or `"pathwise"` on `<Base>`)
-- [ ] `src/pages/`: build the pages from `src/components/` (see `src/data/catalog.ts`), starting from a copy of `index.astro`
-- [ ] Replace `public/placeholders/` and the demo content in `src/data/demo.ts`
-- [ ] Set the real address as `site` in `astro.config.mjs`
-- [ ] Remove what the site doesn't need: `src/pages/gallery.astro` and its links in `src/data/site.ts`, `src/pages/hi/` and the `hi` entries in `src/i18n/ui.ts`, unused components
-- [ ] `npm run build`, then check every page at 390px wide, with reduced motion, and with JavaScript off
+### Apply the first local database migration
 
-Started from the website starter kit (`kit/`) on 2026-11-06.
+For a fresh local database, apply the existing migration once:
+
+```bash
+node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_friendly_wind_dancer.sql
+```
+
+Use `.wrangler/state`, not `.wrangler/state/v3`; Wrangler adds its own versioned directories. Do not replay a migration already applied locally. Local and hosted databases are separate. The Sites publishing workflow applies pending hosted migrations. A successful local migration does not apply the same migration to the hosted database.
+
+### Preview the working Worker
+
+Run one local server at a time. Complete the build and local migration above before using the built preview.
+
+```bash
+npm run start
+```
+
+Use the local URL printed by Wrangler. This built preview includes D1-backed form handling. For iterative frontend development, the project also provides:
+
+```bash
+npm run dev
+```
+
+Rebuild the Worker before testing changed server code with `npm run start`.
+
+For local runtime settings, create an ignored `.env.local` in your project directory and pass its **absolute path** explicitly:
+
+```bash
+npm run start -- --env-file /absolute/path/to/jody-storybook/.env.local
+```
+
+Replace the example path with the real path on your machine. The default built configuration lives in `dist/server/wrangler.json`, so a `.dev.vars` file in the project root is not automatically loaded as a file beside that configuration. Keep local environment files untracked; configure hosted settings through the hosting platform.
+
+Local development does not reproduce the hosted ChatGPT sign-in boundary. Verify the complete owner sign-in flow on the hosted preview as well.
+
+### Validate changes
+
+```bash
+npx tsc --noEmit --incremental false
+node --import tsx --test lib/lead-contract.test.ts lib/admin-auth.test.ts lib/leads.test.ts
+npm run build
+```
+
+The tests cover consent and input validation, exact-origin browser writes, oversized request bodies, idempotent and concurrent submissions, rate limiting, failed saves, CRM forwarding, owner authorization and spreadsheet formula injection. Run `npm run lint` when linting is required.
+
+After changing `db/schema.ts`, generate an additional migration:
+
+```bash
+npm run db:generate
+```
+
+Inspect the generated SQL and metadata, rebuild if needed, and apply each new pending SQL file locally using the migration command above with its actual filename. Applied migrations and metadata are immutable. Tables are never created or altered while handling form requests.
+
+## Main files
+
+- `app/page.tsx` — the chapter content and semantic layout.
+- `app/globals.css` and `app/brand.css` — responsive layouts, modern black-and-gold styling and CSS book geometry.
+- `app/motion.tsx` — responsive GSAP / ScrollTrigger timelines and cleanup.
+- `app/navigation.tsx` — table of contents, accessible modal and active chapter indicator.
+- `app/lead-form.tsx` — shared direct enquiry, booking-request and signup form; preference handling and safe retries.
+- `app/lead-experience.tsx` — audio selection, newsletter interaction and the website helper/follow-up experience.
+- `app/api/leads/route.ts` — validated, same-origin lead capture.
+- `app/admin/page.tsx` — protected owner enquiry inbox.
+- `app/api/leads/export/route.ts` — protected CSV export.
+- `app/privacy/page.tsx` — collection, usage and preference information.
+- `lib/lead-contract.ts` — shared request types, supported topics and validation rules.
+- `lib/leads.ts` — durable saving, idempotency, rate limiting, optional CRM forwarding and CSV formatting.
+- `lib/admin-auth.ts` — explicit owner-allowlist authorization.
+- `db/schema.ts` and `drizzle/` — D1 schema and generated migrations.
+- `src/data/content.ts` — the verified source content reference used during the redesign.
+- `src/data/site-config.ts` — approved destinations, media, social links and optional trust content.
+- `public/images/` — responsive WebP photographs and self-hosted fonts.
+- `public/photo-credits.txt` — original sources and licence details.
+
+## Client requirements and session wording
+
+Hypnosis is the lead service, with life coaching presented as monthly mentoring and equestrian mindset coaching as a new offer for riders and competitors. NLP, speaking and commentating support those main pillars.
+
+- Standard hypnosis session: $250 AUD; quit smoking is priced separately and costs more.
+- Session sequence: a 90-minute whole-life analysis, followed by hypnosis and a personal recording made on the client’s phone, then 21 nights of listening. The 90 minutes is not the total appointment duration.
+- Nothing is payable upfront. Cancellations within 24 hours incur half the session fee.
+- Specialist enquiries include quitting smoking, quitting vaping and mental gastric bypass. Other specialist and package prices must be confirmed with Jody.
+- Live Sexy Now remains forthcoming. The podcast is planned around one episode per chapter, with guests, at Daniel’s studio.
+
+## Narrative
+
+Cover → I. Meet Jody → II. Hypnosis & coaching → III. Find your stride → IV. Live Sexy Now → V. Beyond the page → VI. Your next chapter.
+
+The page uses native scrolling. Desktop scenes can pin briefly; mobile and touch layouts use normal document flow. Reduced-motion preferences remove the moving scenes. Server-rendered content stays legible if the animation code cannot load.
+
+## Content and availability
+
+Primary brief: the client meeting notes of 5 November 2026, recorded in `docs/client-brief-2026-11-05.md`. Existing public content and imagery: https://jody-website.vercel.app/ reviewed in this conversation.
+
+The site retains Jody's published services, qualification descriptions, session price ($250 AUD), session process and public contact email. It does not invent life events, testimonial quotes, customer counts or results. The personal story chapter currently uses verified professional information. Add Jody's approved autobiographical copy and authentic personal photos to make this a fuller memoir.
+
+`Live Sexy Now` remains forthcoming. The custom book artwork is a typographic cover concept, labelled on the page. The podcast is in production and free audios are being recorded. Replace availability copy only when the actual products and media are ready.
+
+## Direct enquiries and signups
+
+Forms submit JSON to `POST /api/leads`. Supported types are `enquiry`, `booking`, `book`, `audio`, `newsletter` and `chat`. Service interest, audio topic, contact details, optional message/preferred time, source and separate contact preferences are saved in D1.
+
+- A new submission receives a reference only after the database save succeeds.
+- An identical retry with the same submission UUID returns the same saved reference. Changed details require a new UUID.
+- General enquiries, booking requests and chat follow-ups require permission to respond. Book, audio and newsletter signups also require explicit email-update consent. SMS consent is separate and requires a phone number.
+- The server validates the request independently, limits payload size, rejects unsupported fields/topics, checks a honeypot, and applies durable rate limits.
+- Browser writes must originate from the exact website origin and use JSON.
+- Booking forms collect a **request** and preferred availability; they do not reserve or confirm an appointment.
+- Audio and book signup success means interest has been recorded. It does not claim that an unavailable file was downloaded or an email was sent.
+
+The public email link remains a contact option. The primary website forms now store submissions directly; they are no longer a mailto-only flow.
+
+### Owner review and CSV
+
+Open `/admin` to review saved enquiries, topics, messages, recorded contact/email/SMS permissions and CRM status. Older submissions can be paged through. The CSV action is labelled **Export latest 5,000 to CSV**; the export endpoint also returns a continuation cursor for larger datasets.
+
+Both `/admin` and `/api/leads/export` require a trusted ChatGPT identity supplied by the hosting platform **and** an exact email match in the server runtime `ADMIN_EMAILS` allowlist. Missing configuration denies access; there is no hardcoded owner fallback. Sign-in alone does not grant owner access. This authorization remains required if the public website's audience changes.
+
+The owner page is dynamic and marked against indexing. CSV responses are private/no-store and untrusted cell values are neutralized against spreadsheet formulas. The inbox provides review/export only; it does not automatically contact visitors.
+
+### Server runtime configuration
+
+Declare the `DB` storage binding in the hosting manifest. Supply the allowlist and optional integration settings through the hosted runtime or an ignored local environment; keep them out of browser code and tracked configuration files:
+
+| Name | Purpose |
+| --- | --- |
+| `DB` | Required Cloudflare D1 binding, declared by the manifest's `d1` field. |
+| `ADMIN_EMAILS` | Required comma-separated allowlist of verified owner/admin emails. Both identity and allowlist checks must pass. |
+| `CRM_WEBHOOK_URL` | Optional HTTPS webhook destination, set only after the owner has chosen and connected the CRM. |
+| `CRM_WEBHOOK_TOKEN` | Optional server-only bearer token for that webhook. |
+| `RATE_LIMIT_SALT` | Optional additional salt for short-lived hashed anti-abuse identifiers. |
+
+No secret values belong in this repository. The production allowlist must be configured explicitly for the verified owner.
+
+### Optional CRM forwarding
+
+The integration is dormant when `CRM_WEBHOOK_URL` is absent. A configured webhook receives the saved lead with its reference, consent choices and an idempotency header. The durable save occurs first.
+
+Successful delivery records `sent`. Failed or uncertain delivery retains the saved lead with `pending` status for owner review. There are **no automatic CRM retries**, and a repeated browser submission does not resend the webhook. A CRM acknowledgement is not evidence that any email or SMS was delivered.
+
+The website sends **no automatic email or SMS**. Those workflows require an approved provider connection, sender configuration and an explicit follow-up implementation.
+
+## Approved content and integration settings
+
+Edit `src/data/site-config.ts` for the following public, approved values:
+
+| Setting | Current behaviour and next integration step |
+| --- | --- |
+| `bookingUrl` | Blank uses the session-request flow. Add Jody's real calendar URL when ready; availability, reservation and confirmation are handled by that booking service. |
+| `introVideoUrl` | Add an approved MP4 introduction video. The portrait is shown when this is blank. |
+| `bookCoverUrl` | Add the final approved cover image to replace the labelled typographic concept. |
+| `portrait` | Select the approved portrait asset name used by the photo component. |
+| `socials` | Add verified account URLs. Empty accounts are omitted. |
+| `reels` | Add approved public reel links, titles and thumbnails. This is a curated collection, not an automatically refreshed feed. |
+| `testimonials` | Add genuine, permissioned quotes and attribution. The section is omitted while empty. |
+| `trustLogos` | Add approved professional logos/assets. The section is omitted while empty. |
+
+Remaining production integrations and assets include a real booking/calendar destination, any desired email/SMS follow-up service, a chosen CRM, final book artwork, actual podcast/audio files and approved personal media. An automatically refreshed Instagram or other social feed requires the relevant account/provider connection and a separate feed integration. These connections are not simulated by the current website.
+
+## Remaining launch checklist
+
+- Receive the full pillars brief and approved personal-story copy.
+- Replace illustrative imagery with Jody’s full-size branding, horse and acreage photographs.
+- Add the final book cover and approved introduction video.
+- Connect the real booking calendar and confirm appointment settings.
+- Connect the selected CRM and implement the approved email/SMS follow-up workflows.
+- Add completed audio recordings, podcast episodes and their delivery or playback integrations.
+- Add the five verified business social links, approved reels, testimonials and any authorised trust logos.
+- Connect the chosen domain and confirm the intended public audience.
+
+The approximately $9/month paid tier and four or five New Year advertising campaigns are future-phase items. No paid membership checkout, promotional discount or advertising campaign is active in this build.
+
+## Publishing and ownership
+
+This implementation is a separate Site. It does not alter the original Vercel deployment. Replacing the existing Vercel site requires access to its project or repository. This implementation also depends on Cloudflare D1 and trusted identity supplied by the Sites ChatGPT sign-in gateway. A Vercel migration therefore requires a supported database connection and authentication/authorization implementation, plus compatible framework and build configuration. Changing only the deployment target or build command is insufficient.
+
+The tracked `.openai/hosting.json` identifies this specific Site and its logical `DB` binding. Preserve that identity while editing this Site. An unrelated new project needs its own registered identity and storage; do not reuse this Site's ID. The Sites release workflow applies pending hosted D1 migrations separately from local preview state. Confirm the release succeeds before treating the hosted database as updated.
+
+## Assets
+
+The portrait is reused from Jody's existing branding website. Other photographs are illustrative stock, never represented as Jody or her clients. Original licence and attribution details are preserved in `public/photo-credits.txt`, with a visible footer link. The locally hosted fonts include their OFL licence files.
