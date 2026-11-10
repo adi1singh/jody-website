@@ -1,10 +1,22 @@
 # Jody Pockran — A Life in Chapters
 
+Website setup, features and launch handoff. Reissued 10 November 2026.
+
+- Private review website: https://jody-a-life-in-chapters.jobgen-ai.chatgpt.site/
+- Owner enquiry inbox: https://jody-a-life-in-chapters.jobgen-ai.chatgpt.site/admin
+- Original website: https://jody-website.vercel.app/
+
+The review website requires the authorised owner’s ChatGPT sign-in. It is a separate deployment from the original Vercel website. This README describes the implemented review build and identifies the remaining launch connections.
+
 A complete responsive, editorial website with six chapters, an accessible contents menu, scroll-linked GSAP scenes, a CSS 3D book, direct enquiry and signup forms, and a protected owner inbox backed by Cloudflare D1.
+
+## Repository handoff
+
+This export includes the complete application source and Git history. Start with `AI_HANDOFF.md` for the project state, important files and remaining work. `AGENTS.md` gives coding agents the project-specific instructions. The exported repository has no remote configured; add your own GitHub remote when you want to push it.
 
 ## Run locally
 
-Requirements: Node.js 22.13 or newer, npm. Run commands from the project root. The project uses React, TypeScript, Vinext/Vite and GSAP. Its Sites integration builds a Cloudflare Worker and static assets.
+These commands require the complete project source. Open a terminal in the extracted or cloned project folder containing `package.json`. Requirements: Node.js 22.13 or newer and npm. Run commands from that project root. The project uses React, TypeScript, Vinext/Vite and GSAP. Its Sites integration builds a Cloudflare Worker and static assets.
 
 ### Install and build
 
@@ -23,9 +35,11 @@ For a fresh local database, apply the existing migration once:
 node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_friendly_wind_dancer.sql
 ```
 
-Use `.wrangler/state`, not `.wrangler/state/v3`; Wrangler adds its own versioned directories. Do not replay a migration already applied locally. Local and hosted databases are separate. Apply pending hosted migrations through Sites before deploying.
+Use `.wrangler/state`, not `.wrangler/state/v3`; Wrangler adds its own versioned directories. Do not replay a migration already applied locally. Local and hosted databases are separate. The Sites publishing workflow applies pending hosted migrations. A successful local migration does not apply the same migration to the hosted database.
 
 ### Preview the working Worker
+
+Run one local server at a time. Complete the build and local migration above before using the built preview.
 
 ```bash
 npm run start
@@ -37,7 +51,17 @@ Use the local URL printed by Wrangler. This built preview includes D1-backed for
 npm run dev
 ```
 
-Rebuild the Worker before testing changed server code with `npm run start`. Supply local runtime settings through the local Worker environment; keep local environment files untracked. Local development does not reproduce the hosted ChatGPT sign-in boundary, so verify the complete owner sign-in flow on the hosted preview as well.
+Rebuild the Worker before testing changed server code with `npm run start`.
+
+For local runtime settings, create an ignored `.env.local` in your project directory and pass its **absolute path** explicitly:
+
+```bash
+npm run start -- --env-file /absolute/path/to/jody-storybook/.env.local
+```
+
+Replace the example path with the real path on your machine. The default built configuration lives in `dist/server/wrangler.json`, so a `.dev.vars` file in the project root is not automatically loaded as a file beside that configuration. Keep local environment files untracked; configure hosted settings through the hosting platform.
+
+Local development does not reproduce the hosted ChatGPT sign-in boundary. Verify the complete owner sign-in flow on the hosted preview as well.
 
 ### Validate changes
 
@@ -77,6 +101,16 @@ Inspect the generated SQL and metadata, rebuild if needed, and apply each new pe
 - `src/data/site-config.ts` — approved destinations, media, social links and optional trust content.
 - `public/images/` — responsive WebP photographs and self-hosted fonts.
 - `public/photo-credits.txt` — original sources and licence details.
+
+## Client requirements and session wording
+
+Hypnosis is the lead service, with life coaching presented as monthly mentoring and equestrian mindset coaching as a new offer for riders and competitors. NLP, speaking and commentating support those main pillars.
+
+- Standard hypnosis session: $250 AUD; quit smoking is priced separately and costs more.
+- Session sequence: a 90-minute whole-life analysis, followed by hypnosis and a personal recording made on the client’s phone, then 21 nights of listening. The 90 minutes is not the total appointment duration.
+- Nothing is payable upfront. Cancellations within 24 hours incur half the session fee.
+- Specialist enquiries include quitting smoking, quitting vaping and mental gastric bypass. Other specialist and package prices must be confirmed with Jody.
+- Live Sexy Now remains forthcoming. The podcast is planned around one episode per chapter, with guests, at Daniel’s studio.
 
 ## Narrative
 
@@ -153,11 +187,24 @@ Edit `src/data/site-config.ts` for the following public, approved values:
 
 Remaining production integrations and assets include a real booking/calendar destination, any desired email/SMS follow-up service, a chosen CRM, final book artwork, actual podcast/audio files and approved personal media. An automatically refreshed Instagram or other social feed requires the relevant account/provider connection and a separate feed integration. These connections are not simulated by the current website.
 
+## Remaining launch checklist
+
+- Receive the full pillars brief and approved personal-story copy.
+- Replace illustrative imagery with Jody’s full-size branding, horse and acreage photographs.
+- Add the final book cover and approved introduction video.
+- Connect the real booking calendar and confirm appointment settings.
+- Connect the selected CRM and implement the approved email/SMS follow-up workflows.
+- Add completed audio recordings, podcast episodes and their delivery or playback integrations.
+- Add the five verified business social links, approved reels, testimonials and any authorised trust logos.
+- Connect the chosen domain and confirm the intended public audience.
+
+The approximately $9/month paid tier and four or five New Year advertising campaigns are future-phase items. No paid membership checkout, promotional discount or advertising campaign is active in this build.
+
 ## Publishing and ownership
 
-This implementation is a separate Site. It does not alter the original Vercel deployment. The full source can be adapted to another host using that host's supported framework/build setup. Replacing the existing Vercel site requires access to its project or repository.
+This implementation is a separate Site. It does not alter the original Vercel deployment. Replacing the existing Vercel site requires access to its project or repository. This implementation also depends on Cloudflare D1 and trusted identity supplied by the Sites ChatGPT sign-in gateway. A Vercel migration therefore requires a supported database connection and authentication/authorization implementation, plus compatible framework and build configuration. Changing only the deployment target or build command is insufficient.
 
-The tracked `.openai/hosting.json` identifies this specific Site and its logical `DB` binding. Preserve that identity while editing this Site. An unrelated new project needs its own registered identity and storage; do not reuse this Site's ID. The release process must apply pending hosted D1 migrations separately from local preview state before publishing.
+The tracked `.openai/hosting.json` identifies this specific Site and its logical `DB` binding. Preserve that identity while editing this Site. An unrelated new project needs its own registered identity and storage; do not reuse this Site's ID. The Sites release workflow applies pending hosted D1 migrations separately from local preview state. Confirm the release succeeds before treating the hosted database as updated.
 
 ## Assets
 
