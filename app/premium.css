@@ -1,0 +1,418 @@
+/* ==========================================================================
+   Premium upgrade (November 2026), loaded after globals.css and brand.css.
+   1. Editorial serif headlines: Cormorant Garamond, light; the gold second
+      line of a headline in italic.
+   2. Readable text: the 7–13px labels and paragraphs raised to comfortable
+      sizes with stronger contrast on dark backgrounds.
+   3. Chapter openers that read like a book: a large gold Roman numeral,
+      "Chapter II" and the chapter's name.
+   4. Full-width photo interludes between chapters (.interlude).
+   Selectors are prefixed with `body` so they outrank the earlier files
+   without !important. No layout, motion or form behaviour is changed.
+   ========================================================================== */
+
+:root {
+  --gold: #c9a96e;
+  --gold-text-light: #8f6f36; /* gold for small text on paper */
+  --soft: #cfc8bb; /* body text on dark */
+}
+
+/* ---------- 1. Serif headlines ---------- */
+body h1,
+body h2,
+body h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 0.98;
+}
+body h2 {
+  font-weight: 300;
+}
+body .cover-title {
+  font-family: var(--serif);
+  font-weight: 300;
+  letter-spacing: -0.035em;
+  line-height: 0.88;
+}
+body .cover-title span,
+body h2 .gold-text,
+body h2 > span,
+body .book h2 .gold-text {
+  font-style: italic;
+  font-weight: 300;
+}
+body .equestrian h2 {
+  font-family: var(--serif);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+}
+body .equestrian h2 > span {
+  color: var(--gold);
+}
+body .service-row h3,
+body .specialist-grid h3,
+body .process-step h3,
+body .podcast-copy h3,
+body .speaking-strip h3,
+body .audio-heading h3,
+body .faq-section h3,
+body .book-waitlist h3,
+body .hypnosis-feature h3 {
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+body .session-price strong {
+  font-family: var(--serif);
+  font-weight: 300;
+}
+body .wordmark,
+body .footer-wordmark {
+  font-family: var(--serif);
+  text-transform: none;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+body .wordmark span {
+  font-family: var(--sans);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+}
+
+/* ---------- 2. Readable text ---------- */
+body .eyebrow,
+body .cover-edition,
+body .story-copy > .eyebrow,
+body .contact-copy .eyebrow,
+body .faq-section .eyebrow,
+body .audio-heading .eyebrow,
+body .speaking-strip .eyebrow,
+body .book-waitlist .eyebrow,
+body .equestrian-copy .eyebrow,
+body .supporting-services .service-row .eyebrow,
+body .session-price > span,
+body .process-step > span,
+body .specialist-grid article > span,
+body .status-tag {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+}
+body .hero-service {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--soft);
+}
+body .gold-button,
+body .light-button {
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  min-height: 54px;
+}
+body .hero-story-link,
+body .header-contact,
+body .header-audio,
+body .contents-button {
+  font-size: 14px;
+}
+body .cover-bottom p,
+body .cover-bottom a,
+body .cover-portrait figcaption,
+body .scene-folio,
+body .book-concept-note,
+body .book-copy .availability-note,
+body .small-status,
+body .site-footer > div {
+  font-size: 12.5px;
+}
+body .text-link,
+body .specialist-grid .text-link,
+body .speaking-strip .text-link {
+  font-size: 15px;
+}
+body .story-body,
+body .story-body p {
+  font-size: 17px;
+  line-height: 1.75;
+  max-width: 470px;
+}
+body .story-lead {
+  font-size: 31px;
+}
+body .section-heading > p,
+body .hypnosis-feature p,
+body .hypnosis-feature .suitability-note,
+body .session-price > p,
+body .process-step p,
+body .specialist-heading > p,
+body .specialist-grid p,
+body .service-row p,
+body .supporting-services p,
+body .equestrian-description > p,
+body .book-copy > p,
+body .podcast-copy > p,
+body .speaking-strip > p,
+body .audio-heading p,
+body .beyond-notes p,
+body .contact-copy p,
+body .booking-terms p,
+body .faq-list p {
+  font-size: 16.5px;
+  line-height: 1.7;
+}
+body .concern-list li {
+  font-size: 14px;
+}
+body .session-price > small,
+body .booking-terms > span,
+body .contact-person a {
+  font-size: 14px;
+}
+body .care-note {
+  font-size: 13px;
+  line-height: 1.7;
+}
+body .faq-list summary {
+  font-size: 19px;
+  font-family: var(--serif);
+}
+body .image-caption > span {
+  font-size: 11px;
+}
+/* Muted text on dark sections: lifted for contrast (was too faint) */
+body .ink .section-heading > p,
+body .ink .hypnosis-feature p,
+body .ink .process-step p,
+body .ink .specialist-grid p,
+body .ink .service-row p,
+body .ink .book-copy > p,
+body .wine .contact-copy p,
+body .wine .booking-terms p,
+body .wine .faq-list p {
+  color: var(--soft);
+}
+/* Form labels and fields */
+body .contact-form label,
+body form label {
+  font-size: 14px;
+}
+body form input,
+body form select,
+body form textarea {
+  font-size: 16px;
+}
+body .form-note,
+body .send-button {
+  font-size: 13.5px;
+}
+
+/* ---------- 3. Chapter openers ---------- */
+body .chapter-label {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  padding-top: clamp(56px, 6vw, 88px);
+  padding-bottom: clamp(36px, 4vw, 56px);
+  text-transform: none;
+  letter-spacing: 0;
+}
+body .chapter-label .folio {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(64px, 6.4vw, 104px);
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  color: var(--gold);
+  min-width: 0;
+}
+body .paper .chapter-label .folio {
+  color: var(--gold-text-light);
+}
+body .chapter-line {
+  width: 72px;
+  background: var(--gold);
+  opacity: 0.8;
+}
+body .chapter-name {
+  display: grid;
+  gap: 6px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(22px, 2vw, 28px);
+  line-height: 1.15;
+  text-transform: none;
+  letter-spacing: 0;
+}
+body .chapter-word {
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+body .paper .chapter-word {
+  color: var(--gold-text-light);
+}
+
+/* ---------- 4. Photo interludes ---------- */
+.interlude {
+  position: relative;
+  height: clamp(440px, 70vh, 760px);
+  overflow: hidden;
+  background: #11110f;
+  display: flex;
+  align-items: flex-end;
+}
+.interlude > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.interlude-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(17, 17, 15, 0.86) 0%, rgba(17, 17, 15, 0.35) 42%, rgba(17, 17, 15, 0) 70%),
+    linear-gradient(to bottom, rgba(17, 17, 15, 0.45) 0%, rgba(17, 17, 15, 0) 22%);
+}
+.interlude-line {
+  position: relative;
+  padding-bottom: clamp(48px, 7vw, 96px);
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(38px, 4.8vw, 76px);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  color: #f8f5ee;
+  max-width: 1680px;
+}
+.interlude-line em {
+  display: block;
+  font-style: italic;
+  color: var(--gold);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .interlude > img {
+    transform: scale(1.06);
+    transition: transform 2.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .interlude:hover > img {
+    transform: scale(1.03);
+  }
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 760px) {
+  body .chapter-label {
+    gap: 16px;
+    padding-top: 48px;
+    padding-bottom: 28px;
+  }
+  body .chapter-label .folio {
+    font-size: 56px;
+  }
+  body .chapter-line {
+    width: 32px;
+  }
+  body .chapter-name {
+    font-size: 21px;
+  }
+  body .hero-service {
+    font-size: 16.5px;
+  }
+  body .story-body,
+  body .story-body p,
+  body .section-heading > p,
+  body .hypnosis-feature p,
+  body .process-step p,
+  body .specialist-grid p,
+  body .service-row p,
+  body .book-copy > p,
+  body .podcast-copy > p,
+  body .contact-copy p,
+  body .faq-list p {
+    font-size: 16px;
+  }
+  .interlude {
+    height: 72svh;
+    min-height: 420px;
+  }
+  .interlude-line {
+    font-size: 36px;
+  }
+}
+
+/* ---------- Serif for the headings brand.css sets with the `font` shorthand ---------- */
+body .image-caption strong,
+body .process-heading > p:last-child,
+body .process-step h3,
+body .supporting-services h3,
+body .book h2,
+body .book-copy .book-subtitle,
+body .podcast-copy h3,
+body .contact h2,
+body .faq-section h3,
+body .contents-intro h2,
+body .contents-name,
+body .contents-number,
+body .footer-wordmark {
+  font-family: var(--serif);
+  font-weight: 300;
+  letter-spacing: -0.015em;
+}
+body .process-step h3,
+body .supporting-services h3,
+body .faq-section h3,
+body .contents-name,
+body .image-caption strong {
+  font-weight: 400;
+}
+body .book h2,
+body .contact h2 {
+  line-height: 0.95;
+}
+body .book h2 .gold-text,
+body .contact h2 .gold-text,
+body .image-caption strong em {
+  font-style: italic;
+}
+body .process-heading > p:last-child {
+  font-size: clamp(32px, 3vw, 44px);
+  line-height: 1.08;
+}
+body .book-copy .book-subtitle {
+  font-size: 28px;
+  font-style: italic;
+  color: var(--gold);
+}
+body .equestrian-word {
+  font-family: var(--serif);
+  font-style: italic;
+}
+/* Interlude words sit lower and darker so they read over bright skies */
+.interlude-shade {
+  background:
+    linear-gradient(to top, rgba(17, 17, 15, 0.92) 0%, rgba(17, 17, 15, 0.6) 30%, rgba(17, 17, 15, 0.1) 62%, rgba(17, 17, 15, 0) 75%),
+    linear-gradient(to bottom, rgba(17, 17, 15, 0.45) 0%, rgba(17, 17, 15, 0) 22%);
+}
+
+/* Phone header: keep the wordmark and the session link on one line */
+@media (max-width: 760px) {
+  body .wordmark {
+    font-size: 19px;
+  }
+  body .wordmark span {
+    font-size: 7.5px;
+    letter-spacing: 0.16em;
+  }
+  body .header-contact {
+    font-size: 12px;
+    white-space: nowrap;
+  }
+}

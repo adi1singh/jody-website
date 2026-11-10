@@ -15,6 +15,16 @@ This Git export contains the full tracked application, assets, migrations and te
 
 The private review build and the original Vercel site are separate deployments. The export contains no configured Git remote. Select the intended destination before preparing a deployment.
 
+## Premium upgrade (10 November 2026)
+
+Visual-only changes on branch `storybook` (`app/premium.css`, loaded last, plus small markup changes in `app/page.tsx`). Forms, server code, database and motion are unchanged; type check, the 16 backend tests and the build pass, and a contact submission was saved locally after the change.
+
+- Headlines in Cormorant Garamond (light; the gold second line in italic) instead of the sans-serif.
+- Body text and labels raised from 7–13px to readable sizes, with more contrast on dark sections.
+- Chapter openers read like a book: a large gold italic Roman numeral, "Chapter II" and the chapter name.
+- Two full-width photo interludes (horses under sunbeams before chapter II; a rider at sunset before chapter VI).
+- "Meet Jody" no longer repeats the cover portrait: it shows an illustrative image (a rider's hands on a horse), labelled as illustrative in its alt text, until Jody's own photos arrive.
+
 ## Product and design direction
 
 Create a premium personal-brand website for Jody Pockran that reads like a book. Her life, work, connection with horses, forthcoming book and media should feel like connected chapters.

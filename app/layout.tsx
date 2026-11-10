@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./brand.css";
 import "./lead-experience.css";
+import "./premium.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://jody-a-life-in-chapters.jobgen-ai.chatgpt.site"),
   title: "Jody Pockran — A Life in Chapters",
