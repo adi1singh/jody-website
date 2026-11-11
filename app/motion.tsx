@@ -27,6 +27,23 @@ export default function StoryMotion() {
 
         gsap.registerPlugin(ScrollTrigger);
 
+        // Premium, softer scrolling: Lenis eases the wheel on mouse and
+        // trackpad devices only. Touch keeps native scrolling, and reduced
+        // motion gets none. It drives ScrollTrigger from GSAP's own ticker.
+        let lenis: import("lenis").default | undefined;
+        let lenisTick: ((time: number) => void) | undefined;
+        if (matchMedia("(hover: hover) and (pointer: fine)").matches
+          && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          const { default: Lenis } = await import("lenis");
+          if (disposed) return;
+          const smooth = new Lenis({ duration: 1.25, easing: (t: number) => 1 - Math.pow(1 - t, 4), wheelMultiplier: 0.9, anchors: { offset: -80 } });
+          smooth.on("scroll", () => ScrollTrigger.update());
+          lenis = smooth;
+          lenisTick = (time: number) => lenis?.raf(time * 1000);
+          gsap.ticker.add(lenisTick);
+          gsap.ticker.lagSmoothing(0);
+        }
+
         const select = (selector: string) =>
           Array.from(root.querySelectorAll<HTMLElement>(selector));
         const first = (selector: string) =>
@@ -46,6 +63,8 @@ export default function StoryMotion() {
 
         destroy = () => {
           active = false;
+          if (lenisTick) gsap.ticker.remove(lenisTick);
+          lenis?.destroy();
           events.abort();
           cancelAnimationFrame(refreshFrame);
           media.revert();
@@ -268,72 +287,51 @@ export default function StoryMotion() {
                 transformPerspective: 1400,
                 transformOrigin: "50% 50%",
               });
+              // Orbit pop-out (as WTE's flask): one eased phase drives every
+              // axis, so the book traces a single loop towards the viewer,
+              // comes right up to the screen at the top of it, and returns to
+              // exactly its resting pose.
+              const stage = bookObject.parentElement as HTMLElement | null;
+              if (stage) gsap.set(stage, { perspective: 1100 });
+              const glint = document.createElement("span");
+              glint.className = "book-glint";
+              bookFront?.appendChild(glint);
+              const ease = (v: number) => { const t = Math.min(1, Math.max(0, v)); return t * t * (3 - 2 * t); };
+              const state = { p: 0 };
+              const draw = () => {
+                const o = ease(state.p);
+                const lift = Math.sin(Math.PI * o) ** 2;
+                const sweep = Math.sin(Math.PI * 2 * o);
+                gsap.set(bookObject, {
+                  x: sweep * 120,
+                  y: resting.y + (1 - Math.cos(Math.PI * 2 * o)) * -18,
+                  z: lift * 300,
+                  scale: resting.scale * (1 + lift * 0.08),
+                  rotationX: sweep * 12,
+                  rotationY: resting.rotationY + sweep * -32,
+                  rotationZ: resting.rotationZ + sweep * -9,
+                });
+                gsap.set(glint, { xPercent: -160 + o * 320, opacity: lift * 0.9 });
+                if (bookOrbit) gsap.set(bookOrbit, { scale: 1 + lift * 0.18, opacity: 1 - lift * 0.5 });
+              };
               const book = gsap.timeline({
                 scrollTrigger: {
                   trigger: bookStage,
                   pin: bookStage,
                   pinSpacing: true,
                   start: pinStart,
-                  end: () => `+=${Math.round(window.innerHeight * 0.8)}`,
-                  scrub: 0.5,
+                  end: () => `+=${Math.round(window.innerHeight * 1.1)}`,
+                  scrub: 0.8,
                   anticipatePin: 1,
                   invalidateOnRefresh: true,
                 },
               });
-              book.from(bookObject, {
-                rotationY: -38,
-                rotationZ: 7,
-                y: 42,
-                scale: resting.scale * 0.89,
-                duration: 0.38,
-                ease: "power2.out",
-              }, 0);
-              book.to(bookObject, {
-                rotationY: 16,
-                rotationZ: resting.rotationZ + 3,
-                y: resting.y - 12,
-                scale: resting.scale * 1.025,
-                duration: 0.25,
-                ease: "power1.inOut",
-              }, 0.35);
-              book.to(bookObject, {
-                ...resting,
-                duration: 0.2,
-                ease: "power2.out",
-              }, 0.6);
-              if (bookFront) {
-                const coverRotation = Number(gsap.getProperty(bookFront, "rotationY")) || 0;
-                gsap.set(bookFront, {
-                  transformOrigin: "left center",
-                  backfaceVisibility: "hidden",
-                });
-                book.to(bookFront, {
-                  rotationY: coverRotation - 48,
-                  duration: 0.23,
-                  ease: "power1.inOut",
-                }, 0.36);
-                book.to(bookFront, {
-                  rotationY: coverRotation,
-                  duration: 0.2,
-                  ease: "power2.out",
-                }, 0.59);
-              }
+              book.to(state, { p: 1, duration: 0.8, ease: "none", onUpdate: draw }, 0);
               if (bookCopy) {
-                book.from(bookCopy, {
-                  x: 34,
-                  y: 12,
-                  duration: 0.32,
-                  ease: "power2.out",
-                }, 0);
+                book.from(bookCopy, { x: -34, opacity: 0, duration: 0.3, ease: "power2.out" }, 0);
               }
-              if (bookOrbit) {
-                book.fromTo(bookOrbit, { rotation: -16 }, {
-                  rotation: 20,
-                  duration: 0.8,
-                  ease: "none",
-                }, 0);
-              }
-              book.to({}, { duration: 0.25 }, 0.8);
+              book.to({}, { duration: 0.2 }, 0.8);
+              draw();
             } else {
               enter(bookObject, { y: 24, rotate: desktop ? -3 : -1 });
               enter(bookCopy, { y: 18 });
@@ -464,12 +462,11 @@ export default function StoryMotion() {
               const image = interlude.querySelector<HTMLElement>("img");
               if (!line || !turnLine) return;
               const scene = gsap.timeline({
-                scrollTrigger: { trigger: interlude, start: "top 70%", end: "bottom bottom", scrub: 0.6, invalidateOnRefresh: true },
+                scrollTrigger: { trigger: interlude, start: "top 85%", end: "bottom bottom", scrub: 0.8, invalidateOnRefresh: true },
               });
-              scene.fromTo(line, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.2, ease: "none" })
-                .to(line, { opacity: 0.45, scale: 0.86, y: -20, duration: 0.3, ease: "none" }, 0.35)
-                .fromTo(turnLine, { opacity: 0, scale: 0.7, y: 50 }, { opacity: 1, scale: 1, y: 0, duration: 0.35, ease: "none" }, 0.38)
-                .to({}, { duration: 0.25 });
+              scene.fromTo(line, { opacity: 0.35, y: 24 }, { opacity: 1, y: 0, duration: 0.3, ease: "none" })
+                .fromTo(turnLine, { opacity: 0.25, scale: 0.86, y: 24 }, { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: "none" }, 0.15)
+                .to({}, { duration: 0.2 });
               if (image) scene.fromTo(image, { scale: 1.12 }, { scale: 1, duration: 1, ease: "none" }, 0);
             });
 

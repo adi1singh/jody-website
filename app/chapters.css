@@ -743,7 +743,7 @@ body .faq-section { margin-top: 56px; }
 /* While motion runs, the interlude gets scroll length and its stage holds */
 [data-motion-mode="cinematic"] .interlude,
 [data-motion-mode="compact"] .interlude {
-  height: 210svh;
+  height: 135svh;
 }
 [data-motion-mode="cinematic"] .interlude-stage,
 [data-motion-mode="compact"] .interlude-stage {
@@ -923,4 +923,168 @@ body #equestrian .chapter-label {
 }
 body #equestrian .equestrian-copy .eyebrow {
   margin-bottom: 10px;
+}
+
+/* Book orbit: a gold glint that crosses the cover as it comes close */
+.book-glint {
+  position: absolute;
+  inset: -10% -40%;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(105deg, rgba(255, 240, 205, 0) 40%, rgba(255, 240, 205, 0.32) 50%, rgba(255, 240, 205, 0) 60%);
+  mix-blend-mode: screen;
+}
+body #book .book-front {
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Brighter, punchier (owner, Nov 2026): richer warm charcoal instead of
+   near-black, a brighter gold, lighter body text on dark, ivory sections
+   a touch brighter, crisper accents.
+   ========================================================================== */
+:root {
+  --gold: #e0b866;
+  --gold-text-light: #9a7224;
+  --paper: #fbf8f1;
+  --soft: #ece5d7;
+}
+body,
+body .wine,
+body .ink,
+body .book-footer {
+  background-color: #1d1a17;
+}
+body .site-header.is-scrolled {
+  background: rgba(29, 26, 23, 0.94);
+}
+body .paper {
+  background: var(--paper);
+}
+/* Alternate the dark chapters with a warmer, lighter charcoal so they never merge */
+body #work {
+  background: #24201c;
+}
+body #book {
+  background:
+    radial-gradient(60% 70% at 72% 45%, rgba(122, 38, 60, 0.45), rgba(122, 38, 60, 0) 70%),
+    #1d1a17;
+}
+body #contact {
+  background: #24201c;
+}
+/* Gold that reads as gold: brighter accents and buttons */
+body .gold-text,
+body h2 .gold-text,
+body .chapter-label .folio,
+body .chapter-word {
+  color: var(--gold);
+}
+body .paper .gold-text,
+body .paper .chapter-label .folio,
+body .paper .chapter-word {
+  color: var(--gold-text-light);
+}
+body .gold-button {
+  background: linear-gradient(120deg, #f1cf85, #e0b866 45%, #c99a45);
+  color: #1d1a17;
+  box-shadow: 0 10px 30px -12px rgba(224, 184, 102, 0.65);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, filter 0.35s ease;
+}
+body .gold-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 38px -12px rgba(224, 184, 102, 0.8);
+  filter: brightness(1.06);
+}
+/* Lighter body text on dark so it doesn't look grey */
+body .ink p,
+body .wine p,
+body #work p,
+body #contact p {
+  color: var(--soft);
+}
+/* Photographs: a little more life */
+body .story-photo img,
+body .portrait-frame img,
+body .work-photo img,
+body .podcast-visual > img {
+  filter: saturate(1.08) contrast(1.04);
+}
+body .interlude-stage > img {
+  filter: brightness(1.12) saturate(1.1);
+}
+.interlude-shade {
+  background:
+    radial-gradient(60% 55% at 50% 52%, rgba(29, 26, 23, 0.5), rgba(29, 26, 23, 0.05) 75%),
+    linear-gradient(to bottom, rgba(29, 26, 23, 0.45) 0%, rgba(29, 26, 23, 0) 22%, rgba(29, 26, 23, 0) 78%, rgba(29, 26, 23, 0.55) 100%) !important;
+}
+body #cover {
+  background:
+    radial-gradient(55% 65% at 72% 50%, rgba(224, 184, 102, 0.24), rgba(224, 184, 102, 0) 65%),
+    linear-gradient(90deg, rgba(29, 26, 23, 0.9) 0%, rgba(29, 26, 23, 0.62) 48%, rgba(29, 26, 23, 0.8) 100%),
+    url("/images/sunbeams-horses-960.webp") center 40% / cover no-repeat,
+    #1d1a17;
+}
+
+/* ---------- Opening book, more real: thickness, spine, light, shadow ---------- */
+.intro-book {
+  transform: rotateX(6deg) rotateY(-8deg);
+}
+.intro-shadow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(420px, 74vw);
+  height: 60px;
+  translate: -50% calc(min(360px, 66vw) * 0.75 + 10px);
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+  filter: blur(8px);
+  pointer-events: none;
+}
+.intro-spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 34px;
+  transform-origin: left center;
+  transform: rotateY(90deg) translateX(-34px);
+  background: linear-gradient(90deg, #0b0a09, #1d1a16 40%, #0e0d0b);
+  border: 1px solid rgba(224, 184, 102, 0.35);
+  display: grid;
+  place-items: center;
+}
+.intro-spine span {
+  writing-mode: vertical-rl;
+  font: 500 12px/1 var(--serif);
+  letter-spacing: 0.3em;
+  color: #e0b866;
+}
+.intro-pages-edge {
+  right: -14px;
+  width: 16px;
+  top: 4px;
+  bottom: 4px;
+  background: repeating-linear-gradient(90deg, #f6eedd 0 1px, #dccfb3 1px 2px, #efe5d1 2px 3px);
+}
+.intro-cover-front {
+  overflow: hidden;
+}
+/* Embossed gold: a fine dark shadow under the foil */
+.intro-author,
+.intro-sub {
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.7)) drop-shadow(0 0 10px rgba(224, 184, 102, 0.18));
+}
+.intro-author {
+  font-size: clamp(44px, 5.4vw, 60px);
+}
+.intro-sweep {
+  position: absolute;
+  inset: -20% -60%;
+  background: linear-gradient(105deg, rgba(255, 236, 196, 0) 42%, rgba(255, 236, 196, 0.16) 50%, rgba(255, 236, 196, 0) 58%);
+  pointer-events: none;
+}
+html[data-intro="play"] .book-intro {
+  background: radial-gradient(70% 70% at 50% 45%, #2a241d, #12100e 75%);
 }

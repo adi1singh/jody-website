@@ -48,14 +48,20 @@ export default function BookIntro() {
       if (!book || !cover || !page) { finish(); return; }
 
       const tl = gsap.timeline({ onComplete: finish });
+      const sweep = el.querySelector<HTMLElement>(".intro-sweep");
+      const shadow = el.querySelector<HTMLElement>(".intro-shadow");
       tl.from(glow, { opacity: 0, duration: 1.2, ease: "power1.out" }, 0)
-        .from(book, { y: 40, rotateX: 14, opacity: 0, duration: 1.1, ease: "power3.out" }, 0)
-        .to({}, { duration: 0.5 })
+        .from(shadow, { opacity: 0, scale: 0.6, duration: 1.1, ease: "power3.out" }, 0)
+        // It arrives turned slightly, showing its spine, then faces you
+        .from(book, { y: 50, rotateY: 28, rotateX: 12, opacity: 0, duration: 1.3, ease: "power3.out" }, 0)
+        .fromTo(sweep, { xPercent: -130 }, { xPercent: 130, duration: 1.1, ease: "power1.inOut" }, 0.55)
+        .to({}, { duration: 0.25 })
         // The cover swings open on its spine onto the first page…
         .to(cover, { rotateY: -165, duration: 1.4, ease: "power2.inOut" }, "open")
         .to(page, { opacity: 1, duration: 0.7, ease: "power1.out" }, "open+=0.3")
         // …then the book dissolves into the page behind it.
         .to(book, { scale: 1.6, opacity: 0, duration: 1, ease: "power2.in" }, "open+=1.15")
+        .to(shadow, { opacity: 0, duration: 0.6 }, "open+=1.1")
         .to(glow, { opacity: 0, duration: 0.8 }, "open+=1.2")
         .to(el, { backgroundColor: "rgba(12,11,10,0)", duration: 0.9, ease: "power1.out" }, "open+=1.25");
       timeline = tl;
@@ -72,7 +78,9 @@ export default function BookIntro() {
 
   return <div ref={overlay} className="book-intro" aria-hidden="true">
     <div className="intro-glow" />
+    <div className="intro-shadow" />
     <div className="intro-book">
+      <div className="intro-spine"><span>Jody Pockran</span></div>
       <div className="intro-pages-edge" />
       <div className="intro-page">
         <span>Chapter one</span>
@@ -85,6 +93,7 @@ export default function BookIntro() {
           <span className="intro-rule" />
           <span className="intro-sub">Hypnotherapy &amp; Coaching</span>
           <span className="intro-flourish">✧</span>
+          <i className="intro-sweep" />
         </div>
         <div className="intro-cover-back" />
       </div>
