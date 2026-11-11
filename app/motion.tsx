@@ -405,12 +405,13 @@ export default function StoryMotion() {
                   onComplete: () => hideEdge(chapter),
                 });
               };
-              select("#story, #work, #equestrian, #book, #beyond, #contact, .interlude").forEach((chapter) => {
+              // Once per chapter, never on the interludes between chapters.
+              select("#story, #work, #equestrian, #book, #beyond, #contact").forEach((chapter) => {
                 ScrollTrigger.create({
                   trigger: chapter,
                   start: "top 70%",
+                  once: true,
                   onEnter: () => turn(chapter),
-                  onEnterBack: () => turn(chapter),
                 });
               });
               releasePageEdge = () => { owner = null; };
@@ -421,9 +422,8 @@ export default function StoryMotion() {
             // (#equestrian, #book) and their ancestors are never transformed.
             const pages = select("main > section").filter((section) => section.id !== "cover");
             const flat = (section: HTMLElement) =>
-              section.matches("#equestrian, #book") ? null
-                : section.matches(".interlude") ? section
-                  : section.querySelector<HTMLElement>(":scope > .section-shell");
+              section.matches("#equestrian, #book, .interlude") ? null
+                : section.querySelector<HTMLElement>(":scope > .section-shell");
             pages.forEach((next, index) => {
               const previous = index > 0 ? pages[index - 1] : first("#cover");
               const outgoing = previous ? (previous.id === "cover" ? previous.querySelector<HTMLElement>(".cover-inner") : flat(previous)) : null;
@@ -454,6 +454,58 @@ export default function StoryMotion() {
                 });
               }
             });
+
+            // Interludes: the photo holds still while the first line reads,
+            // then the second line grows in, larger. (CSS gives the section
+            // its extra scroll length only while motion is running.)
+            select(".interlude").forEach((interlude) => {
+              const line = interlude.querySelector<HTMLElement>(".interlude-line");
+              const turnLine = interlude.querySelector<HTMLElement>(".interlude-turn");
+              const image = interlude.querySelector<HTMLElement>("img");
+              if (!line || !turnLine) return;
+              const scene = gsap.timeline({
+                scrollTrigger: { trigger: interlude, start: "top 70%", end: "bottom bottom", scrub: 0.6, invalidateOnRefresh: true },
+              });
+              scene.fromTo(line, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.2, ease: "none" })
+                .to(line, { opacity: 0.45, scale: 0.86, y: -20, duration: 0.3, ease: "none" }, 0.35)
+                .fromTo(turnLine, { opacity: 0, scale: 0.7, y: 50 }, { opacity: 1, scale: 1, y: 0, duration: 0.35, ease: "none" }, 0.38)
+                .to({}, { duration: 0.25 });
+              if (image) scene.fromTo(image, { scale: 1.12 }, { scale: 1, duration: 1, ease: "none" }, 0);
+            });
+
+            // Chapter I: a gold frame draws itself around the portrait, which
+            // leans gently towards the cursor on desktop.
+            const storyFrame = first("#story .story-frame");
+            if (storyFrame) {
+              gsap.fromTo(storyFrame, { clipPath: "inset(0 100% 100% 0)" }, {
+                clipPath: "inset(0 0% 0% 0)", duration: 1.6, ease: "power2.inOut",
+                scrollTrigger: { trigger: storyFrame, start: "top 80%", once: true },
+              });
+            }
+            const storyPhoto = first("#story .story-photo");
+            const storyImageWrap = first("#story .story-image");
+            if (storyPhoto && storyImageWrap && context.conditions?.fine) {
+              gsap.set(storyPhoto, { transformPerspective: 900 });
+              storyImageWrap.addEventListener("pointermove", (event) => {
+                const box = storyImageWrap.getBoundingClientRect();
+                const x = (event.clientX - box.left) / box.width - 0.5;
+                const y = (event.clientY - box.top) / box.height - 0.5;
+                gsap.to(storyPhoto, { rotateY: x * 8, rotateX: -y * 8, duration: 0.6, ease: "power2.out" });
+              }, { signal: sceneEvents.signal });
+              storyImageWrap.addEventListener("pointerleave", () => {
+                gsap.to(storyPhoto, { rotateY: 0, rotateX: 0, duration: 0.9, ease: "power3.out" });
+              }, { signal: sceneEvents.signal });
+            }
+
+            // Chapter II: the concerns pop in one by one, so the eye lands on each.
+            const chips = select("#work .concern-list li");
+            if (chips.length) {
+              chips.forEach((chip) => handled.add(chip));
+              gsap.from(chips, {
+                opacity: 0, scale: 0.6, y: 16, duration: 0.55, stagger: 0.16, ease: "back.out(2.2)",
+                scrollTrigger: { trigger: chips[0], start: "top 88%", once: true },
+              });
+            }
 
             const waveform = first("#beyond .waveform");
             const bars = select("#beyond .waveform span");

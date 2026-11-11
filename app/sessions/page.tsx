@@ -30,6 +30,9 @@ export default function Sessions() {
             <article id="quit-vaping" data-reveal><span>02 / HABITS</span><h3>Quit vaping.</h3><p>Enquire about Jody’s hypnosis sessions for people wanting to stop vaping.</p><a className="text-link" href="/#booking" data-interest="Quit vaping">Ask about vaping <Arrow /></a></article>
             <article id="weight-support" data-reveal><span>03 / WEIGHT-RELATED HYPNOSIS</span><h3>Mental gastric bypass.</h3><p>A specialist hypnosis enquiry. Discuss the approach and suitability with Jody.</p><a className="text-link" href="/#booking" data-interest="Mental gastric bypass">Explore the session <Arrow /></a></article>
           </div>
+          <div id="coaching" className="supporting-services">
+            <article id="life-coaching" className="service-row" data-reveal><div><span className="eyebrow">Life coaching</span><h3>Mentoring.<br />With momentum.</h3></div><div><p>Ongoing mentoring, shared goals and monthly support. A practical space to work on your direction, separate from therapy.</p><a className="text-link" href="/#booking" data-interest="Life coaching">Explore monthly coaching <Arrow /></a></div></article>
+          </div>
           <div className="subpage-cta" data-reveal><p>Ready to begin, or not sure which session fits?</p><a className="gold-button" href="/#booking" data-interest="Hypnotherapy">Request a session<Arrow /></a></div>
         </div>
       </section>

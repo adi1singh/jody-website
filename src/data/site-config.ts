@@ -4,6 +4,9 @@ export const siteConfig = {
   introVideoUrl: "",
   bookCoverUrl: "",
   portrait: "jody-portrait",
+  // Jody's own photo with her horse for the equestrian chapter (e.g.
+  // "/images/jody-black-horse.webp"). Blank shows an illustrative horse photo.
+  jodyWithHorse: "",
   socials: [
     { name: "Instagram", url: "" },
     { name: "Facebook", url: "" },

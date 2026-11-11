@@ -668,3 +668,215 @@ body .lead-form textarea {
     position: static;
   }
 }
+
+/* ==========================================================================
+   Chapters v4
+   ========================================================================== */
+
+/* ---------- Less empty space down the page ---------- */
+body .chapter-label {
+  padding-top: clamp(40px, 4.5vw, 64px);
+  padding-bottom: clamp(24px, 2.6vw, 36px);
+}
+body .story { padding-bottom: clamp(56px, 6vw, 88px); }
+body .work { padding-bottom: clamp(56px, 6vw, 88px); }
+body .section-heading { margin-bottom: clamp(32px, 3.6vw, 48px); }
+body .book-stage { height: auto; min-height: 0; padding-bottom: 40px; }
+body .book-scene { min-height: 520px; }
+body .beyond { padding-bottom: clamp(56px, 6vw, 88px); }
+body .speaking-strip { margin-top: 48px; }
+body .audio-section { padding-top: 56px; }
+body .faq-section { margin-top: 56px; }
+
+/* ---------- Interlude: centred words, held while you scroll ---------- */
+.interlude {
+  height: auto;
+  display: block;
+  overflow: visible; /* a hidden overflow would stop the stage holding still */
+  background: #11110f;
+}
+.interlude-stage {
+  position: relative;
+  height: clamp(460px, 80vh, 820px);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.interlude-stage > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: none !important;
+}
+.interlude-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(70% 60% at 50% 55%, rgba(17, 17, 15, 0.55), rgba(17, 17, 15, 0.15) 70%),
+    linear-gradient(to bottom, rgba(17, 17, 15, 0.6) 0%, rgba(17, 17, 15, 0) 25%, rgba(17, 17, 15, 0) 75%, rgba(17, 17, 15, 0.7) 100%) !important;
+}
+.interlude-words {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: clamp(10px, 2vh, 22px);
+  padding: 0 var(--gutter);
+  text-align: center;
+}
+.interlude-line {
+  margin: 0;
+  font: 300 clamp(30px, 3.4vw, 54px) / 1.1 var(--serif);
+  letter-spacing: -0.01em;
+  color: #f8f5ee;
+  padding: 0 !important;
+}
+.interlude-turn {
+  margin: 0;
+  font: italic 300 clamp(48px, 6.6vw, 112px) / 1 var(--serif);
+  letter-spacing: -0.02em;
+  color: var(--gold);
+  text-shadow: 0 6px 40px rgba(0, 0, 0, 0.45);
+}
+/* While motion runs, the interlude gets scroll length and its stage holds */
+[data-motion-mode="cinematic"] .interlude,
+[data-motion-mode="compact"] .interlude {
+  height: 210svh;
+}
+[data-motion-mode="cinematic"] .interlude-stage,
+[data-motion-mode="compact"] .interlude-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+}
+
+/* ---------- Chapter I: a gold frame and a portrait that leans ---------- */
+body #story .story-image {
+  position: relative;
+}
+.story-frame {
+  position: absolute;
+  inset: -18px 18px 38px -18px;
+  border: 1px solid var(--gold);
+  pointer-events: none;
+}
+body #story .story-photo {
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform;
+  box-shadow: 0 30px 60px -30px rgba(40, 30, 15, 0.45);
+}
+@media (max-width: 900px) {
+  .story-frame { inset: -10px 10px 30px -10px; }
+}
+
+/* ---------- Chapter II: a photograph beside the opening ---------- */
+.work-photo {
+  margin: 0;
+  width: min(420px, 38vw);
+  display: grid;
+  gap: 16px;
+}
+.work-photo img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  filter: saturate(0.85);
+}
+.work-photo figcaption {
+  font: italic 300 clamp(20px, 1.7vw, 25px) / 1.35 var(--serif);
+  color: #e6decf;
+}
+body #work .section-heading {
+  align-items: center;
+}
+/* The concerns: pop in one by one, lift on hover */
+body #work .concern-list li {
+  transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  cursor: default;
+}
+body #work .concern-list li:hover {
+  transform: translateY(-3px);
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #11110f;
+}
+.find-more {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 6px 24px;
+  margin-top: 48px;
+  padding: 30px 0;
+  border-top: 1px solid #b6a27e55;
+  border-bottom: 1px solid #b6a27e55;
+  transition: padding 0.35s ease, color 0.35s ease;
+}
+.find-more:hover { padding-left: 12px; color: var(--gold); }
+.find-more span { font: 400 clamp(34px, 3vw, 48px) / 1 var(--serif); }
+.find-more small { grid-column: 1; font-size: 16px; color: #bdb6a8; }
+.find-more .arrow { grid-row: 1 / span 2; grid-column: 2; color: var(--gold); width: 30px; height: 30px; }
+@media (max-width: 900px) {
+  body #work .section-heading { display: grid; gap: 28px; }
+  .work-photo { width: 100%; }
+}
+
+/* ---------- Chapter III: smaller copy, Jody and her horse on the right ---------- */
+body #equestrian h2 { font-size: clamp(56px, 5.6vw, 92px); }
+body #equestrian .equestrian-description { margin-top: 22px; }
+body #equestrian .equestrian-description > p { font-size: 17px; }
+body #equestrian .equestrian-copy .eyebrow { margin-bottom: 16px; }
+.equestrian-portrait {
+  position: absolute;
+  z-index: 2;
+  right: var(--gutter);
+  top: 50%;
+  translate: 0 -42%;
+  width: min(360px, 28vw);
+  margin: 0;
+  padding: 10px;
+  background: rgba(17, 17, 15, 0.55);
+  border: 1px solid rgba(201, 169, 110, 0.5);
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.8);
+}
+.equestrian-portrait img {
+  width: 100%;
+  height: auto;
+  max-height: 62vh;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+.equestrian-portrait figcaption {
+  padding: 12px 4px 2px;
+  font: italic 400 17px/1.2 var(--serif);
+  color: #e8d9ba;
+}
+body #equestrian .equestrian-word { right: auto; left: 38%; }
+@media (max-width: 900px) {
+  .equestrian-portrait {
+    position: relative;
+    right: auto;
+    top: auto;
+    translate: none;
+    width: min(320px, 80%);
+    margin-top: 36px;
+  }
+  body #equestrian .equestrian-word { display: none; }
+}
+
+/* ---------- Headings that stay with you while their content scrolls ---------- */
+body .book-waitlist { align-items: start; }
+body .book-waitlist > div:first-child,
+body .audio-heading {
+  position: sticky;
+  top: 110px;
+  align-self: start;
+}
+body .audio-section { align-items: start; }
+@media (max-width: 760px) {
+  body .book-waitlist > div:first-child,
+  body .audio-heading { position: static; }
+}
