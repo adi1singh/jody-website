@@ -39,7 +39,7 @@ export default function BookIntro() {
     el.addEventListener("click", skip, { once: true });
 
     let cancelled = false;
-    void import("gsap").then(({ gsap }) => {
+    void Promise.all([import("gsap"), document.fonts.ready]).then(([{ gsap }]) => {
       if (cancelled || finished) return;
       const book = el.querySelector<HTMLElement>(".intro-book");
       const cover = el.querySelector<HTMLElement>(".intro-cover");
@@ -50,12 +50,11 @@ export default function BookIntro() {
       const tl = gsap.timeline({ onComplete: finish });
       const sweep = el.querySelector<HTMLElement>(".intro-sweep");
       const shadow = el.querySelector<HTMLElement>(".intro-shadow");
-      tl.from(glow, { opacity: 0, duration: 1.2, ease: "power1.out" }, 0)
-        .from(shadow, { opacity: 0, scale: 0.6, duration: 1.1, ease: "power3.out" }, 0)
+      tl.fromTo(glow, { opacity: 0 }, { opacity: 1, duration: 1.2, ease: "power1.out" }, 0)
+        .fromTo(shadow, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 1.1, ease: "power3.out" }, 0)
         // It arrives turned slightly, showing its spine, then faces you
-        .from(book, { y: 50, rotateY: 28, rotateX: 12, opacity: 0, duration: 1.3, ease: "power3.out" }, 0)
-        .fromTo(sweep, { xPercent: -130 }, { xPercent: 130, duration: 1.1, ease: "power1.inOut" }, 0.55)
-        .to({}, { duration: 0.25 })
+        .fromTo(book, { y: 50, rotateY: 28, rotateX: 12, opacity: 0 }, { y: 0, rotateY: -8, rotateX: 6, opacity: 1, duration: 1.3, ease: "power3.out" }, 0)
+        .fromTo(sweep, { xPercent: -130 }, { xPercent: 130, duration: 0.9, ease: "power1.inOut" }, 0.45)
         // The cover swings open on its spine onto the first page…
         .to(cover, { rotateY: -165, duration: 1.4, ease: "power2.inOut" }, "open")
         .to(page, { opacity: 1, duration: 0.7, ease: "power1.out" }, "open+=0.3")

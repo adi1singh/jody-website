@@ -199,8 +199,9 @@ export default function StoryMotion() {
             const equestrianImage = first("#equestrian .equestrian-image");
             const equestrianCopy = first("#equestrian .equestrian-copy");
             const equestrianWord = first("#equestrian .equestrian-word");
-            const equestrianPin = desktop && equestrianStage
-              && equestrianStage.scrollHeight <= window.innerHeight - 70;
+            // Not pinned: the chapter scrolls with the page (owner: a pinned,
+            // still chapter looked empty). The photo drifts gently instead.
+            const equestrianPin = false;
             // Desktop navigation settles at 72px after leaving the cover.
             const pinStart = "top 72px";
 
@@ -258,7 +259,13 @@ export default function StoryMotion() {
               // End on a still composition, allowing time to read and act.
               equestrian.to({}, { duration: 0.3 }, 0.7);
             } else {
-              enter(equestrianImage, { y: 14 });
+              const drift = equestrianImage?.querySelector("img");
+              if (drift && equestrianStage) {
+                gsap.fromTo(drift, { yPercent: -8, scale: 1.14 }, {
+                  yPercent: 8, scale: 1.14, ease: "none",
+                  scrollTrigger: { trigger: equestrianStage, start: "top bottom", end: "bottom top", scrub: 0.6 },
+                });
+              }
               enter(equestrianCopy, { y: 22 });
               enter(equestrianWord, { x: -12, y: 0 });
             }
@@ -464,9 +471,9 @@ export default function StoryMotion() {
               const scene = gsap.timeline({
                 scrollTrigger: { trigger: interlude, start: "top 85%", end: "bottom bottom", scrub: 0.8, invalidateOnRefresh: true },
               });
-              scene.fromTo(line, { opacity: 0.35, y: 24 }, { opacity: 1, y: 0, duration: 0.3, ease: "none" })
-                .fromTo(turnLine, { opacity: 0.25, scale: 0.86, y: 24 }, { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: "none" }, 0.15)
-                .to({}, { duration: 0.2 });
+              // Words stay fully readable; only the second line grows a little.
+              scene.fromTo(turnLine, { scale: 0.9 }, { scale: 1, duration: 0.6, ease: "none" }, 0)
+                .to({}, { duration: 0.4 });
               if (image) scene.fromTo(image, { scale: 1.12 }, { scale: 1, duration: 1, ease: "none" }, 0);
             });
 
