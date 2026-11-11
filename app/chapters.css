@@ -880,3 +880,47 @@ body .audio-section { align-items: start; }
   body .book-waitlist > div:first-child,
   body .audio-heading { position: static; }
 }
+
+/* "What brings you here?": the sentence and the concerns read as content, not small print */
+body #work .hypnosis-feature > div > p:not(.suitability-lead) {
+  font-family: var(--serif);
+  font-size: clamp(24px, 2vw, 30px);
+  line-height: 1.4;
+  color: #f1ece2;
+  max-width: 560px;
+}
+body #work .concern-list {
+  gap: 12px;
+  margin: 28px 0;
+}
+body #work .concern-list li {
+  font-size: clamp(17px, 1.3vw, 19px);
+  padding: 11px 20px;
+  border-radius: 999px;
+}
+
+/* Chapter openers: compact. The numeral and name sit close to what follows. */
+body .chapter-label {
+  gap: 18px;
+  padding-top: clamp(28px, 3vw, 44px);
+  padding-bottom: clamp(16px, 1.6vw, 24px);
+}
+body .chapter-label .folio {
+  font-size: clamp(54px, 5vw, 80px);
+}
+body .chapter-line {
+  width: 48px;
+}
+body .chapter-name {
+  gap: 2px;
+}
+body #equestrian .equestrian-content {
+  padding-top: 0;
+}
+body #equestrian .chapter-label {
+  padding-top: clamp(24px, 2.6vw, 36px);
+  padding-bottom: 12px;
+}
+body #equestrian .equestrian-copy .eyebrow {
+  margin-bottom: 10px;
+}
