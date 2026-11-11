@@ -399,8 +399,8 @@ export default function StoryMotion() {
                 sweep?.kill();
                 sweep = gsap.to(state, {
                   progress: 1,
-                  duration: 0.95,
-                  ease: "power2.inOut",
+                  duration: 1.9,
+                  ease: "sine.inOut",
                   onUpdate: () => drawEdge(state.progress),
                   onComplete: () => hideEdge(chapter),
                 });
@@ -416,39 +416,9 @@ export default function StoryMotion() {
               releasePageEdge = () => { owner = null; };
             }
 
-            // Chapter moments. "Chapter II" rises in the centre as a chapter
-            // arrives, then fades, and the page folds: the previous page tips
+            // Page folds between chapters: the previous page tips
             // back and dims while the next one comes alive. Pinned scenes
             // (#equestrian, #book) and their ancestors are never transformed.
-            let toast = document.querySelector<HTMLElement>(".chapter-toast");
-            if (!toast) {
-              toast = document.createElement("div");
-              toast.className = "chapter-toast";
-              toast.setAttribute("aria-hidden", "true");
-              toast.innerHTML = "<b></b><span></span>";
-              document.body.appendChild(toast);
-            }
-            const toastEl = toast;
-            let toastTl: ReturnType<typeof gsap.timeline> | undefined;
-            const showToast = (numeral: string, name: string) => {
-              toastEl.querySelector("b")!.textContent = numeral;
-              toastEl.querySelector("span")!.textContent = `Chapter ${numeral} · ${name}`;
-              toastTl?.kill();
-              toastTl = gsap.timeline()
-                .fromTo(toastEl, { opacity: 0, y: 24, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out" })
-                .to(toastEl, { opacity: 0, y: -16, duration: 0.7, ease: "power2.in" }, "+=0.75");
-            };
-            select("main > section.chapter").forEach((chapter) => {
-              const folio = chapter.querySelector(".chapter-label .folio")?.textContent?.trim();
-              const name = chapter.querySelector(".chapter-label .chapter-name")?.lastChild?.textContent?.trim() ?? "";
-              if (!folio) return;
-              ScrollTrigger.create({
-                trigger: chapter,
-                start: "top 55%",
-                onEnter: () => showToast(folio, name),
-              });
-            });
-
             const pages = select("main > section").filter((section) => section.id !== "cover");
             const flat = (section: HTMLElement) =>
               section.matches("#equestrian, #book") ? null

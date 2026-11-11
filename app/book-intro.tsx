@@ -3,9 +3,9 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Opening scene: a closed book titled "Jody Pockran, Hypnotherapy & Coaching".
- * The cover swings open onto its first page (the hero), the title glides up
- * into the header wordmark, and the book dissolves into the background.
+ * Opening scene: a closed leather-and-gold book titled "Jody Pockran,
+ * Hypnotherapy & Coaching". The cover swings open onto its first page and
+ * the book dissolves into the hero.
  *
  * - Plays once per visit, only on the home page, only with motion allowed.
  *   The decision is made before first paint by INTRO_SCRIPT (intro-script.ts),
@@ -43,30 +43,21 @@ export default function BookIntro() {
       if (cancelled || finished) return;
       const book = el.querySelector<HTMLElement>(".intro-book");
       const cover = el.querySelector<HTMLElement>(".intro-cover");
-      const title = el.querySelector<HTMLElement>(".intro-title");
       const page = el.querySelector<HTMLElement>(".intro-page");
-      const target = document.querySelector<HTMLElement>("[data-wordmark]");
-      if (!book || !cover || !title || !page) { finish(); return; }
-
-      // Where the title must land: the header wordmark (FLIP).
-      const from = title.getBoundingClientRect();
-      const to = target?.getBoundingClientRect();
-      const dx = to ? to.left - from.left : 0;
-      const dy = to ? to.top - from.top : -from.top;
-      const scale = to ? Math.max(0.2, to.width / from.width) : 0.4;
+      const glow = el.querySelector<HTMLElement>(".intro-glow");
+      if (!book || !cover || !page) { finish(); return; }
 
       const tl = gsap.timeline({ onComplete: finish });
-      tl.from(book, { scale: 0.9, y: 30, opacity: 0, duration: 0.7, ease: "power3.out" })
-        .to({}, { duration: 0.35 })
-        // The cover swings open on its spine…
-        .to(cover, { rotateY: -168, duration: 1.15, ease: "power2.inOut" }, "open")
-        .to(page, { opacity: 1, duration: 0.6, ease: "power1.out" }, "open+=0.25")
-        // …while the title lifts off the cover into the header.
-        .to(title, { x: dx, y: dy, scale, transformOrigin: "left top", duration: 1.15, ease: "power3.inOut" }, "open+=0.1")
-        // The first page becomes the page: the book grows and dissolves.
-        .to(book, { scale: 2.4, opacity: 0, duration: 0.9, ease: "power2.in" }, "open+=0.85")
-        .to(el, { backgroundColor: "rgba(17,17,15,0)", duration: 0.8, ease: "power1.out" }, "open+=0.95")
-        .to(title, { opacity: 0, duration: 0.25 }, ">-0.1");
+      tl.from(glow, { opacity: 0, duration: 1.2, ease: "power1.out" }, 0)
+        .from(book, { y: 40, rotateX: 14, opacity: 0, duration: 1.1, ease: "power3.out" }, 0)
+        .to({}, { duration: 0.5 })
+        // The cover swings open on its spine onto the first page…
+        .to(cover, { rotateY: -165, duration: 1.4, ease: "power2.inOut" }, "open")
+        .to(page, { opacity: 1, duration: 0.7, ease: "power1.out" }, "open+=0.3")
+        // …then the book dissolves into the page behind it.
+        .to(book, { scale: 1.6, opacity: 0, duration: 1, ease: "power2.in" }, "open+=1.15")
+        .to(glow, { opacity: 0, duration: 0.8 }, "open+=1.2")
+        .to(el, { backgroundColor: "rgba(12,11,10,0)", duration: 0.9, ease: "power1.out" }, "open+=1.25");
       timeline = tl;
     }).catch(finish);
 
@@ -80,20 +71,23 @@ export default function BookIntro() {
   }, []);
 
   return <div ref={overlay} className="book-intro" aria-hidden="true">
+    <div className="intro-glow" />
     <div className="intro-book">
+      <div className="intro-pages-edge" />
       <div className="intro-page">
         <span>Chapter one</span>
         <em>Change the story.</em>
       </div>
       <div className="intro-cover">
         <div className="intro-cover-front">
+          <i className="corner tl" /><i className="corner tr" /><i className="corner bl" /><i className="corner br" />
+          <span className="intro-author">Jody Pockran</span>
           <span className="intro-rule" />
+          <span className="intro-sub">Hypnotherapy &amp; Coaching</span>
           <span className="intro-flourish">✧</span>
-          <span className="intro-rule" />
         </div>
         <div className="intro-cover-back" />
       </div>
     </div>
-    <p className="intro-title">Jody Pockran<span>Hypnotherapy &amp; Coaching</span></p>
   </div>;
 }

@@ -103,7 +103,7 @@ body #cover .portrait-frame img {
   }
 }
 
-/* ---------- Book-opening intro ---------- */
+/* ---------- Book-opening intro: a leather-and-gold book that opens ---------- */
 .book-intro {
   display: none;
 }
@@ -113,24 +113,36 @@ html[data-intro="play"] .book-intro {
   z-index: 500;
   display: grid;
   place-items: center;
-  background: #11110f;
-  perspective: 1800px;
+  background: #0c0b0a;
+  perspective: 2000px;
   cursor: pointer;
 }
 html[data-intro="play"] body {
   overflow: hidden;
 }
-html[data-intro="play"] [data-wordmark] {
-  opacity: 0;
-}
-[data-wordmark] {
-  transition: opacity 0.4s ease;
+.intro-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(42% 46% at 50% 52%, rgba(201, 169, 110, 0.22), rgba(201, 169, 110, 0) 70%);
+  pointer-events: none;
 }
 .intro-book {
   position: relative;
-  width: min(340px, 64vw);
+  width: min(360px, 66vw);
   aspect-ratio: 2 / 3;
   transform-style: preserve-3d;
+  transform: rotateX(4deg);
+}
+/* Page block visible along the fore-edge */
+.intro-pages-edge {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  right: -9px;
+  width: 12px;
+  background: repeating-linear-gradient(90deg, #efe6d4 0 1px, #d9ccb2 1px 2px);
+  border-radius: 0 2px 2px 0;
+  box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.25);
 }
 .intro-page,
 .intro-cover {
@@ -141,21 +153,22 @@ html[data-intro="play"] [data-wordmark] {
   display: grid;
   place-content: center;
   justify-items: center;
-  gap: 14px;
-  padding: 24px;
-  background: #f4efe5;
+  gap: 16px;
+  padding: 28px;
+  background:
+    radial-gradient(120% 90% at 50% 40%, #fbf7ef, #efe6d6);
   color: #22221d;
   opacity: 0;
-  box-shadow: 0 30px 80px -30px #000;
+  box-shadow: 0 40px 90px -30px #000;
 }
 .intro-page span {
   font: 600 10px/1 var(--sans);
-  letter-spacing: 0.24em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
   color: #8f6f36;
 }
 .intro-page em {
-  font: italic 300 30px/1.1 var(--serif);
+  font: italic 300 32px/1.1 var(--serif);
 }
 .intro-cover {
   transform-origin: left center;
@@ -169,51 +182,65 @@ html[data-intro="play"] [data-wordmark] {
 }
 .intro-cover-front {
   display: grid;
-  place-content: end center;
+  place-content: center;
   justify-items: center;
-  gap: 10px;
-  padding-bottom: 34px;
+  gap: 14px;
+  padding: 36px 24px;
+  border-radius: 2px 6px 6px 2px;
+  /* Black leather: soft sheen, fine grain, a darker spine */
   background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 7%),
-    radial-gradient(ellipse at 50% 30%, #2a2721, #151512 70%);
-  border: 1px solid rgba(201, 169, 110, 0.45);
-  outline: 1px solid rgba(201, 169, 110, 0.25);
-  outline-offset: -12px;
-  box-shadow: 0 40px 90px -30px #000;
+    linear-gradient(90deg, rgba(0, 0, 0, 0.55) 0%, rgba(255, 255, 255, 0.06) 3.5%, rgba(0, 0, 0, 0.25) 6%, rgba(0, 0, 0, 0) 9%),
+    radial-gradient(90% 70% at 35% 25%, rgba(255, 240, 210, 0.07), rgba(0, 0, 0, 0) 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E"),
+    linear-gradient(160deg, #23201b, #121110 60%, #0b0a09);
+  box-shadow:
+    0 50px 100px -30px rgba(0, 0, 0, 0.9),
+    inset 0 0 0 1px rgba(201, 169, 110, 0.35),
+    inset 0 0 0 14px rgba(0, 0, 0, 0),
+    inset 0 0 0 15px rgba(201, 169, 110, 0.22);
 }
-.intro-cover-back {
-  transform: rotateY(180deg);
-  background: #e8dfd1;
+/* Gold foil: a metallic gradient, used only on the cover lettering and ornaments */
+.intro-author,
+.intro-sub,
+.intro-flourish {
+  background: linear-gradient(110deg, #9c7a3e 0%, #e9d29b 30%, #c9a96e 48%, #f6e7bd 62%, #a8843f 85%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.intro-author {
+  font: 400 clamp(40px, 5vw, 54px) / 1 var(--serif);
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+.intro-sub {
+  font: 600 10.5px/1 var(--sans);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
 }
 .intro-rule {
-  width: 60px;
+  width: 70px;
   height: 1px;
-  background: var(--gold);
+  background: linear-gradient(90deg, rgba(201, 169, 110, 0), #c9a96e, rgba(201, 169, 110, 0));
 }
 .intro-flourish {
-  color: var(--gold);
-  font-size: 18px;
+  margin-top: 26px;
+  font-size: 20px;
 }
-.intro-title {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  translate: -50% -85%;
-  margin: 0;
-  z-index: 1;
-  display: grid;
-  justify-items: start; /* matches the left-aligned header wordmark it flies to */
-  gap: 12px;
-  font: 400 clamp(38px, 4.6vw, 58px) / 1 var(--serif);
-  color: #f8f5ee;
-  white-space: nowrap;
-  pointer-events: none;
+.corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(201, 169, 110, 0.55);
 }
-.intro-title span {
-  font: 600 12px/1 var(--sans);
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: var(--gold);
+.corner.tl { top: 22px; left: 22px; border-right: 0; border-bottom: 0; }
+.corner.tr { top: 22px; right: 22px; border-left: 0; border-bottom: 0; }
+.corner.bl { bottom: 22px; left: 22px; border-right: 0; border-top: 0; }
+.corner.br { bottom: 22px; right: 22px; border-left: 0; border-top: 0; }
+.intro-cover-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(90deg, #e8dfd1, #f3ece0);
+  border-radius: 6px 2px 2px 6px;
 }
 
 /* ---------- Chapter I: tighter spread ---------- */
@@ -409,39 +436,65 @@ body .contents-bottom {
   border-color: rgba(201, 169, 110, 0.25);
 }
 
-/* ---------- Chapter toast: "Chapter II" appears, then fades ---------- */
-.chapter-toast {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  z-index: 70;
-  translate: -50% -50%;
-  display: grid;
-  justify-items: center;
-  gap: 10px;
-  padding: 26px 44px;
-  pointer-events: none;
-  opacity: 0;
-  text-align: center;
+/* ---------- Page turn: a slow, wavy page edge sweeps across ---------- */
+body .page-turn-edge {
+  width: 260px;
+  border-radius: 0;
+  filter: none;
+  background: none;
 }
-.chapter-toast b {
-  font: italic 300 clamp(80px, 9vw, 140px) / 0.8 var(--serif);
-  color: var(--gold);
+body .page-turn-edge::before {
+  content: "";
+  position: absolute;
+  inset: -4% 0;
+  /* the edge of a page, bending: a soft shadow, a lit gold rim, then air */
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.22) 44%, rgba(246, 231, 199, 0.5) 58%, rgba(211, 174, 108, 0.55) 62%, rgba(140, 105, 46, 0.3) 67%, rgba(0, 0, 0, 0) 100%);
+  /* a wavy outline, so the page reads as paper, not a straight bar */
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 400' preserveAspectRatio='none'%3E%3Cpath d='M0 0H70C92 50 52 100 74 150S56 250 78 300S58 380 72 400H0Z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 400' preserveAspectRatio='none'%3E%3Cpath d='M0 0H70C92 50 52 100 74 150S56 250 78 300S58 380 72 400H0Z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
+  animation: page-wave 1.9s ease-in-out infinite alternate;
 }
-.chapter-toast span {
-  font: 600 13px/1 var(--sans);
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: #b08f55; /* a gold that reads on both ivory and black */
+@keyframes page-wave {
+  from { transform: skewX(-4deg) scaleY(1.02); }
+  to { transform: skewX(4deg) scaleY(0.98); }
+}
+@media (prefers-reduced-motion: reduce) {
+  body .page-turn-edge::before { animation: none; }
 }
 
-/* ---------- Page turn: a curved page edge sweeps across ---------- */
-body .page-turn-edge {
-  width: 220px;
+/* ---------- Hero: a richer backdrop than plain dark brown ----------
+   Golden morning light through trees (illustrative), deeply darkened, with a
+   warm light behind Jody and a vignette, so the photo and the line stand out. */
+body #cover {
   background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.28) 46%, rgba(246, 231, 199, 0.55) 60%, rgba(211, 174, 108, 0.6) 64%, rgba(140, 105, 46, 0.35) 68%, rgba(0, 0, 0, 0) 100%);
-  border-radius: 0 50% 50% 0 / 0 6% 6% 0;
-  filter: blur(0.4px);
+    radial-gradient(60% 70% at 72% 50%, rgba(201, 169, 110, 0.16), rgba(201, 169, 110, 0) 65%),
+    linear-gradient(90deg, rgba(12, 11, 10, 0.94) 0%, rgba(12, 11, 10, 0.78) 45%, rgba(12, 11, 10, 0.88) 100%),
+    url("/images/sunbeams-horses-960.webp") center 40% / cover no-repeat,
+    #0c0b0a;
+}
+body #cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 50%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+body #cover .cover-inner {
+  position: relative;
+  z-index: 1;
+}
+body #cover .portrait-frame {
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(201, 169, 110, 0.35);
+}
+
+/* ---------- FAQ: the heading stays in view while the questions scroll ---------- */
+body .faq-section {
+  align-items: start;
+}
+body .faq-section > div:first-child {
+  position: sticky;
+  top: 110px;
+  align-self: start;
 }
 
 /* ---------- Footer ---------- */
@@ -609,4 +662,9 @@ body .lead-form textarea {
   height: auto;
   min-height: 54px;
   padding: 14px 26px;
+}
+@media (max-width: 760px) {
+  body .faq-section > div:first-child {
+    position: static;
+  }
 }
