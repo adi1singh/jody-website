@@ -7,10 +7,10 @@
   --ivory: #fbf7f0;
   --blush: #f8e6de;
   --sage: #e9efe2;
-  --sunshine: #f6c85a;
+  --sunshine: #e6d3ac;
   --ink-w: #2a221c;
   --muted-w: #5f5246;
-  --gold-deep: #9a6414;
+  --gold-deep: #7d6038;
   --wrap-w: 1240px;
 }
 
@@ -33,7 +33,7 @@ body #contact .faq-section { margin-top: 40px; }
 /* ---------- Hero: fuller, warmer, Jody bigger ---------- */
 body #cover {
   background:
-    radial-gradient(48% 70% at 78% 52%, rgba(246, 200, 90, 0.42), rgba(246, 200, 90, 0) 70%),
+    radial-gradient(48% 70% at 78% 52%, rgba(230, 211, 172, 0.42), rgba(230, 211, 172, 0) 70%),
     radial-gradient(40% 50% at 8% 90%, rgba(248, 214, 200, 0.7), rgba(248, 214, 200, 0) 70%),
     var(--ivory) !important;
   padding-top: 92px;
@@ -58,7 +58,7 @@ body #cover .cover-title {
   line-height: 0.92;
   color: var(--ink-w);
 }
-body #cover .cover-title span { display: block; color: #b8700d !important; font-style: italic; }
+body #cover .cover-title span { display: block; color: #8c6e39 !important; font-style: italic; }
 .hero-line {
   max-width: 30ch;
   font: 400 clamp(19px, 1.6vw, 24px) / 1.45 var(--sans);
@@ -71,7 +71,7 @@ body #cover .cover-title span { display: block; color: #b8700d !important; font-
   padding: 8px 14px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(154, 100, 20, 0.25);
+  border: 1px solid rgba(125, 96, 56, 0.25);
   font-size: 14px;
   color: var(--ink-w);
 }
@@ -82,7 +82,7 @@ body #cover .cover-portrait { position: relative; justify-content: center; }
   width: 92%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle, #ffd977 0%, #f6c85a 45%, rgba(246, 200, 90, 0) 70%);
+  background: radial-gradient(circle, #eddec3 0%, #e6d3ac 45%, rgba(230, 211, 172, 0) 70%);
   opacity: 0.7;
   top: 50%;
   left: 50%;
@@ -95,7 +95,7 @@ body #cover .portrait-frame {
   margin: 0 auto;
   border-radius: 999px 999px 18px 18px;
   overflow: hidden;
-  box-shadow: 0 30px 70px -28px rgba(140, 80, 20, 0.5), 0 0 0 6px #fff, 0 0 0 7px rgba(184, 112, 13, 0.45);
+  box-shadow: 0 30px 70px -28px rgba(114, 89, 46, 0.5), 0 0 0 6px #fff, 0 0 0 7px rgba(140, 110, 57, 0.45);
 }
 body #cover .portrait-frame img { object-position: 28% 30%; }
 @media (max-width: 900px) {
@@ -110,7 +110,7 @@ body #book { background: var(--blush) !important; }
 body #work { background: var(--ivory) !important; }
 body #beyond { background: var(--sage) !important; }
 body #contact { background: #fff !important; }
-body .sunny-close { background: radial-gradient(50% 80% at 50% 115%, rgba(246, 200, 90, 0.6), rgba(246, 200, 90, 0) 70%), var(--ivory) !important; }
+body .sunny-close { background: radial-gradient(50% 80% at 50% 115%, rgba(230, 211, 172, 0.6), rgba(230, 211, 172, 0) 70%), var(--ivory) !important; }
 
 /* ---------- Statement band: bold, sunny, typographic ---------- */
 .statement-band {
@@ -123,7 +123,7 @@ body .sunny-close { background: radial-gradient(50% 80% at 50% 115%, rgba(246, 2
 }
 .statement-small {
   font: italic 400 clamp(22px, 2.2vw, 32px) / 1.2 var(--serif);
-  color: #6b4508;
+  color: #524021;
 }
 .statement-big {
   margin-top: 10px;
@@ -131,7 +131,7 @@ body .sunny-close { background: radial-gradient(50% 80% at 50% 115%, rgba(246, 2
   letter-spacing: -0.02em;
   color: var(--ink-w);
 }
-.statement-big em { font-style: italic; color: #fff; text-shadow: 0 2px 0 rgba(120, 70, 0, 0.18); }
+.statement-big em { font-style: italic; color: #fff; text-shadow: 0 2px 0 rgba(85, 67, 35, 0.18); }
 
 /* ---------- Hypnosis: intro + six cards ---------- */
 .hyp {
@@ -159,18 +159,18 @@ body .sunny-close { background: radial-gradient(50% 80% at 50% 115%, rgba(246, 2
   padding: 26px 24px;
   border-radius: 18px;
   background: #fff;
-  border: 1px solid rgba(154, 100, 20, 0.16);
-  box-shadow: 0 14px 34px -24px rgba(120, 80, 30, 0.45);
+  border: 1px solid rgba(125, 96, 56, 0.16);
+  box-shadow: 0 14px 34px -24px rgba(110, 85, 50, 0.45);
   transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
 .hyp-cards li:hover {
   transform: translateY(-4px);
-  border-color: rgba(214, 150, 40, 0.6);
-  box-shadow: 0 22px 40px -22px rgba(160, 100, 20, 0.55);
+  border-color: rgba(180, 141, 74, 0.6);
+  box-shadow: 0 22px 40px -22px rgba(128, 100, 52, 0.55);
 }
 .hyp-cards i {
   font: italic 300 22px/1 var(--serif);
-  color: #c4831b;
+  color: #a8844e;
   font-style: italic;
 }
 .hyp-cards b { font: 400 30px/1.05 var(--serif); color: var(--ink-w); }
@@ -212,7 +212,7 @@ body .sunny-close { background: radial-gradient(50% 80% at 50% 115%, rgba(246, 2
 }
 .hyp-intro h2 { margin: 0; }
 .hyp-side { display: grid; gap: 22px; }
-.hyp-buy { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; padding-top: 20px; border-top: 1px solid rgba(154, 100, 20, 0.25); }
+.hyp-buy { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; padding-top: 20px; border-top: 1px solid rgba(125, 96, 56, 0.25); }
 .hyp-cards {
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   gap: 18px !important;
@@ -234,8 +234,8 @@ body .sunny-close { background: radial-gradient(50% 80% at 50% 115%, rgba(246, 2
   padding: 30px 28px 26px;
   border-radius: 22px;
   background: #fff;
-  border: 1px solid rgba(154, 100, 20, 0.16);
-  box-shadow: 0 18px 40px -28px rgba(120, 80, 30, 0.5);
+  border: 1px solid rgba(125, 96, 56, 0.16);
+  box-shadow: 0 18px 40px -28px rgba(110, 85, 50, 0.5);
   overflow: hidden;
   isolation: isolate;
   transition: transform 0.45s cubic-bezier(.2,.8,.2,1), box-shadow 0.45s ease, border-color 0.45s ease, color 0.45s ease;
@@ -246,17 +246,17 @@ body .sunny-close { background: radial-gradient(50% 80% at 50% 115%, rgba(246, 2
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(160deg, #ffd977, #f2b443 60%, #e59a2c);
+  background: linear-gradient(160deg, #eddec3, #d9c08e 60%, #c9a96e);
   transform: translateY(101%);
   transition: transform 0.55s cubic-bezier(.2,.8,.2,1);
 }
 .hyp-card:hover, .hyp-card:focus-visible {
   transform: translateY(-6px);
   border-color: transparent;
-  box-shadow: 0 30px 50px -26px rgba(190, 120, 20, 0.65);
+  box-shadow: 0 30px 50px -26px rgba(140, 108, 60, 0.65);
 }
 .hyp-card:hover::before, .hyp-card:focus-visible::before { transform: none; }
-.hyp-card i { font: italic 300 26px/1 var(--serif); color: #c4831b; transition: color .4s; }
+.hyp-card i { font: italic 300 26px/1 var(--serif); color: #a8844e; transition: color .4s; }
 .hyp-card b { font: 400 clamp(30px, 2.6vw, 38px) / 1.05 var(--serif); color: var(--ink-w); }
 .hyp-card span { font-size: 18px; line-height: 1.45; color: var(--muted-w); transition: color .4s; }
 .hyp-card .hyp-more {
@@ -276,7 +276,7 @@ body .sunny-close { background: radial-gradient(50% 80% at 50% 115%, rgba(246, 2
   gap: 10px;
   text-decoration: none;
   font: 600 15px var(--sans);
-  color: #9a6414;
+  color: #7d6038;
   padding-top: 8px;
 }
 .hyp-card u .arrow { width: 16px; height: 16px; transition: transform .35s; }
@@ -316,7 +316,7 @@ body #contact .contact-copy { position: sticky; top: 110px; align-self: start; }
 .takeaway-sky {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, #fde8c4 0%, #fbd29a 40%, #f6b46d 75%, #f2a35c 100%);
+  background: linear-gradient(180deg, #f1e5d0 0%, #e7d2ae 40%, #dcbd87 75%, #d7b477 100%);
 }
 .takeaway-sun {
   position: absolute;
@@ -330,13 +330,13 @@ body #contact .contact-copy { position: sticky; top: 110px; align-self: start; }
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: radial-gradient(circle, #fff6d8 0%, #ffe08a 32%, #ffc24d 52%, rgba(255, 194, 77, 0) 70%);
+  background: radial-gradient(circle, #fff6d8 0%, #e5cda4 32%, #d7b375 52%, rgba(215, 179, 117, 0) 70%);
 }
 .takeaway-sun::after {
   content: "";
   position: absolute;
   inset: -40%;
-  background: repeating-conic-gradient(rgba(255, 236, 170, 0.35) 0 4deg, transparent 4deg 18deg);
+  background: repeating-conic-gradient(rgba(236, 219, 189, 0.35) 0 4deg, transparent 4deg 18deg);
   -webkit-mask: radial-gradient(circle, #000 20%, transparent 62%);
   mask: radial-gradient(circle, #000 20%, transparent 62%);
   animation: sun-turn 80s linear infinite;
@@ -348,9 +348,9 @@ body #contact .contact-copy { position: sticky; top: 110px; align-self: start; }
   bottom: -2px;
   height: 30%;
   background:
-    radial-gradient(60% 100% at 25% 100%, #e7a868 0 60%, transparent 61%),
-    radial-gradient(70% 100% at 80% 100%, #dd9858 0 60%, transparent 61%),
-    radial-gradient(90% 90% at 50% 115%, #cf8649 0 60%, transparent 61%);
+    radial-gradient(60% 100% at 25% 100%, #d8b477 0 60%, transparent 61%),
+    radial-gradient(70% 100% at 80% 100%, #d2a963 0 60%, transparent 61%),
+    radial-gradient(90% 90% at 50% 115%, #bc995c 0 60%, transparent 61%);
 }
 .takeaway-words { position: relative; z-index: 1; display: grid; justify-items: center; gap: 10px; padding-bottom: 6vh; }
 .takeaway-line {
@@ -363,15 +363,15 @@ body #contact .contact-copy { position: sticky; top: 110px; align-self: start; }
   margin: 0;
   font: italic 400 clamp(46px, 6.8vw, 120px) / 1 var(--serif);
   color: #fff;
-  text-shadow: 0 4px 30px rgba(170, 90, 20, 0.45);
+  text-shadow: 0 4px 30px rgba(135, 106, 55, 0.45);
 }
 .takeaway-sub {
   margin-top: 14px;
   font: italic 400 clamp(20px, 1.8vw, 26px) / 1.3 var(--serif);
-  color: #4a2e12;
+  color: #41331b;
 }
 .takeaway-cta { margin-top: 18px; }
-.takeaway-turn { color: #a3500a !important; text-shadow: 0 2px 24px rgba(255, 246, 216, 0.9) !important; }
+.takeaway-turn { color: #7d6038 !important; text-shadow: 0 2px 24px rgba(255, 246, 216, 0.9) !important; }
 .takeaway-line { text-shadow: 0 2px 20px rgba(255, 246, 216, 0.8); }
 body #story .story-photo img { width: 100%; height: 100%; object-fit: cover; }
 body #story .story-photo img[src*="jody-chestnut"] { object-position: 32% 40%; }

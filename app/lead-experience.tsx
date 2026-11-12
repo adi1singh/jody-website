@@ -7,10 +7,10 @@ import type { LeadInterest } from "../lib/lead-contract";
 const popupSessionKey = "jody-newsletter-seen";
 const greetingSessionKey = "jody-guide-greeting";
 const audioTopics: { label: string; interest: LeadInterest; description: string }[] = [
-  { label: "Sleep", interest: "Sleep audio", description: "A recording for your evening routine." },
-  { label: "Anxiety", interest: "Anxiety audio", description: "A little space to pause." },
-  { label: "Depression", interest: "Depression audio", description: "A gentle listening moment." },
-  { label: "Money rewiring", interest: "Money rewiring audio", description: "Explore your money mindset." },
+  { label: "Sleep", interest: "Sleep audio", description: "Drift off calmly, every night." },
+  { label: "Anxiety", interest: "Anxiety audio", description: "Breathe out. Let the worry soften." },
+  { label: "Depression", interest: "Depression audio", description: "Gentle light for heavy days." },
+  { label: "Money rewiring", interest: "Money rewiring audio", description: "Rewrite your money story." },
 ];
 
 function sessionHas(key: string) {
@@ -38,6 +38,14 @@ function ArrowIcon({ direction = "up-right" }: { direction?: "up-right" | "left"
   return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false"><path d={path} stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 }
 
+/** Line icons for the four audios: moon, breath, sunrise, coin. */
+const audioIcons = [
+  <svg key="sleep" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M20.5 5.5A11 11 0 1 0 26.5 21 9 9 0 0 1 20.5 5.5Z" /><path d="M24 6.5v3M22.5 8h3" strokeLinecap="round" /></svg>,
+  <svg key="anxiety" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><path d="M4 12c4-4 8 4 12 0s8-4 12 0" /><path d="M4 18c4-4 8 4 12 0s8-4 12 0" /><path d="M8 24c3-2.5 6 2.5 9 0s5-2 7 0" /></svg>,
+  <svg key="mood" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><path d="M7 21a9 9 0 0 1 18 0" /><path d="M3 25h26M16 6v4M7.5 10.5l2.5 2.5M24.5 10.5 22 13M3.5 17H6M26 17h2.5" /></svg>,
+  <svg key="money" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"><circle cx="16" cy="16" r="11" /><circle cx="16" cy="16" r="7.5" opacity=".5" /><path d="M18.5 12.5c-.6-1-1.5-1.4-2.6-1.4-1.6 0-2.6.9-2.6 2 0 2.8 5.6 1.4 5.6 4.3 0 1.2-1.1 2.1-2.8 2.1-1.2 0-2.3-.5-2.9-1.5M16 9.5v1.6M16 20.9v1.6" /></svg>,
+];
+
 export function AudioSignup({ source = "website-audio" }: { source?: string }) {
   const id = useId().replaceAll(":", "");
   const [selected, setSelected] = useState<LeadInterest>("Sleep audio");
@@ -46,7 +54,7 @@ export function AudioSignup({ source = "website-audio" }: { source?: string }) {
     <fieldset className="lead-audio-topics"><legend>Choose the recording you’d like updates on</legend><div>
       {audioTopics.map((item, index) => <label className={`lead-audio-topic${selected === item.interest ? " is-selected" : ""}`} key={item.interest}>
         <input type="radio" name={`audio-topic-${id}`} value={item.interest} checked={selected === item.interest} onChange={() => setSelected(item.interest)} />
-        <span className="lead-audio-number" aria-hidden="true">0{index + 1}</span><span><strong>{item.label}</strong><small>{item.description}</small></span><span className="lead-audio-choice" aria-hidden="true" />
+        <span className="lead-audio-icon" aria-hidden="true">{audioIcons[index]}</span><span className="lead-audio-text"><span className="lead-audio-number" aria-hidden="true">0{index + 1}</span><strong>{item.label}</strong><small>{item.description}</small></span><span className="lead-audio-choice" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" /></svg></span><span className="lead-audio-wave" aria-hidden="true">{Array.from({ length: 18 }, (_, i) => <i key={i} style={{ ["--i" as string]: i }} />)}</span>
       </label>)}
     </div></fieldset>
     <div className="lead-audio-notice"><span aria-hidden="true" /><p><strong>Being recorded</strong>Notify me when it’s ready.</p></div>

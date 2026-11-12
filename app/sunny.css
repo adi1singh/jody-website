@@ -11,8 +11,8 @@
   --sun-sage: #eef4e6;
   --sun-ink: #2f261f;
   --sun-muted: #6a5b4d;
-  --gold: #e9a92b;
-  --gold-text-light: #9b6510;
+  --gold: #c9a96e;
+  --gold-text-light: #7d6038;
   --soft: #4d4035;
   --paper: #fffaf1;
 }
@@ -47,22 +47,22 @@ body .site-header.is-scrolled {
 }
 body .site-header.is-scrolled {
   background: rgba(255, 250, 241, 0.9);
-  border-color: rgba(233, 169, 43, 0.3);
+  border-color: rgba(201, 169, 110, 0.3);
   backdrop-filter: blur(14px);
 }
 body .site-header .wordmark, body .header-audio, body .site-header .contents-button { color: var(--sun-ink); }
 body .site-header .wordmark span, body .header-contact { color: var(--gold-text-light); }
 body .menu-lines i { background: var(--sun-ink); }
-body .chapter-rail { background: rgba(255, 250, 241, 0.9); border-color: rgba(233, 169, 43, 0.35); }
+body .chapter-rail { background: rgba(255, 250, 241, 0.9); border-color: rgba(201, 169, 110, 0.35); }
 body .chapter-rail a { color: var(--gold-text-light); }
 body .rail-tooltip { background: #fff; color: var(--sun-ink); }
-body .reading-progress { background: linear-gradient(90deg, #f6c64a, #ef9a5a); }
+body .reading-progress { background: linear-gradient(90deg, #e6d3ac, #c9a96e); }
 
 /* Buttons: sunshine */
 body .gold-button {
-  background: linear-gradient(120deg, #ffd66b, #f4b73d 50%, #ee9d3a);
+  background: linear-gradient(120deg, #eddec3, #d9c08e 50%, #c4a26a);
   color: #2f2008;
-  box-shadow: 0 12px 30px -12px rgba(238, 157, 58, 0.7);
+  box-shadow: 0 12px 30px -12px rgba(201, 169, 110, 0.7);
 }
 body .light-button { color: var(--sun-ink); border-color: rgba(47, 38, 31, 0.35); background: rgba(255, 255, 255, 0.7); }
 body .text-link { color: var(--gold-text-light); }
@@ -70,15 +70,15 @@ body .text-link { color: var(--gold-text-light); }
 /* Hero: morning sunshine */
 body #cover {
   background:
-    radial-gradient(55% 70% at 74% 40%, rgba(255, 214, 120, 0.55), rgba(255, 214, 120, 0) 65%),
+    radial-gradient(55% 70% at 74% 40%, rgba(225, 197, 150, 0.55), rgba(225, 197, 150, 0) 65%),
     linear-gradient(90deg, rgba(255, 250, 241, 0.94) 0%, rgba(255, 246, 228, 0.82) 48%, rgba(255, 238, 210, 0.55) 100%),
     url("/images/sunbeams-horses-960.webp") center 40% / cover no-repeat,
     var(--sun-cream);
 }
 body #cover::after { background: none; }
 body #cover .cover-title { color: var(--sun-ink); }
-body #cover .cover-title span { color: #c27f0f; }
-body #cover .portrait-frame { box-shadow: 0 30px 70px -30px rgba(160, 100, 30, 0.45), 0 0 0 1px rgba(233, 169, 43, 0.5); }
+body #cover .cover-title span { color: #94743d; }
+body #cover .portrait-frame { box-shadow: 0 30px 70px -30px rgba(135, 106, 55, 0.45), 0 0 0 1px rgba(201, 169, 110, 0.5); }
 
 /* Chapter tones: alternate warm light colours so chapters still separate */
 body #story { background: #ffffff; }
@@ -91,13 +91,13 @@ body #book {
 body #beyond { background: #ffffff; }
 body #contact { background: var(--sun-sky); }
 body .work-photo figcaption { color: var(--sun-muted); }
-body #work .concern-list li { border-color: rgba(155, 101, 16, 0.4); color: var(--sun-ink); background: rgba(255, 255, 255, 0.6); }
+body #work .concern-list li { border-color: rgba(121, 95, 50, 0.4); color: var(--sun-ink); background: rgba(255, 255, 255, 0.6); }
 body #work .concern-list li:hover { background: var(--gold); color: #2f2008; }
-body #work .suitability-lead { color: #a8650d !important; }
+body #work .suitability-lead { color: #816534 !important; }
 body #work .hypnosis-feature > div > p:not(.suitability-lead) { color: var(--sun-ink); }
-body .hypnosis-feature, body .session-price { border-color: rgba(155, 101, 16, 0.25); }
+body .hypnosis-feature, body .session-price { border-color: rgba(121, 95, 50, 0.25); }
 body .session-price strong, body .session-price > span { color: var(--sun-ink); }
-body .find-more { border-color: rgba(155, 101, 16, 0.3); color: var(--sun-ink); }
+body .find-more { border-color: rgba(121, 95, 50, 0.3); color: var(--sun-ink); }
 body .find-more small { color: var(--sun-muted); }
 body .find-more .arrow { color: var(--gold-text-light); }
 
@@ -107,16 +107,16 @@ body #equestrian .equestrian-shade {
 }
 body #equestrian .equestrian-image img { filter: brightness(1.25) saturate(1.1); }
 body #equestrian, body #equestrian h2, body #equestrian p, body #equestrian .chapter-label { color: var(--sun-ink); }
-body #equestrian .equestrian-word { -webkit-text-stroke-color: rgba(155, 101, 16, 0.35); }
-body .equestrian-portrait { background: rgba(255, 255, 255, 0.8); border-color: rgba(233, 169, 43, 0.6); box-shadow: 0 30px 60px -30px rgba(120, 80, 20, 0.5); }
+body #equestrian .equestrian-word { -webkit-text-stroke-color: rgba(121, 95, 50, 0.35); }
+body .equestrian-portrait { background: rgba(255, 255, 255, 0.8); border-color: rgba(201, 169, 110, 0.6); box-shadow: 0 30px 60px -30px rgba(99, 78, 41, 0.5); }
 body .equestrian-portrait figcaption { color: var(--sun-muted); }
 
 /* Book chapter */
 body .book h2, body .book-copy .book-subtitle { color: var(--sun-ink); }
-body .book-copy .book-subtitle { color: #a8650d; }
+body .book-copy .book-subtitle { color: #816534; }
 body .book-concept-note { color: var(--sun-muted); }
-body .book-orbit { border-color: rgba(155, 101, 16, 0.3); }
-body .book-waitlist { background: transparent; border-color: rgba(155, 101, 16, 0.25); }
+body .book-orbit { border-color: rgba(121, 95, 50, 0.3); }
+body .book-waitlist { background: transparent; border-color: rgba(121, 95, 50, 0.25); }
 
 /* Interludes: bright photos, words on a soft cream band */
 body .interlude, body .interlude-stage { background: var(--sun-cream); }
@@ -128,27 +128,27 @@ body .interlude-stage > img { filter: brightness(1.15) saturate(1.1); }
   background: radial-gradient(closest-side, rgba(255, 250, 241, 0.92), rgba(255, 250, 241, 0.75) 60%, rgba(255, 250, 241, 0)) !important;
 }
 .interlude-line { color: var(--sun-ink) !important; text-shadow: 0 1px 12px rgba(255, 255, 255, 0.8) !important; }
-.interlude-turn { color: #b8700a !important; text-shadow: 0 1px 14px rgba(255, 255, 255, 0.9) !important; }
+.interlude-turn { color: #8a6c38 !important; text-shadow: 0 1px 14px rgba(255, 255, 255, 0.9) !important; }
 
 /* Page edge: a light paper edge */
 body .page-turn-edge::before {
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(150, 110, 50, 0.12) 44%, rgba(255, 255, 255, 0.9) 58%, rgba(244, 196, 100, 0.6) 62%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(150, 110, 50, 0.12) 44%, rgba(255, 255, 255, 0.9) 58%, rgba(218, 184, 126, 0.6) 62%, rgba(255, 255, 255, 0) 100%);
 }
 
 /* Forms and FAQ on light backgrounds */
-body .faq-list summary { color: var(--sun-ink); border-color: rgba(155, 101, 16, 0.25); }
-body .faq-list details { border-color: rgba(155, 101, 16, 0.25); }
-body .booking-terms > span { color: #a8650d; }
+body .faq-list summary { color: var(--sun-ink); border-color: rgba(121, 95, 50, 0.25); }
+body .faq-list details { border-color: rgba(121, 95, 50, 0.25); }
+body .booking-terms > span { color: #816534; }
 
 /* Contents drawer and footer: light and warm */
-body .contents-dialog { background: var(--sun-cream); color: var(--sun-ink); border-left-color: rgba(233, 169, 43, 0.45); }
+body .contents-dialog { background: var(--sun-cream); color: var(--sun-ink); border-left-color: rgba(201, 169, 110, 0.45); }
 body .contents-top .wordmark, body .close-menu, body .contents-name { color: var(--sun-ink); }
 body .contents-name small { color: var(--sun-muted); }
 body .contents-dialog::backdrop { background: rgba(255, 240, 210, 0.45); }
-body .book-footer { background: var(--sun-butter); color: var(--sun-ink); border-top-color: rgba(233, 169, 43, 0.4); }
+body .book-footer { background: var(--sun-butter); color: var(--sun-ink); border-top-color: rgba(201, 169, 110, 0.4); }
 body .book-footer-top a:not(.gold-button):not(.book-footer-mark) { color: var(--sun-ink); }
-body .book-footer-bottom { color: var(--sun-muted); border-top-color: rgba(155, 101, 16, 0.2); }
-body .book-footer-brand em, body .book-footer-head, body .book-footer-mark span, body .powered strong { color: #a8650d; }
+body .book-footer-bottom { color: var(--sun-muted); border-top-color: rgba(121, 95, 50, 0.2); }
+body .book-footer-brand em, body .book-footer-head, body .book-footer-mark span, body .powered strong { color: #816534; }
 
 /* Closing note: sunshine */
 .sunny-close {
@@ -157,7 +157,7 @@ body .book-footer-brand em, body .book-footer-head, body .book-footer-mark span,
   padding: clamp(72px, 9vw, 130px) 0;
   text-align: center;
   background:
-    radial-gradient(50% 80% at 50% 110%, rgba(255, 200, 90, 0.75), rgba(255, 200, 90, 0) 70%),
+    radial-gradient(50% 80% at 50% 110%, rgba(218, 185, 127, 0.75), rgba(218, 185, 127, 0) 70%),
     linear-gradient(180deg, #fffaf1, #fff0cc);
 }
 .sunny-close .section-shell { display: grid; justify-items: center; gap: 22px; }
@@ -165,7 +165,7 @@ body .book-footer-brand em, body .book-footer-head, body .book-footer-mark span,
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: radial-gradient(circle, #ffd76a 40%, rgba(255, 215, 106, 0) 41%), repeating-conic-gradient(#f4b73d 0 6deg, transparent 6deg 30deg);
+  background: radial-gradient(circle, #ddbf8c 40%, rgba(221, 191, 140, 0) 41%), repeating-conic-gradient(#d9c08e 0 6deg, transparent 6deg 30deg);
   animation: sun-turn 30s linear infinite;
 }
 @keyframes sun-turn { to { transform: rotate(360deg); } }
@@ -175,7 +175,7 @@ body .book-footer-brand em, body .book-footer-head, body .book-footer-mark span,
   font: 300 clamp(40px, 5vw, 78px) / 1.05 var(--serif);
   color: var(--sun-ink);
 }
-.sunny-line em { color: #b8700a; }
+.sunny-line em { color: #8a6c38; }
 .sunny-sub {
   max-width: 34ch;
   font: italic 400 clamp(20px, 1.8vw, 26px) / 1.4 var(--serif);
@@ -184,33 +184,33 @@ body .book-footer-brand em, body .book-footer-head, body .book-footer-mark span,
 
 /* Opening book: morning light, a cream cover with gold lettering */
 html[data-intro="play"] .book-intro {
-  background: radial-gradient(70% 70% at 50% 45%, #fff6e2, #ffe7bd 75%) !important;
+  background: radial-gradient(70% 70% at 50% 45%, #fff6e2, #f0e3cc 75%) !important;
 }
-.intro-glow { background: radial-gradient(42% 46% at 50% 52%, rgba(255, 210, 110, 0.55), rgba(255, 210, 110, 0) 70%); }
+.intro-glow { background: radial-gradient(42% 46% at 50% 52%, rgba(222, 193, 143, 0.55), rgba(222, 193, 143, 0) 70%); }
 .intro-cover-front {
   background:
-    linear-gradient(90deg, rgba(120, 70, 20, 0.25) 0%, rgba(255, 255, 255, 0.25) 3.5%, rgba(120, 70, 20, 0.1) 6%, rgba(0, 0, 0, 0) 9%),
+    linear-gradient(90deg, rgba(99, 78, 41, 0.25) 0%, rgba(255, 255, 255, 0.25) 3.5%, rgba(99, 78, 41, 0.1) 6%, rgba(0, 0, 0, 0) 9%),
     radial-gradient(90% 70% at 35% 25%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 60%),
-    linear-gradient(160deg, #fff4dd, #f7e1b5 60%, #efcf92) !important;
-  box-shadow: 0 40px 80px -30px rgba(150, 95, 25, 0.55), inset 0 0 0 1px rgba(184, 112, 10, 0.4), inset 0 0 0 15px rgba(184, 112, 10, 0.18) !important;
+    linear-gradient(160deg, #fff4dd, #eddcbf 60%, #e3ca9e) !important;
+  box-shadow: 0 40px 80px -30px rgba(124, 97, 51, 0.55), inset 0 0 0 1px rgba(138, 108, 56, 0.4), inset 0 0 0 15px rgba(138, 108, 56, 0.18) !important;
 }
 .intro-author {
   white-space: normal;
   text-align: center;
   font-size: clamp(30px, 3.4vw, 40px);
   line-height: 1.08;
-  background: linear-gradient(110deg, #8a560b 0%, #c98a1d 40%, #a86d10 70%) !important;
+  background: linear-gradient(110deg, #6a532b 0%, #a38043 40%, #836635 70%) !important;
   -webkit-background-clip: text !important;
   background-clip: text !important;
 }
 .intro-author em { font-style: italic; }
-.intro-sub { background: linear-gradient(110deg, #8a560b, #b8700a) !important; -webkit-background-clip: text !important; background-clip: text !important; }
-.intro-spine { background: linear-gradient(90deg, #e8c98a, #f7e1b5 40%, #e2bf7a) !important; }
-.intro-spine span { color: #8a560b; }
-.corner { border-color: rgba(168, 101, 16, 0.6); }
-.intro-shadow { background: radial-gradient(closest-side, rgba(150, 95, 25, 0.35), rgba(150, 95, 25, 0)); }
+.intro-sub { background: linear-gradient(110deg, #6a532b, #8a6c38) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+.intro-spine { background: linear-gradient(90deg, #dfc393, #eddcbf 40%, #dbba81) !important; }
+.intro-spine span { color: #6a532b; }
+.corner { border-color: rgba(131, 102, 53, 0.6); }
+.intro-shadow { background: radial-gradient(closest-side, rgba(124, 97, 51, 0.35), rgba(124, 97, 51, 0)); }
 .intro-sweep { background: linear-gradient(105deg, rgba(255, 255, 255, 0) 42%, rgba(255, 255, 255, 0.55) 50%, rgba(255, 255, 255, 0) 58%) !important; }
-body .book-copy .text-link { color: #a8650d; border-color: currentColor; }
+body .book-copy .text-link { color: #816534; border-color: currentColor; }
 body .interlude-stage > img[src*="rider-sunset"] { filter: brightness(1.35) saturate(1.15); }
 
 /* ==========================================================================
@@ -221,11 +221,11 @@ body .interlude-stage > img[src*="rider-sunset"] { filter: brightness(1.35) satu
   --sun-cream: #fbf7f0;
   --sun-ink: #2a221c;
   --sun-muted: #655749;
-  --gold: #d79a2b;
-  --gold-text-light: #9a6414;
+  --gold: #b68f4c;
+  --gold-text-light: #7d6038;
 }
 body #cover { background:
-    radial-gradient(55% 70% at 74% 40%, rgba(255, 220, 150, 0.45), rgba(255, 220, 150, 0) 65%),
+    radial-gradient(55% 70% at 74% 40%, rgba(231, 210, 174, 0.45), rgba(231, 210, 174, 0) 65%),
     linear-gradient(90deg, rgba(251, 247, 240, 0.95) 0%, rgba(251, 247, 240, 0.85) 50%, rgba(251, 247, 240, 0.6) 100%),
     url("/images/sunbeams-horses-960.webp") center 40% / cover no-repeat, var(--sun-cream); }
 body #story { background: #ffffff; }
@@ -233,11 +233,11 @@ body #book { background: var(--sun-cream); }
 body #work { background: #ffffff; }
 body #beyond { background: #ffffff; }
 body #contact { background: var(--sun-cream); }
-body .book-footer { background: var(--sun-cream); border-top-color: rgba(215, 154, 43, 0.35); }
-.sunny-close { background: radial-gradient(50% 80% at 50% 115%, rgba(255, 205, 110, 0.5), rgba(255, 205, 110, 0) 70%), #ffffff; }
+body .book-footer { background: var(--sun-cream); border-top-color: rgba(182, 143, 76, 0.35); }
+.sunny-close { background: radial-gradient(50% 80% at 50% 115%, rgba(222, 193, 143, 0.5), rgba(222, 193, 143, 0) 70%), #ffffff; }
 body #work .concern-list li { background: #fff; }
-body #cover .cover-title span, body .interlude-turn, .sunny-line em { color: #b87512 !important; }
-body .gold-button { background: linear-gradient(120deg, #f2c35a, #dea036 55%, #d28c2a); }
+body #cover .cover-title span, body .interlude-turn, .sunny-line em { color: #8f703b !important; }
+body .gold-button { background: linear-gradient(120deg, #e3ca9f, #d2b47f 55%, #b8955e); }
 
 /* ---------- The new, shorter chapters ---------- */
 body #story .story-body p { font-size: 19px; max-width: 34ch; }
@@ -257,8 +257,8 @@ body #story .gold-button { margin-top: 28px; }
   align-items: center;
   gap: 14px 24px;
   padding: 22px 0;
-  border-top: 1px solid rgba(154, 100, 20, 0.25);
-  border-bottom: 1px solid rgba(154, 100, 20, 0.25);
+  border-top: 1px solid rgba(125, 96, 56, 0.25);
+  border-bottom: 1px solid rgba(125, 96, 56, 0.25);
 }
 .offer-buy strong { font: 300 52px/1 var(--serif); color: var(--sun-ink); }
 .offer-buy strong small { font: 500 14px var(--sans); color: var(--sun-muted); }
@@ -289,7 +289,7 @@ body #beyond .audio-heading p { font-size: 18px; margin-top: 18px; color: var(--
 }
 
 /* The approved cover: burgundy velvet spine and back to match */
-body .book-spine { background: linear-gradient(90deg, #4a1426, #6b2236 50%, #4a1426); color: #e9c98a; }
+body .book-spine { background: linear-gradient(90deg, #4a1426, #6b2236 50%, #4a1426); color: #e0c493; }
 body .book-back { background: #561a2c; }
 body .book-front { background: #561a2c; }
 body .approved-book-cover { display: block; }

@@ -11,7 +11,7 @@
   --pop-teal: #1fa596;   --ink-teal: #0f7a70;
   --pop-leaf: #6aa84a;   --ink-leaf: #376f25;
   --pop-violet: #7a6ff0; --ink-violet: #5b4fd0;
-  --pop-orange: #f08a24; --ink-orange: #b8530c;
+  --pop-orange: #bb9759; --ink-orange: #8b6d39;
 }
 #story { --pop: var(--pop-coral); --pop-ink: var(--ink-coral); }
 #book { --pop: var(--pop-rose); --pop-ink: var(--ink-rose); }
@@ -33,7 +33,7 @@ body .chapter[id] .chapter-line {
   position: relative;
   height: 2px;
   opacity: 1;
-  background: linear-gradient(90deg, #f6c85a, var(--pop));
+  background: linear-gradient(90deg, #e6d3ac, var(--pop));
   border-radius: 2px;
 }
 body .chapter[id] .chapter-line::after {
@@ -59,7 +59,7 @@ body .chapter[id] .chapter-name::after {
   height: 14px;
   background:
     radial-gradient(circle 3.5px at 4px 10px, var(--pop) 98%, transparent),
-    radial-gradient(circle 2.5px at 12px 3px, #f6c85a 98%, transparent),
+    radial-gradient(circle 2.5px at 12px 3px, #e6d3ac 98%, transparent),
     radial-gradient(circle 3px at 19px 9px, color-mix(in oklab, var(--pop), #fff 35%) 98%, transparent);
   pointer-events: none;
 }
@@ -100,7 +100,7 @@ body .faq-list details:nth-child(3) summary span { color: var(--ink-violet); }
 body .faq-list details:nth-child(4) summary span { color: var(--ink-rose); }
 /* Reading progress: a little rainbow of the chapter colours */
 body .reading-progress {
-  background: linear-gradient(90deg, var(--pop-coral), var(--pop-rose), #f6c85a, var(--pop-teal), var(--pop-leaf), var(--pop-violet), var(--pop-orange));
+  background: linear-gradient(90deg, var(--pop-coral), var(--pop-rose), #e6d3ac, var(--pop-teal), var(--pop-leaf), var(--pop-violet), var(--pop-orange));
 }
 /* Footer: a thin colour ribbon on top */
 body .book-footer { position: relative; }
@@ -109,7 +109,7 @@ body .book-footer::before {
   position: absolute;
   inset: 0 0 auto 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--pop-coral), var(--pop-rose), #f6c85a, var(--pop-teal), var(--pop-leaf), var(--pop-violet), var(--pop-orange));
+  background: linear-gradient(90deg, var(--pop-coral), var(--pop-rose), #e6d3ac, var(--pop-teal), var(--pop-leaf), var(--pop-violet), var(--pop-orange));
 }
 
 /* ---------- The gallop: a horse and rider cross the screen (gallop.tsx) ---------- */
@@ -136,7 +136,7 @@ body .book-footer::before {
   left: 0; right: 0;
   bottom: clamp(18px, 2.2vw, 30px);
   height: 2px;
-  background: linear-gradient(90deg, transparent, #d9b25a 15%, var(--pop-leaf) 50%, #d9b25a 85%, transparent);
+  background: linear-gradient(90deg, transparent, #d1a862 15%, var(--pop-leaf) 50%, #d1a862 85%, transparent);
   opacity: 0.6;
 }
 .gallop-runner {
@@ -151,7 +151,7 @@ body .book-footer::before {
 .gallop-horse {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, #8a4a22 0%, #5b311a 55%, #3b2214 100%);
+  background: linear-gradient(180deg, #7a6032 0%, #5b311a 55%, #3b2214 100%);
   -webkit-mask: url("/images/gallop.webp") 0 0 / 1500% 100% no-repeat;
   mask: url("/images/gallop.webp") 0 0 / 1500% 100% no-repeat;
   -webkit-mask-position: calc(100% * 6 / 14) 0;

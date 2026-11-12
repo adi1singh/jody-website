@@ -203,7 +203,7 @@ html[data-intro="play"] body {
 .intro-author,
 .intro-sub,
 .intro-flourish {
-  background: linear-gradient(110deg, #9c7a3e 0%, #e9d29b 30%, #c9a96e 48%, #f6e7bd 62%, #a8843f 85%);
+  background: linear-gradient(110deg, #9c7a3e 0%, #e4cba0 30%, #c9a96e 48%, #eedfc5 62%, #a8843f 85%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -448,7 +448,7 @@ body .page-turn-edge::before {
   position: absolute;
   inset: -4% 0;
   /* the edge of a page, bending: a soft shadow, a lit gold rim, then air */
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.22) 44%, rgba(246, 231, 199, 0.5) 58%, rgba(211, 174, 108, 0.55) 62%, rgba(140, 105, 46, 0.3) 67%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.22) 44%, rgba(240, 227, 205, 0.5) 58%, rgba(211, 174, 108, 0.55) 62%, rgba(140, 105, 46, 0.3) 67%, rgba(0, 0, 0, 0) 100%);
   /* a wavy outline, so the page reads as paper, not a straight bar */
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 400' preserveAspectRatio='none'%3E%3Cpath d='M0 0H70C92 50 52 100 74 150S56 250 78 300S58 380 72 400H0Z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 400' preserveAspectRatio='none'%3E%3Cpath d='M0 0H70C92 50 52 100 74 150S56 250 78 300S58 380 72 400H0Z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
@@ -945,8 +945,8 @@ body #book .book-front {
    a touch brighter, crisper accents.
    ========================================================================== */
 :root {
-  --gold: #e0b866;
-  --gold-text-light: #9a7224;
+  --gold: #d6b070;
+  --gold-text-light: #876a37;
   --paper: #fbf8f1;
   --soft: #ece5d7;
 }
@@ -987,14 +987,14 @@ body .paper .chapter-word {
   color: var(--gold-text-light);
 }
 body .gold-button {
-  background: linear-gradient(120deg, #f1cf85, #e0b866 45%, #c99a45);
+  background: linear-gradient(120deg, #e0c596, #d6b070 45%, #c99a45);
   color: #1d1a17;
-  box-shadow: 0 10px 30px -12px rgba(224, 184, 102, 0.65);
+  box-shadow: 0 10px 30px -12px rgba(214, 176, 112, 0.65);
   transition: transform 0.35s ease, box-shadow 0.35s ease, filter 0.35s ease;
 }
 body .gold-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 16px 38px -12px rgba(224, 184, 102, 0.8);
+  box-shadow: 0 16px 38px -12px rgba(214, 176, 112, 0.8);
   filter: brightness(1.06);
 }
 /* Lighter body text on dark so it doesn't look grey */
@@ -1021,7 +1021,7 @@ body .interlude-stage > img {
 }
 body #cover {
   background:
-    radial-gradient(55% 65% at 72% 50%, rgba(224, 184, 102, 0.24), rgba(224, 184, 102, 0) 65%),
+    radial-gradient(55% 65% at 72% 50%, rgba(214, 176, 112, 0.24), rgba(214, 176, 112, 0) 65%),
     linear-gradient(90deg, rgba(29, 26, 23, 0.9) 0%, rgba(29, 26, 23, 0.62) 48%, rgba(29, 26, 23, 0.8) 100%),
     url("/images/sunbeams-horses-960.webp") center 40% / cover no-repeat,
     #1d1a17;
@@ -1051,7 +1051,7 @@ body #cover {
   transform-origin: left center;
   transform: rotateY(90deg) translateX(-34px);
   background: linear-gradient(90deg, #0b0a09, #1d1a16 40%, #0e0d0b);
-  border: 1px solid rgba(224, 184, 102, 0.35);
+  border: 1px solid rgba(214, 176, 112, 0.35);
   display: grid;
   place-items: center;
 }
@@ -1059,7 +1059,7 @@ body #cover {
   writing-mode: vertical-rl;
   font: 500 12px/1 var(--serif);
   letter-spacing: 0.3em;
-  color: #e0b866;
+  color: #d6b070;
 }
 .intro-pages-edge {
   right: -14px;
@@ -1074,7 +1074,7 @@ body #cover {
 /* Embossed gold: a fine dark shadow under the foil */
 .intro-author,
 .intro-sub {
-  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.7)) drop-shadow(0 0 10px rgba(224, 184, 102, 0.18));
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.7)) drop-shadow(0 0 10px rgba(214, 176, 112, 0.18));
 }
 .intro-author {
   font-size: clamp(44px, 5.4vw, 60px);
@@ -1082,7 +1082,7 @@ body #cover {
 .intro-sweep {
   position: absolute;
   inset: -20% -60%;
-  background: linear-gradient(105deg, rgba(255, 236, 196, 0) 42%, rgba(255, 236, 196, 0.16) 50%, rgba(255, 236, 196, 0) 58%);
+  background: linear-gradient(105deg, rgba(242, 230, 209, 0) 42%, rgba(242, 230, 209, 0.16) 50%, rgba(242, 230, 209, 0) 58%);
   pointer-events: none;
 }
 html[data-intro="play"] .book-intro {
@@ -1114,7 +1114,7 @@ html[data-intro="play"] .intro-glow {
 }
 .interlude-turn {
   font-weight: 400;
-  color: #f0c96f;
+  color: #dbbb84;
   opacity: 1 !important;
   text-shadow: 0 2px 22px rgba(0, 0, 0, 0.85), 0 1px 3px rgba(0, 0, 0, 0.9);
 }
