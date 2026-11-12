@@ -190,3 +190,10 @@ git push -u origin main
 ```
 
 Replace the example URL. These commands need your own GitHub authentication. No GitHub repository is created by this offline export.
+
+## Round: pillars, booking, sample reviews, gold & luxury (12 Nov 2026, Kush's feedback)
+- Pillar pages: `/hypnosis` (also served at `/sessions`), `/life-coaching`, `/equestrian`, `/live-sexy-now`, `/listen`. Shared parts in `app/pillar.tsx` (PillarHero, Section, Steps, Offers, Reviews, BookBand, Faq).
+- Booking: `/book-a-session` (`app/book-a-session/booking-flow.tsx`): choose a session, pick days/times (fills the form's preferred time), send the request (LeadForm kind="booking"; non-session interests use "enquiry"). `?interest=` preselects. Still a request; Jody confirms.
+- Home: "Ways to work with Jody" row under the hero, "Explore …" links in chapters, reviews before Chapter VI. Header shows the pillar pages (desktop) and a gold "Book a session"; Contents and footer list the pages.
+- Reviews: `src/data/reviews.ts` are SAMPLES, labelled "Sample" on the page. Replace with real reviews (with permission) and set `SAMPLE_REVIEWS = false`.
+- Gold & luxury: `app/luxe.css` (loaded last) re-casts colour.css's chapter colours as metals (gold, rose gold, champagne, antique gold, bronze), gold-foil buttons with a sheen, gold hairline frames, a champagne-gold statement band and a gold galloping horse. Not done yet: Instagram/video section (needs Jody's links).

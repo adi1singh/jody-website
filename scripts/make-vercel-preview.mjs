@@ -6,7 +6,7 @@
 import { cpSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 
 const origin = process.env.PREVIEW_ORIGIN ?? "http://127.0.0.1:8787";
-const pages = ["/", "/privacy", "/sessions"];
+const pages = ["/", "/privacy", "/sessions", "/hypnosis", "/life-coaching", "/equestrian", "/live-sexy-now", "/listen", "/book-a-session"];
 const out = new URL("../vercel-preview/", import.meta.url);
 const shim = `<script>(function(){var f=window.fetch;window.fetch=function(i,o){var u=typeof i==="string"?i:(i&&i.url)||"";if(u.indexOf("/api/leads")!==-1){return Promise.resolve(new Response(JSON.stringify({ok:false,error:"Online enquiries aren\\u2019t connected yet. To reach Jody now, email jannpockran@gmail.com."}),{status:503,headers:{"content-type":"application/json"}}));}return f.apply(this,arguments);};})();</script>`;
 

@@ -7,6 +7,7 @@ import "./chapters.css";
 import "./sunny.css";
 import "./refresh.css";
 import "./colour.css";
+import "./luxe.css";
 import { INTRO_SCRIPT } from "./intro-script";
 export const metadata: Metadata = {
   metadataBase: new URL("https://jody-a-life-in-chapters.jobgen-ai.chatgpt.site"),
