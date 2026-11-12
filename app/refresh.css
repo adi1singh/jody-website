@@ -373,3 +373,4 @@ body #contact .contact-copy { position: sticky; top: 110px; align-self: start; }
 .takeaway-cta { margin-top: 18px; }
 .takeaway-turn { color: #a3500a !important; text-shadow: 0 2px 24px rgba(255, 246, 216, 0.9) !important; }
 .takeaway-line { text-shadow: 0 2px 20px rgba(255, 246, 216, 0.8); }
+body #story .story-photo img { width: 100%; height: 100%; object-fit: cover; }
