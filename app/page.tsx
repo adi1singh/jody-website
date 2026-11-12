@@ -43,10 +43,14 @@ export default function Home() {
       <section id="cover" className="cover ink" aria-labelledby="cover-heading" data-chapter="Cover">
         <div className="cover-inner">
           <div className="cover-copy">
+            <p className="hero-kicker">Hypnotherapy &amp; life coaching with Jody Pockran</p>
             <h1 id="cover-heading" className="cover-title">Change the story.<span>Change your life.</span></h1>
-            <a className="gold-button" href={siteConfig.bookingUrl || "#booking"} data-interest="Hypnotherapy">{siteConfig.bookingUrl ? "Book a session" : "Request a session"}<Arrow /></a>
+            <p className="hero-line">Let go of what’s been holding you back, and feel like yourself again.</p>
+            <div className="hero-cta"><a className="gold-button" href={siteConfig.bookingUrl || "#booking"} data-interest="Hypnotherapy">{siteConfig.bookingUrl ? "Book a session" : "Request a session"}<Arrow /></a><span>No upfront payment</span></div>
+            <ul className="hero-creds"><li>Master hypnotherapist</li><li>Master life coach</li><li>NLP practitioner</li></ul>
           </div>
           <figure className="cover-portrait">
+            <span className="hero-sun" aria-hidden="true" />
             <div className="portrait-frame">{siteConfig.introVideoUrl ? <video className="hero-film" controls playsInline preload="metadata" poster="/images/jody-portrait.webp"><source src={siteConfig.introVideoUrl} type="video/mp4" />Your browser does not support this video.</video> : <Photo name={siteConfig.portrait} alt="Jody Pockran, master hypnotherapist and life coach" portrait priority />}</div>
           </figure>
         </div>
@@ -61,18 +65,31 @@ export default function Home() {
 
       <section id="book" className="book chapter ink" aria-labelledby="book-heading" data-chapter="The book"><div className="book-stage section-shell"><ChapterLabel number="II">The book · Live Sexy Now</ChapterLabel><div className="book-grid"><div className="book-copy"><span className="status-tag"><i /> Coming soon</span><h2 id="book-heading">Live<br /><span className="gold-text">Sexy</span><br />Now.</h2><p className="book-subtitle">A manifesto for bold living: your guide to reclaim your life on your terms.</p><div id="book-list" className="book-signup"><LeadForm kind="book" interest="Book updates" source="book" compact buttonLabel="Tell me when it’s out" /></div></div><div className="book-scene" aria-label="Live Sexy Now — concept presentation of Jody’s forthcoming book"><div className="book-orbit" aria-hidden="true" /><div className="book-object" aria-hidden="true"><div className="book-back" /><div className="book-pages" /><div className="book-spine"><span>LIVE SEXY NOW</span><span>JODY POCKRAN</span></div><div className="book-front">{siteConfig.bookCoverUrl ? <img className="approved-book-cover" src={siteConfig.bookCoverUrl} alt="Live Sexy Now by Jody Pockran: the book cover" /> : <div className="book-cover-border"><span className="book-author">JODY POCKRAN</span><span className="book-cover-title">LIVE<br /><em>SEXY</em><br />NOW<span className="book-cover-dot">.</span></span><svg className="book-bloom" viewBox="0 0 180 100" fill="none"><path d="M90 94C88 70 55 20 18 13C18 48 45 83 90 94ZM90 94C92 70 125 20 162 13C162 48 135 83 90 94ZM90 94C55 55 65 20 90 3C115 20 125 55 90 94Z" stroke="currentColor" strokeWidth=".8"/><path d="M12 93H168M90 94V40" stroke="currentColor" strokeWidth=".6"/></svg><span className="book-cover-foot">CONFIDENCE. REINVENTION. YOU.</span></div>}</div></div>{!siteConfig.bookCoverUrl && <p className="book-concept-note">Concept presentation · Final cover to come</p>}</div></div></div></section>
 
-      <Interlude photo="sunbeams-horses" alt="Illustrative landscape: horses grazing as sunbeams break through the morning mist" line="You know the story by heart." turn="It doesn’t have to end this way." position="50% 62%" />
+      <section className="statement-band" aria-label="You know the story by heart. It doesn’t have to end this way.">
+        <div className="section-shell">
+          <p className="statement-small" data-reveal>You know the story by heart.</p>
+          <p className="statement-big" data-reveal>It doesn’t have to <em>end this way.</em></p>
+        </div>
+      </section>
 
       <section id="work" className="work chapter ink" aria-labelledby="work-heading" data-chapter="Hypnosis">
         <div className="section-shell"><ChapterLabel number="III">Hypnosis with Jody</ChapterLabel>
-          <div className="offer" data-reveal>
-            <div className="offer-copy">
+          <div className="hyp">
+            <div className="hyp-intro" data-reveal>
               <h2 id="work-heading">Let go of what’s<br /><span className="gold-text">holding you back.</span></h2>
-              <ul className="concern-list"><li>Overwhelm</li><li>Anxiety</li><li>Depression</li><li>Phobias</li><li>Childhood trauma</li><li>Money blocks</li><li>Quit smoking</li></ul>
-              <div className="offer-buy"><strong>$250 <small>AUD a session</small></strong><span>Nothing to pay upfront</span><a className="gold-button" href={siteConfig.bookingUrl || "#booking"} data-interest="Hypnotherapy">Book hypnosis <Arrow /></a></div>
+              <p className="hyp-lead">One deep session, a recording made just for you, and 21 nights of listening at bedtime.</p>
+              <div className="hyp-price"><strong>$250</strong><span>AUD a session<br />Nothing to pay upfront</span></div>
+              <a className="gold-button" href={siteConfig.bookingUrl || "#booking"} data-interest="Hypnotherapy">Book hypnosis <Arrow /></a>
               <details className="more"><summary>More details</summary><p>Each session starts with a 90-minute whole-life analysis. Hypnosis follows, with a personal recording made on your phone to listen to at bedtime for 21 nights. Specialist sessions: quit smoking (priced separately), quit vaping and mental gastric bypass. Monthly life coaching is also available. <a href="/sessions">See everything about sessions</a>.</p></details>
             </div>
-            <figure className="work-photo"><Photo name="hand-wheat" alt="Illustrative image: a hand brushing through golden wheat" /></figure>
+            <ul className="hyp-cards" aria-label="What people come to Jody for">
+              <li><i>01</i><b>Overwhelm</b><span>For when everything feels like too much.</span></li>
+              <li><i>02</i><b>Anxiety</b><span>For the worry that keeps coming back.</span></li>
+              <li><i>03</i><b>Depression</b><span>For the heavy days that won’t lift.</span></li>
+              <li><i>04</i><b>Phobias</b><span>For fears that make life feel smaller.</span></li>
+              <li><i>05</i><b>Childhood trauma</b><span>For the past that still shows up today.</span></li>
+              <li><i>06</i><b>Money blocks</b><span>For the old stories you tell about money.</span></li>
+            </ul>
           </div>
         </div>
       </section>

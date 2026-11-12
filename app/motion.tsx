@@ -497,7 +497,7 @@ export default function StoryMotion() {
             }
 
             // Chapter II: the concerns pop in one by one, so the eye lands on each.
-            const chips = select("#work .concern-list li");
+            const chips = select("#work .hyp-cards li");
             if (chips.length) {
               chips.forEach((chip) => handled.add(chip));
               gsap.from(chips, {

@@ -147,7 +147,7 @@ export default function LeadExperience() {
       {greetingVisible && !chatOpen && <div className="lead-guide-greeting"><button type="button" className="lead-greeting-message" onClick={openGuide}>Need a hand finding<br />your next chapter?<span aria-hidden="true"><ArrowIcon /></span></button><button className="lead-greeting-dismiss" type="button" aria-label="Dismiss greeting" onClick={() => setGreetingVisible(false)}><CloseIcon /></button></div>}
       {chatOpen && <section className="lead-guide-panel" ref={panelRef} role="dialog" aria-modal="false" aria-labelledby="website-guide-title" id="website-guide-panel">
         <header className="lead-guide-header"><span className="lead-guide-monogram" aria-hidden="true">J</span><div><h2 id="website-guide-title">Website guide</h2><p>A simple guide to Jody’s website</p></div><button type="button" className="lead-icon-button" aria-label="Close website guide" onClick={() => closeGuide()}><CloseIcon /></button></header>
-        <div className="lead-guide-scroll" ref={scrollRef}>
+        <div className="lead-guide-scroll" data-lenis-prevent ref={scrollRef}>
           {view !== "home" && <button type="button" className="lead-guide-back" onClick={() => setView("home")}><span aria-hidden="true"><ArrowIcon direction="left" /></span> Back to the choices</button>}
           {view === "home" ? <>
             <p className="lead-guide-welcome">Where would you<br />like to begin?</p><p className="lead-guide-intro">I can point you to a service, something new, or a way to get in touch.</p>
@@ -165,7 +165,7 @@ export default function LeadExperience() {
       <button className="lead-guide-launcher" ref={launcherRef} type="button" aria-label={chatOpen ? "Close website guide" : "Open website guide"} aria-expanded={chatOpen} aria-controls="website-guide-panel" aria-haspopup="dialog" onClick={() => chatOpen ? closeGuide() : openGuide()}>{chatOpen ? <CloseIcon /> : <ChatIcon />}<span>{chatOpen ? "Close" : "Guide"}</span></button>
     </div>
 
-    <dialog className="lead-newsletter-dialog" ref={dialogRef} aria-labelledby="newsletter-popup-title" aria-describedby="newsletter-popup-copy"
+    <dialog className="lead-newsletter-dialog" data-lenis-prevent ref={dialogRef} aria-labelledby="newsletter-popup-title" aria-describedby="newsletter-popup-copy"
       onClick={(event) => {
         if (event.target !== event.currentTarget) return;
         const bounds = event.currentTarget.getBoundingClientRect();
