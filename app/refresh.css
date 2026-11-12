@@ -374,3 +374,5 @@ body #contact .contact-copy { position: sticky; top: 110px; align-self: start; }
 .takeaway-turn { color: #a3500a !important; text-shadow: 0 2px 24px rgba(255, 246, 216, 0.9) !important; }
 .takeaway-line { text-shadow: 0 2px 20px rgba(255, 246, 216, 0.8); }
 body #story .story-photo img { width: 100%; height: 100%; object-fit: cover; }
+body #story .story-photo img[src*="jody-chestnut"] { object-position: 32% 40%; }
+body .equestrian-portrait img[src*="jody-black-horse"] { object-position: 50% 30%; }

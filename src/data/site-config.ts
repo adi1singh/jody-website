@@ -6,10 +6,10 @@ export const siteConfig = {
   portrait: "jody-portrait",
   // Jody's own photo with her horse for the equestrian chapter (e.g.
   // "/images/jody-black-horse.webp"). Blank shows an illustrative horse photo.
-  jodyWithHorse: "",
+  jodyWithHorse: "/images/jody-black-horse.webp",
   // Jody's own photo for "Meet Jody" (e.g. Jody hugging her chestnut horse).
   // Blank shows an illustrative photo, so the hero portrait isn't repeated.
-  meetJodyPhoto: "",
+  meetJodyPhoto: "/images/jody-chestnut-horse.webp",
   socials: [
     { name: "Instagram", url: "" },
     { name: "Facebook", url: "" },
