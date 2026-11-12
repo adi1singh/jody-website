@@ -277,8 +277,9 @@ export default function StoryMotion() {
             const bookFront = first("#book .book-object .book-front");
             const bookCopy = first("#book .book-copy");
             const bookOrbit = first("#book .book-orbit");
-            const bookPin = desktop && bookStage
-              && bookStage.scrollHeight <= window.innerHeight - 70;
+            // The orbit runs as the book scrolls through the screen, so it
+            // plays on every size, not only where the whole stage fits.
+            const bookPin = Boolean(bookStage);
 
             if (bookStage && bookObject && bookPin) {
               [bookObject, bookCopy, bookOrbit].forEach((element) => {
@@ -310,9 +311,9 @@ export default function StoryMotion() {
                 const lift = Math.sin(Math.PI * o) ** 2;
                 const sweep = Math.sin(Math.PI * 2 * o);
                 gsap.set(bookObject, {
-                  x: sweep * 120,
+                  x: sweep * (desktop ? 120 : 50),
                   y: resting.y + (1 - Math.cos(Math.PI * 2 * o)) * -18,
-                  z: lift * 300,
+                  z: lift * (desktop ? 300 : 160),
                   scale: resting.scale * (1 + lift * 0.08),
                   rotationX: sweep * 12,
                   rotationY: resting.rotationY + sweep * -32,
@@ -323,20 +324,14 @@ export default function StoryMotion() {
               };
               const book = gsap.timeline({
                 scrollTrigger: {
-                  trigger: bookStage,
-                  pin: bookStage,
-                  pinSpacing: true,
-                  start: pinStart,
-                  end: () => `+=${Math.round(window.innerHeight * 1.1)}`,
+                  trigger: bookObject,
+                  start: "top 95%",
+                  end: "bottom 15%",
                   scrub: 0.8,
-                  anticipatePin: 1,
                   invalidateOnRefresh: true,
                 },
               });
               book.to(state, { p: 1, duration: 0.8, ease: "none", onUpdate: draw }, 0);
-              if (bookCopy) {
-                book.from(bookCopy, { x: -34, opacity: 0, duration: 0.3, ease: "power2.out" }, 0);
-              }
               book.to({}, { duration: 0.2 }, 0.8);
               draw();
             } else {

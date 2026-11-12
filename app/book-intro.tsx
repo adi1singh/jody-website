@@ -79,18 +79,18 @@ export default function BookIntro() {
     <div className="intro-glow" />
     <div className="intro-shadow" />
     <div className="intro-book">
-      <div className="intro-spine"><span>Jody Pockran</span></div>
+      <div className="intro-spine"><span>Begin again</span></div>
       <div className="intro-pages-edge" />
       <div className="intro-page">
         <span>Chapter one</span>
-        <em>Change the story.</em>
+        <em>Your happiest chapter starts here.</em>
       </div>
       <div className="intro-cover">
         <div className="intro-cover-front">
           <i className="corner tl" /><i className="corner tr" /><i className="corner bl" /><i className="corner br" />
-          <span className="intro-author">Jody Pockran</span>
+          <span className="intro-author">Today is a<br />beautiful day<br /><em>to begin again.</em></span>
           <span className="intro-rule" />
-          <span className="intro-sub">Hypnotherapy &amp; Coaching</span>
+          <span className="intro-sub">Jody Pockran</span>
           <span className="intro-flourish">✧</span>
           <i className="intro-sweep" />
         </div>
