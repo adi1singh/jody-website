@@ -15,11 +15,11 @@ export default function SiteFooter() {
         <nav aria-label="Footer: chapters">
           <p className="book-footer-head">The chapters</p>
           <a href="/#story">Meet Jody</a>
-          <a href="/#work">Hypnosis &amp; coaching</a>
+          <a href="/#book">Live Sexy Now</a>
+          <a href="/#work">Hypnosis</a>
           <a href="/sessions">How a session works</a>
           <a href="/#equestrian">Equestrian mindset</a>
-          <a href="/#book">Live Sexy Now</a>
-          <a href="/#beyond">Podcast &amp; free audio</a>
+          <a href="/#beyond">Free audio &amp; podcast</a>
         </nav>
         <div>
           <p className="book-footer-head">Get in touch</p>

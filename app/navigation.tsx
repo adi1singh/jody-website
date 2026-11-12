@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 const chapters = [
-  { id: "cover", number: "", name: "The cover", note: "Jody Pockran" },
-  { id: "story", number: "I", name: "Meet Jody", note: "The woman behind the work" },
-  { id: "work", number: "II", name: "Hypnosis & coaching", note: "Your work with Jody" },
-  { id: "equestrian", number: "III", name: "Find your stride", note: "Equestrian mindset" },
-  { id: "book", number: "IV", name: "Live Sexy Now", note: "The forthcoming book" },
-  { id: "beyond", number: "V", name: "Beyond the page", note: "Podcast, speaking & free audio" },
-  { id: "contact", number: "VI", name: "Your next chapter", note: "Begin a conversation" },
+  { id: "cover", number: "", name: "The cover", note: "Change the story" },
+  { id: "story", number: "I", name: "Meet Jody", note: "Who I am" },
+  { id: "book", number: "II", name: "Live Sexy Now", note: "The book, coming soon" },
+  { id: "work", number: "III", name: "Hypnosis", note: "Sessions from $250" },
+  { id: "equestrian", number: "IV", name: "Equestrian mindset", note: "Coaching for riders" },
+  { id: "beyond", number: "V", name: "Free audio & podcast", note: "Listen free" },
+  { id: "contact", number: "VI", name: "Book a session", note: "Talk to Jody" },
 ];
 export default function Navigation() {
   const dialog = useRef<HTMLDialogElement>(null);
