@@ -287,3 +287,9 @@ body #beyond .audio-heading p { font-size: 18px; margin-top: 18px; color: var(--
 @media (max-width: 900px) {
   .offer { grid-template-columns: 1fr; }
 }
+
+/* The approved cover: burgundy velvet spine and back to match */
+body .book-spine { background: linear-gradient(90deg, #4a1426, #6b2236 50%, #4a1426); color: #e9c98a; }
+body .book-back { background: #561a2c; }
+body .book-front { background: #561a2c; }
+body .approved-book-cover { display: block; }

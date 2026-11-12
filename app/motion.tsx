@@ -311,9 +311,9 @@ export default function StoryMotion() {
                 const lift = Math.sin(Math.PI * o) ** 2;
                 const sweep = Math.sin(Math.PI * 2 * o);
                 gsap.set(bookObject, {
-                  x: sweep * (desktop ? 120 : 50),
+                  x: sweep * (desktop ? 90 : 30),
                   y: resting.y + (1 - Math.cos(Math.PI * 2 * o)) * -18,
-                  z: lift * (desktop ? 300 : 160),
+                  z: lift * (desktop ? 170 : 60),
                   scale: resting.scale * (1 + lift * 0.08),
                   rotationX: sweep * 12,
                   rotationY: resting.rotationY + sweep * -32,

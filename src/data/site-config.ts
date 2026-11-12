@@ -2,7 +2,7 @@
 export const siteConfig = {
   bookingUrl: "",
   introVideoUrl: "",
-  bookCoverUrl: "",
+  bookCoverUrl: "/images/live-sexy-now-cover.webp",
   portrait: "jody-portrait",
   // Jody's own photo with her horse for the equestrian chapter (e.g.
   // "/images/jody-black-horse.webp"). Blank shows an illustrative horse photo.
