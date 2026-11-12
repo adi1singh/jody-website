@@ -506,6 +506,17 @@ export default function StoryMotion() {
               });
             }
 
+            // The takeaway: the sun rises over the hills as the words arrive.
+            const take = first(".takeaway");
+            if (take) {
+              const tl = gsap.timeline({ scrollTrigger: { trigger: take, start: "top 80%", end: "bottom bottom", scrub: 0.8, invalidateOnRefresh: true } });
+              tl.fromTo(take.querySelector(".takeaway-sun"), { yPercent: 70, scale: 0.8 }, { yPercent: 0, scale: 1, ease: "none", duration: 1 }, 0)
+                .fromTo(take.querySelector(".takeaway-sky"), { opacity: 0.35 }, { opacity: 1, ease: "none", duration: 1 }, 0)
+                .fromTo(take.querySelector(".takeaway-line"), { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.35 }, 0.15)
+                .fromTo(take.querySelector(".takeaway-turn"), { opacity: 0, y: 40, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.35 }, 0.4)
+                .fromTo(take.querySelectorAll(".takeaway-sub, .takeaway-cta"), { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.08 }, 0.7);
+            }
+
             const waveform = first("#beyond .waveform");
             const bars = select("#beyond .waveform span");
             if (waveform && bars.length) {

@@ -43,7 +43,6 @@ export default function Home() {
       <section id="cover" className="cover ink" aria-labelledby="cover-heading" data-chapter="Cover">
         <div className="cover-inner">
           <div className="cover-copy">
-            <p className="hero-kicker">Hypnotherapy &amp; life coaching with Jody Pockran</p>
             <h1 id="cover-heading" className="cover-title">Change the story.<span>Change your life.</span></h1>
             <p className="hero-line">Let go of what’s been holding you back, and feel like yourself again.</p>
             <div className="hero-cta"><a className="gold-button" href={siteConfig.bookingUrl || "#booking"} data-interest="Hypnotherapy">{siteConfig.bookingUrl ? "Book a session" : "Request a session"}<Arrow /></a><span>No upfront payment</span></div>
@@ -76,20 +75,21 @@ export default function Home() {
         <div className="section-shell"><ChapterLabel number="III">Hypnosis with Jody</ChapterLabel>
           <div className="hyp">
             <div className="hyp-intro" data-reveal>
-              <h2 id="work-heading">Let go of what’s<br /><span className="gold-text">holding you back.</span></h2>
-              <p className="hyp-lead">One deep session, a recording made just for you, and 21 nights of listening at bedtime.</p>
-              <div className="hyp-price"><strong>$250</strong><span>AUD a session<br />Nothing to pay upfront</span></div>
-              <a className="gold-button" href={siteConfig.bookingUrl || "#booking"} data-interest="Hypnotherapy">Book hypnosis <Arrow /></a>
-              <details className="more"><summary>More details</summary><p>Each session starts with a 90-minute whole-life analysis. Hypnosis follows, with a personal recording made on your phone to listen to at bedtime for 21 nights. Specialist sessions: quit smoking (priced separately), quit vaping and mental gastric bypass. Monthly life coaching is also available. <a href="/sessions">See everything about sessions</a>.</p></details>
+              <h2 id="work-heading">Let go of what’s <span className="gold-text">holding you back.</span></h2>
+              <div className="hyp-side">
+                <p className="hyp-lead">One deep session, a recording made just for you, and 21 nights of listening at bedtime.</p>
+                <div className="hyp-buy"><div className="hyp-price"><strong>$250</strong><span>AUD a session<br />Nothing to pay upfront</span></div><a className="gold-button" href={siteConfig.bookingUrl || "#booking"} data-interest="Hypnotherapy">Book hypnosis <Arrow /></a></div>
+              </div>
             </div>
             <ul className="hyp-cards" aria-label="What people come to Jody for">
-              <li><i>01</i><b>Overwhelm</b><span>For when everything feels like too much.</span></li>
-              <li><i>02</i><b>Anxiety</b><span>For the worry that keeps coming back.</span></li>
-              <li><i>03</i><b>Depression</b><span>For the heavy days that won’t lift.</span></li>
-              <li><i>04</i><b>Phobias</b><span>For fears that make life feel smaller.</span></li>
-              <li><i>05</i><b>Childhood trauma</b><span>For the past that still shows up today.</span></li>
-              <li><i>06</i><b>Money blocks</b><span>For the old stories you tell about money.</span></li>
+              <li><a className="hyp-card" href="#booking" data-interest="Hypnotherapy"><i>01</i><b>Overwhelm</b><span>For when everything feels like too much.</span><em className="hyp-more">When life piles up, we find where the pressure really starts.</em><u>Talk to Jody about this <Arrow /></u></a></li>
+              <li><a className="hyp-card" href="#booking" data-interest="Hypnotherapy"><i>02</i><b>Anxiety</b><span>For the worry that keeps coming back.</span><em className="hyp-more">We work with the patterns behind the worry, gently and at your pace.</em><u>Talk to Jody about this <Arrow /></u></a></li>
+              <li><a className="hyp-card" href="#booking" data-interest="Hypnotherapy"><i>03</i><b>Depression</b><span>For the heavy days that won’t lift.</span><em className="hyp-more">A calm space to explore what’s weighing on you, alongside your other care.</em><u>Talk to Jody about this <Arrow /></u></a></li>
+              <li><a className="hyp-card" href="#booking" data-interest="Hypnotherapy"><i>04</i><b>Phobias</b><span>For fears that make life feel smaller.</span><em className="hyp-more">Spiders, flying, needles or crowds: fears that stop you living fully.</em><u>Talk to Jody about this <Arrow /></u></a></li>
+              <li><a className="hyp-card" href="#booking" data-interest="Hypnotherapy"><i>05</i><b>Childhood trauma</b><span>For the past that still shows up today.</span><em className="hyp-more">Careful, respectful work with experiences that still shape you.</em><u>Talk to Jody about this <Arrow /></u></a></li>
+              <li><a className="hyp-card" href="#booking" data-interest="Hypnotherapy"><i>06</i><b>Money blocks</b><span>For the old stories you tell about money.</span><em className="hyp-more">For the beliefs about money that hold your work and life back.</em><u>Talk to Jody about this <Arrow /></u></a></li>
             </ul>
+            <details className="more"><summary>More details</summary><p>Each session starts with a 90-minute whole-life analysis. Hypnosis follows, with a personal recording made on your phone to listen to at bedtime for 21 nights. Specialist sessions: quit smoking (priced separately), quit vaping and mental gastric bypass. Monthly life coaching is also available. <a href="/sessions">See everything about sessions</a>.</p></details>
           </div>
         </div>
       </section>
@@ -103,12 +103,17 @@ export default function Home() {
 
       <section id="contact" className="contact chapter wine" aria-labelledby="contact-heading" data-chapter="Your next chapter"><div className="section-shell"><ChapterLabel number="VI">Book a session</ChapterLabel><div id="booking" className="contact-grid"><div className="contact-copy" data-reveal><h2 id="contact-heading">Let’s talk<br /><span className="gold-text">about you.</span></h2>{siteConfig.bookingUrl && <p>Choose a time in Jody’s calendar, or send a question below.</p>}{siteConfig.bookingUrl && <a className="gold-button calendar-link" href={siteConfig.bookingUrl} target="_blank" rel="noreferrer">Choose a time <Arrow /></a>}<div className="booking-terms"><span>No upfront payment.</span><p>Cancellations within 24 hours incur half the fee.</p></div></div><ContactForm /></div><div className="faq-section"><div><h3>A few things<br />you might wonder.</h3></div><div className="faq-list"><details><summary>How does a hypnosis appointment work?<span aria-hidden="true">+</span></summary><p>Your appointment begins with a 90-minute whole-life analysis. Hypnosis follows, with a personal recording made on your phone. Jody asks you to listen at bedtime for at least 21 nights. The analysis is one part of the appointment; total appointment time is confirmed with Jody.</p></details><details><summary>What does it cost?<span aria-hidden="true">+</span></summary><p>A standard hypnosis session is $250 AUD. Quit smoking costs more. Enquire about pricing for quit vaping, mental gastric bypass, monthly life coaching, equestrian mindset, speaking and commentating.</p></details><details><summary>Is a request a confirmed booking?<span aria-hidden="true">+</span></summary><p>Submitting this form sends a session request. Jody will confirm the appointment with you. Nothing is payable upfront; cancellations within 24 hours incur half the session fee.</p></details><details><summary>Are the book, podcast and audios available?<span aria-hidden="true">+</span></summary><p>Live Sexy Now is coming soon, the podcast is in production and the free audios are being recorded. Join the book or audio list to register your interest.</p></details></div></div><p className="care-note">Hypnotherapy and coaching can sit alongside medical or psychological care. They do not replace it, and individual experiences differ. Please keep personal medical details for your appointment.</p></div></section>
     </main>
-    <section className="sunny-close" aria-label="A note from Jody">
-      <div className="section-shell">
-        <span className="sun-mark" aria-hidden="true" />
-        <p className="sunny-line">You are allowed to begin again,<br /><em>as many times as you need.</em></p>
-        <p className="sunny-sub">Your best chapter is still being written. I can’t wait to read it with you.</p>
-        <a className="gold-button" href="#booking" data-interest="Hypnotherapy">Start your next chapter</a>
+    <section className="takeaway" aria-label="You are allowed to begin again, as many times as you need.">
+      <div className="takeaway-stage">
+        <div className="takeaway-sky" aria-hidden="true" />
+        <div className="takeaway-sun" aria-hidden="true"><span /></div>
+        <div className="takeaway-hills" aria-hidden="true" />
+        <div className="takeaway-words section-shell">
+          <p className="takeaway-line">You are allowed to <b>begin again,</b></p>
+          <p className="takeaway-turn">as many times as you need.</p>
+          <p className="takeaway-sub">Your best chapter is still being written.</p>
+          <a className="gold-button takeaway-cta" href="#booking" data-interest="Hypnotherapy">Start your next chapter <Arrow /></a>
+        </div>
       </div>
     </section>
     <SiteFooter />
