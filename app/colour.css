@@ -1,0 +1,209 @@
+/* ==========================================================================
+   Little colours (owner, Nov 2026): each chapter has its own accent colour on
+   its number, rule and label, plus a few small colourful touches (card
+   numbers, FAQ signs, dots). Used sparingly: headlines and buttons keep the
+   sunny gold. --pop is decoration only; --pop-ink is for small text and
+   passes 4.5:1 on its chapter's background. Loaded last.
+   ========================================================================== */
+:root {
+  --pop-coral: #ef6a4c;  --ink-coral: #c0412a;
+  --pop-rose: #e0508a;   --ink-rose: #b3305f;
+  --pop-teal: #1fa596;   --ink-teal: #0f7a70;
+  --pop-leaf: #6aa84a;   --ink-leaf: #376f25;
+  --pop-violet: #7a6ff0; --ink-violet: #5b4fd0;
+  --pop-orange: #f08a24; --ink-orange: #b8530c;
+}
+#story { --pop: var(--pop-coral); --pop-ink: var(--ink-coral); }
+#book { --pop: var(--pop-rose); --pop-ink: var(--ink-rose); }
+#work { --pop: var(--pop-teal); --pop-ink: var(--ink-teal); }
+#equestrian { --pop: var(--pop-leaf); --pop-ink: var(--ink-leaf); }
+#beyond { --pop: var(--pop-violet); --pop-ink: var(--ink-violet); }
+#contact { --pop: var(--pop-orange); --pop-ink: var(--ink-orange); }
+
+/* ---------- Chapter openers: number, rule and label in the chapter's colour ---------- */
+body .chapter[id] .chapter-label .folio {
+  color: var(--pop-ink);
+  background: linear-gradient(135deg, var(--pop-ink) 20%, color-mix(in oklab, var(--pop-ink), var(--pop) 55%) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding-right: 0.08em; /* the italic numeral's tail isn't clipped */
+}
+body .chapter[id] .chapter-line {
+  position: relative;
+  height: 2px;
+  opacity: 1;
+  background: linear-gradient(90deg, #f6c85a, var(--pop));
+  border-radius: 2px;
+}
+body .chapter[id] .chapter-line::after {
+  content: "";
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pop);
+  transform: translateY(-50%);
+}
+body .chapter[id] .chapter-word { color: var(--pop-ink); }
+/* A tiny confetti of three dots after the chapter's name */
+body .chapter[id] .chapter-name { position: relative; padding-right: 30px; justify-self: start; }
+body .chapter[id] .chapter-name::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0.35em;
+  width: 22px;
+  height: 14px;
+  background:
+    radial-gradient(circle 3.5px at 4px 10px, var(--pop) 98%, transparent),
+    radial-gradient(circle 2.5px at 12px 3px, #f6c85a 98%, transparent),
+    radial-gradient(circle 3px at 19px 9px, color-mix(in oklab, var(--pop), #fff 35%) 98%, transparent);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  body .chapter[id] .chapter-name::after { animation: pop-bob 4.5s ease-in-out infinite; }
+}
+@keyframes pop-bob { 50% { transform: translateY(-3px); } }
+
+/* ---------- Hypnosis cards: each concern its own colour ---------- */
+#work .hyp-cards li:nth-child(1) .hyp-card { --c: var(--pop-coral); --ci: var(--ink-coral); }
+#work .hyp-cards li:nth-child(2) .hyp-card { --c: var(--pop-teal); --ci: var(--ink-teal); }
+#work .hyp-cards li:nth-child(3) .hyp-card { --c: var(--pop-violet); --ci: var(--ink-violet); }
+#work .hyp-cards li:nth-child(4) .hyp-card { --c: var(--pop-rose); --ci: var(--ink-rose); }
+#work .hyp-cards li:nth-child(5) .hyp-card { --c: var(--pop-leaf); --ci: var(--ink-leaf); }
+#work .hyp-cards li:nth-child(6) .hyp-card { --c: var(--pop-orange); --ci: var(--ink-orange); }
+#work .hyp-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 28px;
+  width: 44px;
+  height: 5px;
+  border-radius: 0 0 5px 5px;
+  background: var(--c);
+  transition: width 0.45s cubic-bezier(.2,.8,.2,1);
+}
+#work .hyp-card i { color: var(--ci); font-weight: 400; }
+#work .hyp-card:hover::after, #work .hyp-card:focus-visible::after { width: calc(100% - 56px); }
+#work .hyp-card:hover i, #work .hyp-card:focus-visible i { color: #2f2008; }
+
+/* ---------- Small touches ---------- */
+/* "Coming soon" dot */
+body .status-tag i { background: var(--pop-rose) !important; box-shadow: 0 0 0 4px color-mix(in oklab, var(--pop-rose), transparent 78%); }
+/* FAQ plus signs take turns in the palette */
+body .faq-list details:nth-child(1) summary span { color: var(--ink-coral); }
+body .faq-list details:nth-child(2) summary span { color: var(--ink-teal); }
+body .faq-list details:nth-child(3) summary span { color: var(--ink-violet); }
+body .faq-list details:nth-child(4) summary span { color: var(--ink-rose); }
+/* Reading progress: a little rainbow of the chapter colours */
+body .reading-progress {
+  background: linear-gradient(90deg, var(--pop-coral), var(--pop-rose), #f6c85a, var(--pop-teal), var(--pop-leaf), var(--pop-violet), var(--pop-orange));
+}
+/* Footer: a thin colour ribbon on top */
+body .book-footer { position: relative; }
+body .book-footer::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--pop-coral), var(--pop-rose), #f6c85a, var(--pop-teal), var(--pop-leaf), var(--pop-violet), var(--pop-orange));
+}
+
+/* ---------- The gallop: a horse and rider cross the screen (gallop.tsx) ---------- */
+.gallop {
+  --h: clamp(118px, 13vw, 190px);          /* horse height */
+  --w: calc(var(--h) * 1.595);              /* one frame's width */
+  position: relative;
+  height: calc(var(--h) + clamp(110px, 11vw, 150px));
+  overflow: clip;
+  background: linear-gradient(180deg, #f5f1e4 0%, var(--sage) 100%);
+}
+.gallop-line {
+  position: absolute;
+  inset: 0 0 auto;
+  margin: 0;
+  padding-top: clamp(26px, 3.4vw, 50px);
+  text-align: center;
+  font: italic 300 clamp(30px, 3.6vw, 54px) / 1 var(--serif);
+  color: var(--ink-leaf);
+  letter-spacing: -0.01em;
+}
+.gallop-ground {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: clamp(18px, 2.2vw, 30px);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #d9b25a 15%, var(--pop-leaf) 50%, #d9b25a 85%, transparent);
+  opacity: 0.6;
+}
+.gallop-runner {
+  position: absolute;
+  left: 0;
+  bottom: calc(clamp(18px, 2.2vw, 30px) - var(--h) * 0.02);
+  width: var(--w);
+  height: var(--h);
+  /* Still: standing mid-stride, right of centre */
+  transform: translateX(calc(64vw - var(--w) / 2));
+}
+.gallop-horse {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #8a4a22 0%, #5b311a 55%, #3b2214 100%);
+  -webkit-mask: url("/images/gallop.webp") 0 0 / 1500% 100% no-repeat;
+  mask: url("/images/gallop.webp") 0 0 / 1500% 100% no-repeat;
+  -webkit-mask-position: calc(100% * 6 / 14) 0;
+  mask-position: calc(100% * 6 / 14) 0;
+}
+.gallop-shadow {
+  position: absolute;
+  left: 12%; right: 12%;
+  bottom: -4%;
+  height: 10%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(70, 50, 20, 0.28), transparent);
+}
+.gallop-dust { display: none; }
+
+/* Running: the frames cycle (one stride = 0.6 s) while the horse crosses */
+.gallop.can-run .gallop-runner { transform: translateX(calc(-1 * var(--w))); }
+.gallop.is-running .gallop-runner { animation: gallop-cross 3.4s linear forwards; }
+.gallop.is-running .gallop-horse {
+  -webkit-animation: gallop-stride 0.6s steps(15, jump-none) infinite;
+  animation: gallop-stride 0.6s steps(15, jump-none) infinite;
+}
+.gallop.is-running .gallop-dust {
+  display: block;
+  position: absolute;
+  left: -4%;
+  bottom: -2%;
+  width: 30%;
+  height: 26%;
+  background:
+    radial-gradient(circle at 70% 70%, rgba(214, 180, 120, 0.55), transparent 45%),
+    radial-gradient(circle at 35% 60%, rgba(214, 180, 120, 0.4), transparent 40%),
+    radial-gradient(circle at 10% 75%, rgba(214, 180, 120, 0.25), transparent 35%);
+  filter: blur(6px);
+  border-radius: 50%;
+  animation: gallop-dust 0.6s ease-out infinite;
+}
+@keyframes gallop-stride {
+  from { -webkit-mask-position: 0 0; mask-position: 0 0; }
+  to { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+}
+@keyframes gallop-cross {
+  from { transform: translateX(calc(-1 * var(--w))); }
+  to { transform: translateX(100vw); }
+}
+@keyframes gallop-dust {
+  0% { opacity: 0.9; transform: scale(0.6); }
+  100% { opacity: 0; transform: scale(1.3) translateX(-20%); }
+}
+@media (max-width: 600px) {
+  .gallop.is-running .gallop-runner { animation-duration: 2.4s; }
+}
+
+/* The page-fold scale on chapters must never widen the page on phones */
+html, body { overflow-x: clip; }

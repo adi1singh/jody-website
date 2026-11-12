@@ -54,3 +54,5 @@ https://github.com/adi1singh/jody-website/blob/main/public/photos/CREDITS.md
 The stock photographs are illustrative and are not represented as photographs of Jody or her clients.
 
 jody-black-horse.webp, jody-chestnut-horse.webp: photos of Jody Pockran supplied by the client (originals in photos-original/). The black-horse photo is by Angelica Peady Photo and Film; its watermark corner is cropped out and the photographer is credited on the page.
+
+Galloping horse (between Chapters IV and V): silhouette cut from Eadweard Muybridge, "The Horse in Motion" (1878), public domain (Wikimedia Commons: Muybridge_race_horse_animated.gif).

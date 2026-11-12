@@ -6,6 +6,7 @@ import LeadExperience, { AudioSignup } from "./lead-experience";
 import { siteConfig } from "../src/data/site-config";
 import SiteFooter from "./site-footer";
 import BookIntro from "./book-intro";
+import Gallop from "./gallop";
 
 function Arrow() {
   return <svg aria-hidden="true" className="arrow" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 19 19 5M5 5h14v14" stroke="currentColor" strokeWidth="1.2" /></svg>;
@@ -95,6 +96,7 @@ export default function Home() {
       </section>
 
       <section id="equestrian" className="equestrian chapter" aria-labelledby="equestrian-heading" data-chapter="Equestrian mindset"><div className="equestrian-stage"><div className="equestrian-image"><Photo name="horse-tree-light" alt="Illustrative landscape of a horse grazing beneath trees in golden light" wide /><div className="equestrian-shade" /></div><div className="equestrian-content section-shell"><ChapterLabel number="IV">Equestrian mindset coaching</ChapterLabel><div className="equestrian-copy"><h2 id="equestrian-heading">Ride with<br /><span>confidence.</span></h2><div className="equestrian-description"><p>Mindset coaching for riders and competitors: calm nerves, sharper focus.</p><a className="gold-button" href="#booking" data-interest="Equestrian mindset">Ask about rider coaching <Arrow /></a></div></div><figure className="equestrian-portrait" data-reveal>{siteConfig.jodyWithHorse ? <img src={siteConfig.jodyWithHorse} srcSet={`${siteConfig.jodyWithHorse.replace(".webp","-480.webp")} 480w, ${siteConfig.jodyWithHorse.replace(".webp","-768.webp")} 768w, ${siteConfig.jodyWithHorse} 1010w`} sizes="(max-width: 900px) 80vw, 28vw" alt="Jody Pockran with her black horse" loading="lazy" /> : <Photo name="black-horse" alt="Illustrative image: a black horse in low light" />}<figcaption>{siteConfig.jodyWithHorse ? "Jody and her horse · Photo: Angelica Peady Photo and Film" : "Jody and her horse, photo to come"}</figcaption></figure></div></div></section>
+      <Gallop />
 
       <section id="beyond" className="beyond chapter paper" aria-labelledby="beyond-heading" data-chapter="Listen"><div className="section-shell"><ChapterLabel number="V">Free audio &amp; podcast</ChapterLabel><div id="audio" className="audio-section"><div className="audio-heading" data-reveal><h2 id="beyond-heading">Listen free,<br /><span className="gold-text">feel lighter.</span></h2><p>Four free hypnosis audios: sleep, anxiety, low mood and money. Pick one and we’ll send it when it’s ready.</p><details className="more"><summary>The podcast &amp; speaking</summary><p>The <em>Live Sexy Now</em> podcast, one episode per chapter of the book with guests, is in production at Daniel’s studio. Jody also speaks on confidence, mindset and the equestrian world. <a href="#contact" data-interest="Speaking and commentating">Invite Jody</a>.</p></details></div><AudioSignup source="audio" /></div></div></section>
 
